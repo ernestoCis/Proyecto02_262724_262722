@@ -1732,7 +1732,7 @@
 							"font": "Arial;13;0",
 							"parentStyle": false,
 							"left": 1368,
-							"top": 864,
+							"top": 832,
 							"width": 33,
 							"height": 25,
 							"text": "0..*"
@@ -5029,7 +5029,7 @@
 							"font": "Arial;13;0",
 							"parentStyle": false,
 							"left": 776,
-							"top": 1000,
+							"top": 1016,
 							"width": 29.5126953125,
 							"height": 25,
 							"text": "0..*"
