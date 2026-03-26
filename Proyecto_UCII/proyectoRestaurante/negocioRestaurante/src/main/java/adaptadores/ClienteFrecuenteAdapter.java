@@ -56,7 +56,7 @@ public class ClienteFrecuenteAdapter {
 
         ClienteFrecuente cliente = new ClienteFrecuente();
 
-        cliente.setIdCliente(dto.getIdCliente());
+//        cliente.setIdCliente(dto.getIdCliente());
 
         if (dto.getNombreCompleto() != null) {
             String[] partes = dto.getNombreCompleto().split(" ");

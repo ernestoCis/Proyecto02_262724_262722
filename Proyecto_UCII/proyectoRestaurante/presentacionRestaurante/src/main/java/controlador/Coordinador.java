@@ -6,7 +6,9 @@ package controlador;
 
 import dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
+import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import objetosnegocio.ClienteFrecuenteBO;
 import pantallas.*;
@@ -54,6 +56,44 @@ public class Coordinador {
             frmClientes.setVisible(true);
             frmClientes.toFront();
         } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }
+    
+    public void mostrarRegistrarCliente(List<ClienteFrecuenteDTO> clientes){
+        if(frmRegistrarCliente == null){
+            frmRegistrarCliente = new FrmRegistrarCliente(frmClientes, clientes, this);
+        }
+        frmRegistrarCliente.setVisible(true);
+        frmRegistrarCliente.toFront();
+    }
+    
+    public void registrarCliente(ClienteFrecuenteDTO clienteDTO){
+        try{
+            clienteFrecuenteBO.registrarCliente(clienteDTO);
+            JOptionPane.showMessageDialog(null, "Cliente registrado correctamente");
+            
+            if(frmRegistrarCliente != null){
+                frmRegistrarCliente.dispose();
+                frmRegistrarCliente = null;
+            }
+            
+            //actualizar tabla
+            actualizarTablaClientes();
+            
+        }catch(NegocioException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }
+    
+    public void actualizarTablaClientes(){
+        try{
+            List<ClienteFrecuenteDTO> clientes = clienteFrecuenteBO.consultarTodos();
+
+            if (frmClientes != null) {
+                frmClientes.actualizarTablaClientes(clientes);
+            }
+        }catch(NegocioException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }

@@ -232,12 +232,7 @@ public class FrmClientes extends JFrame {
         });
 
         btnRegistrar.addActionListener(e -> {
-            JOptionPane.showMessageDialog(
-                    this,
-                    "Formulario registrar"
-            );
-
-            // coordinador.mostrarFormularioNuevoCliente(this);
+            coordinador.mostrarRegistrarCliente(listaOriginal);
         });
 
         btnRegresar.addActionListener(e -> {
@@ -309,5 +304,10 @@ public class FrmClientes extends JFrame {
                 }
             }
         });
+    }
+    
+    public void actualizarTablaClientes(List<ClienteFrecuenteDTO> clientes) {
+        this.listaOriginal = clientes;
+        cargarDatosTabla(this.listaOriginal);
     }
 }
