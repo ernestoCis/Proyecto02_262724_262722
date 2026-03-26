@@ -45,6 +45,7 @@ public class FrmClientes extends JFrame {
     private JButton btnRegistrar;
 
     private List<ClienteFrecuenteDTO> listaOriginal;
+    private List<ClienteFrecuenteDTO> listaMostrada;
 
     public FrmClientes(List<ClienteFrecuenteDTO> clientes, Coordinador coordinador) {
         this.coordinador = coordinador;
@@ -218,20 +219,16 @@ public class FrmClientes extends JFrame {
                 if (e.getClickCount() == 2) {
                     int fila = tblClientes.getSelectedRow();
                     if (fila != -1) {
-                        Long idCliente = (Long) modeloTabla.getValueAt(fila, 0);
+                        ClienteFrecuenteDTO clienteSeleccionado = listaMostrada.get(fila);
 
-                        JOptionPane.showMessageDialog(
-                                FrmClientes.this,
-                                "editar el cliente con ID: " + idCliente
-                        );
-
-                        // coordinador.mostrarFormularioEditarCliente(FrmClientes.this, idCliente);
+                        coordinador.mostrarEditarCliente(clienteSeleccionado);
                     }
                 }
             }
         });
 
         btnRegistrar.addActionListener(e -> {
+            dispose();
             coordinador.mostrarRegistrarCliente(listaOriginal);
         });
 
@@ -242,6 +239,7 @@ public class FrmClientes extends JFrame {
     }
 
     private void cargarDatosTabla(List<ClienteFrecuenteDTO> lista) {
+        listaMostrada = lista;
         modeloTabla.setRowCount(0);
 
         if (lista != null) {

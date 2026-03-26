@@ -1,5 +1,6 @@
 package inicio;
 
+
 import controlador.Coordinador;
 
 /**

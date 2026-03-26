@@ -50,8 +50,6 @@ public class Coordinador {
             List<ClienteFrecuenteDTO> clientes = clienteFrecuenteBO.consultarTodos();
             if (frmClientes == null) {
                 frmClientes = new FrmClientes(clientes, this);
-            }else{
-//                frmClientes.ac
             }
             frmClientes.setVisible(true);
             frmClientes.toFront();
@@ -93,6 +91,35 @@ public class Coordinador {
             if (frmClientes != null) {
                 frmClientes.actualizarTablaClientes(clientes);
             }
+        }catch(NegocioException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }
+    
+    public void mostrarEditarCliente(ClienteFrecuenteDTO clienteDTO){
+        if(frmEditarCliente != null){
+            frmEditarCliente.dispose();
+        }
+        frmClientes.dispose();
+        frmEditarCliente = new FrmEditarCliente(clienteDTO, this);
+        frmEditarCliente.setVisible(true);
+        frmEditarCliente.toFront();
+    }
+    
+    public void editarCliente(ClienteFrecuenteDTO clienteDTO){
+        try{
+            clienteFrecuenteBO.actualizarCliente(clienteDTO);
+            JOptionPane.showMessageDialog(null, "Cliente editado correctamente");
+            
+            if(frmEditarCliente != null){
+                frmEditarCliente.dispose();
+                frmEditarCliente = null;
+            }
+            
+            actualizarTablaClientes();
+            
+            frmClientes.setVisible(true);
+            
         }catch(NegocioException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }

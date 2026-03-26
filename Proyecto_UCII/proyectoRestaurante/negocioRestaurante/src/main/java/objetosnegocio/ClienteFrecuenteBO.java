@@ -87,7 +87,7 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         validarDatos(dto);
 
         try {
-            ClienteFrecuente entidad = ClienteFrecuenteAdapter.dtoAEntidad(dto);
+            ClienteFrecuente entidad = ClienteFrecuenteAdapter.dtoAEntidadNuevo(dto);
             clienteFrecuenteDAO.guardar(entidad);
 
         } catch (PersistenciaException e) {
@@ -113,10 +113,9 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         }
 
         validarDatos(dto);
-
         try {
-            ClienteFrecuente entidad = ClienteFrecuenteAdapter.dtoAEntidad(dto);
-
+            ClienteFrecuente entidad = ClienteFrecuenteAdapter.dtoAEntidadExistente(dto);
+            entidad.setIdCliente(dto.getIdCliente());
             clienteFrecuenteDAO.actualizar(entidad);
 
         } catch (PersistenciaException e) {

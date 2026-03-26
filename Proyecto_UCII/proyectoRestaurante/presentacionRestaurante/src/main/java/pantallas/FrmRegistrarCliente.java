@@ -207,7 +207,7 @@ public class FrmRegistrarCliente extends JFrame {
     }
 
     private void eventos() {
-        btnRegresar.addActionListener(e -> JOptionPane.showMessageDialog(null, "falta coordinador"));
+        btnRegresar.addActionListener(e -> coordinador.mostrarClientes());
 
         btnRegistrar.addActionListener(e -> registrarCliente());
     }
@@ -248,7 +248,6 @@ public class FrmRegistrarCliente extends JFrame {
         
         coordinador.registrarCliente(nuevoCliente);
 
-        JOptionPane.showMessageDialog(this, "Cliente registrado correctamente.");
         dispose();
     }
 
