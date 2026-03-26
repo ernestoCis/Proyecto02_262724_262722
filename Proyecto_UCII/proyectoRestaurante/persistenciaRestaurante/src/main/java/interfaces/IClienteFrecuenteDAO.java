@@ -1,0 +1,25 @@
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
+ */
+package interfaces;
+
+import entidades.ClienteFrecuente;
+import excepciones.PersistenciaException;
+import java.util.List;
+
+/**
+ *
+ * @author Paulina Guevara, Ernesto Cisneros
+ */
+public interface IClienteFrecuenteDAO {
+
+    public List<ClienteFrecuente> obtenerFrecuentes() throws PersistenciaException;
+
+    public List<ClienteFrecuente> buscarPorFiltro(String filtro) throws PersistenciaException;
+
+    public void guardar(ClienteFrecuente cliente) throws PersistenciaException;
+    
+    public ClienteFrecuente buscarPorId(Long id) throws PersistenciaException;
+
+}
