@@ -23,6 +23,12 @@ public class ClienteFrecuenteAdapter {
         ClienteFrecuenteDTO dto = new ClienteFrecuenteDTO();
 
         dto.setIdCliente(c.getIdCliente());
+        if(c.getApellidoPaterno() == null){
+            c.setApellidoPaterno("");
+        }
+        if(c.getApellidoMaterno() == null){
+            c.setApellidoMaterno("");
+        }
         dto.setNombreCompleto(
                 c.getNombres() + " " + c.getApellidoPaterno() + " " + c.getApellidoMaterno()
         );
