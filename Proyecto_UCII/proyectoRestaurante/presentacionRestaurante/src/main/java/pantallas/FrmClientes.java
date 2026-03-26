@@ -27,8 +27,6 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
-import javax.swing.SwingConstants;
-import javax.swing.border.EmptyBorder;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -68,7 +66,6 @@ public class FrmClientes extends JFrame {
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorFondo = new Color(238, 238, 238);
-        Color colorLineaAzul = new Color(72, 161, 255);
         Color colorTablaHeader = new Color(177, 201, 182);
 
         JPanel panelPrincipal = new JPanel(new BorderLayout());
@@ -102,12 +99,8 @@ public class FrmClientes extends JFrame {
         panelSuperior.add(lblLogo, BorderLayout.WEST);
         panelSuperior.add(panelTitulo, BorderLayout.CENTER);
 
-        JPanel lineaAzul = new JPanel();
-        lineaAzul.setBackground(colorLineaAzul);
-        lineaAzul.setPreferredSize(new Dimension(1000, 3));
 
         panelSuperiorContenedor.add(panelSuperior, BorderLayout.CENTER);
-        panelSuperiorContenedor.add(lineaAzul, BorderLayout.SOUTH);
 
         JPanel panelCentro = new JPanel(new BorderLayout());
         panelCentro.setBackground(colorFondo);
