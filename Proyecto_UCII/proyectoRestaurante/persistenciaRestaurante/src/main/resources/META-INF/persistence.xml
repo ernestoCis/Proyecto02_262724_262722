@@ -16,7 +16,7 @@
         <properties>
             <property name="jakarta.persistence.jdbc.url" value="jdbc:mysql://localhost:3306/Restaurante"/>
             <property name="jakarta.persistence.jdbc.user" value="root"/>
-            <property name="jakarta.persistence.jdbc.password" value="Ernesto_0611"/>
+            <property name="jakarta.persistence.jdbc.password" value="pau"/>
             <property name="jakarta.persistence.jdbc.driver" value="com.mysql.cj.jdbc.Driver"/>
 
             <property name="hibernate.dialect" value="org.hibernate.dialect.MySQLDialect"/>

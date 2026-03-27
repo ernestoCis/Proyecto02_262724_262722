@@ -27,7 +27,7 @@ public class Coordinador {
     private FrmEditarCliente frmEditarCliente;
     
     public Coordinador(){
-        this.clienteFrecuenteBO = new ClienteFrecuenteBO();
+        this.clienteFrecuenteBO = ClienteFrecuenteBO.getInstance();
     }
     
     public void iniciarSistema() {

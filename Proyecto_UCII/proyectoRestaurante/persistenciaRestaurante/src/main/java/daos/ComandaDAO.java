@@ -14,6 +14,18 @@ import jakarta.persistence.EntityManager;
  */
 public class ComandaDAO implements IComandaDAO {
 
+    private static ComandaDAO instance;
+
+    private ComandaDAO() {
+    }
+
+    public static ComandaDAO getInstance() {
+        if (instance == null) {
+            instance = new ComandaDAO();
+        }
+        return instance;
+    }
+    
     @Override
     public int contarVisitas(Long idCliente) {
         EntityManager em = ConexionBD.crearConexion();

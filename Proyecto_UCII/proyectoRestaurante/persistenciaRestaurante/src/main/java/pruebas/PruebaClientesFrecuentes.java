@@ -19,7 +19,7 @@ public class PruebaClientesFrecuentes {
      * @param args the command line arguments
      */
     public static void main(String[] args) {
-        ClienteFrecuenteDAO dao = new ClienteFrecuenteDAO();
+        ClienteFrecuenteDAO dao = ClienteFrecuenteDAO.getInstance();
 
         try {
             ClienteFrecuente cliente = new ClienteFrecuente();

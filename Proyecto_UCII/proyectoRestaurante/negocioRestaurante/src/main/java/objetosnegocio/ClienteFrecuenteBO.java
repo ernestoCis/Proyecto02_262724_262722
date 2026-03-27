@@ -21,8 +21,22 @@ import java.util.List;
  */
 public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
 
-    private ClienteFrecuenteDAO clienteFrecuenteDAO = new ClienteFrecuenteDAO();
-    private ComandaDAO comandaDAO = new ComandaDAO();
+    private static ClienteFrecuenteBO instance;
+
+    private ClienteFrecuenteDAO clienteFrecuenteDAO;
+    private ComandaDAO comandaDAO;
+
+    private ClienteFrecuenteBO() {
+        clienteFrecuenteDAO = ClienteFrecuenteDAO.getInstance();
+        comandaDAO = ComandaDAO.getInstance();
+    }
+
+    public static ClienteFrecuenteBO getInstance() {
+        if (instance == null) {
+            instance = new ClienteFrecuenteBO();
+        }
+        return instance;
+    }
 
     @Override
     public List<ClienteFrecuenteDTO> consultarTodos() throws NegocioException {
