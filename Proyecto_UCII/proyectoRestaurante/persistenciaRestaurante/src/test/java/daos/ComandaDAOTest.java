@@ -4,10 +4,9 @@
  */
 package daos;
 
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.BeforeAll;
+import entidades.ClienteFrecuente;
+import entidades.Comanda;
+import excepciones.PersistenciaException;
 import org.junit.jupiter.api.Test;
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -20,15 +19,30 @@ public class ComandaDAOTest {
     private final ComandaDAO dao = ComandaDAO.getInstance();
 
     @Test
-    public void contarVisitasDeCliente() {
-        int visitas = dao.contarVisitas(1L);
-
-        assertTrue(visitas >= 0);
-        assertNotNull(visitas);
+    public void contarVisitasDeCliente() throws PersistenciaException {
+//        ClienteFrecuenteDAO clienteDAO = ClienteFrecuenteDAO.getInstance();
+//        ComandaDAO comandaDAO = ComandaDAO.getInstance();
+//
+//        ClienteFrecuente cliente = new ClienteFrecuente();
+//        cliente.setNombres("Juan");
+//        cliente.setTelefono("644" + System.currentTimeMillis());
+//        cliente.setEmail("juan@gmail.com");
+//
+//        clienteDAO.guardar(cliente);
+//
+//        Comanda comanda = new Comanda();
+//        comanda.setCliente(cliente);
+//        comanda.setTotal(200.0);
+//
+//        // fakta guardar comanda
+//        
+//        int visitas = dao.contarVisitas(cliente.getIdCliente());
+//
+//        assertTrue(visitas >= 1);
     }
 
     @Test
-    public void retornarCeroSiNoHayVisitas() {
+    public void retornarCeroSiNoHayVisitas() throws PersistenciaException {
         int visitas = dao.contarVisitas(99789L);
 
         assertTrue(visitas >= 0);
@@ -36,7 +50,7 @@ public class ComandaDAOTest {
     }
 
     @Test
-    public void calcularTotalGastado() {
+    public void calcularTotalGastado() throws PersistenciaException {
         double total = dao.totalGastado(1L);
 
         assertTrue(total >= 0);
@@ -44,7 +58,7 @@ public class ComandaDAOTest {
     }
 
     @Test
-    public void retornarCeroSiNoHayConsumos() {
+    public void retornarCeroSiNoHayConsumos() throws PersistenciaException {
         double total = dao.totalGastado(99789L);
 
         assertTrue(total >= 0);
