@@ -45,11 +45,11 @@ public class FrmClientes extends JFrame {
     private JButton btnRegistrar;
 
     private List<ClienteFrecuenteDTO> listaOriginal;
-    private List<ClienteFrecuenteDTO> listaMostrada;
+//    private List<ClienteFrecuenteDTO> listaMostrada;
 
-    public FrmClientes(List<ClienteFrecuenteDTO> clientes, Coordinador coordinador) {
+    public FrmClientes(Coordinador coordinador) {
         this.coordinador = coordinador;
-        this.listaOriginal = clientes != null ? clientes : new ArrayList<>();
+        this.listaOriginal = this.coordinador.getListaClientesActual();
         configurarVentana();
         inicializarComponentes();
         cargarDatosTabla(this.listaOriginal);
@@ -219,9 +219,10 @@ public class FrmClientes extends JFrame {
                 if (e.getClickCount() == 2) {
                     int fila = tblClientes.getSelectedRow();
                     if (fila != -1) {
-                        ClienteFrecuenteDTO clienteSeleccionado = listaMostrada.get(fila);
-
-                        coordinador.mostrarEditarCliente(clienteSeleccionado);
+                        ClienteFrecuenteDTO clienteSeleccionado = listaOriginal.get(fila);
+                        
+                        coordinador.setClienteSeleccionado(clienteSeleccionado);
+                        coordinador.mostrarEditarCliente();
                     }
                 }
             }
@@ -239,7 +240,7 @@ public class FrmClientes extends JFrame {
     }
 
     private void cargarDatosTabla(List<ClienteFrecuenteDTO> lista) {
-        listaMostrada = lista;
+//        listaMostrada = lista;
         modeloTabla.setRowCount(0);
 
         if (lista != null) {

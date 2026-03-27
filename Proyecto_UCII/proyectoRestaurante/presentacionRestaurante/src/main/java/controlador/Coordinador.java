@@ -6,9 +6,7 @@ package controlador;
 
 import dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
-import java.util.ArrayList;
 import java.util.List;
-import javax.swing.JFrame;
 import javax.swing.JOptionPane;
 import objetosnegocio.ClienteFrecuenteBO;
 import pantallas.*;
@@ -25,6 +23,9 @@ public class Coordinador {
     private FrmClientes frmClientes;
     private FrmRegistrarCliente frmRegistrarCliente;
     private FrmEditarCliente frmEditarCliente;
+    
+    private List<ClienteFrecuenteDTO> listaClientesActual;
+    private ClienteFrecuenteDTO clienteSeleccionado;
     
     public Coordinador(){
         this.clienteFrecuenteBO = ClienteFrecuenteBO.getInstance();
@@ -47,9 +48,9 @@ public class Coordinador {
     
     public void mostrarClientes(){
         try{
-            List<ClienteFrecuenteDTO> clientes = clienteFrecuenteBO.consultarTodos();
+            this.listaClientesActual = clienteFrecuenteBO.consultarTodos();
             if (frmClientes == null) {
-                frmClientes = new FrmClientes(clientes, this);
+                frmClientes = new FrmClientes(this);
             }
             frmClientes.setVisible(true);
             frmClientes.toFront();
@@ -98,12 +99,17 @@ public class Coordinador {
         }
     }
     
-    public void mostrarEditarCliente(ClienteFrecuenteDTO clienteDTO){
+    public void mostrarEditarCliente(){
+        if(clienteSeleccionado == null) {
+            JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente primero");
+            return;
+        }
+        
         if(frmEditarCliente != null){
             frmEditarCliente.dispose();
         }
         frmClientes.dispose();
-        frmEditarCliente = new FrmEditarCliente(clienteDTO, this);
+        frmEditarCliente = new FrmEditarCliente(this);
         frmEditarCliente.setVisible(true);
         frmEditarCliente.toFront();
     }
@@ -125,6 +131,18 @@ public class Coordinador {
         }catch(NegocioException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
+    }
+    
+    public void setClienteSeleccionado(ClienteFrecuenteDTO cliente) {
+        this.clienteSeleccionado = cliente;
+    }
+    
+    public ClienteFrecuenteDTO getClienteSeleccionado() {
+        return this.clienteSeleccionado;
+    }
+    
+    public List<ClienteFrecuenteDTO> getListaClientesActual() {
+        return this.listaClientesActual;
     }
     
 }

@@ -34,9 +34,9 @@ public class FrmEditarCliente extends JFrame {
     private JButton btnRegresar;
     private JButton btnEditar;
 
-    public FrmEditarCliente(ClienteFrecuenteDTO clienteEditar, Coordinador coordinador) {
+    public FrmEditarCliente(Coordinador coordinador) {
         this.coordinador = coordinador;
-        this.clienteEditar = clienteEditar;
+        this.clienteEditar = coordinador.getClienteSeleccionado();
 
         configurarVentana();
         inicializarComponentes();
@@ -244,8 +244,6 @@ public class FrmEditarCliente extends JFrame {
                 clienteEditar.getPuntos()
         );
 
-        
-        
         coordinador.editarCliente(clienteActualizado);
 
         dispose();
