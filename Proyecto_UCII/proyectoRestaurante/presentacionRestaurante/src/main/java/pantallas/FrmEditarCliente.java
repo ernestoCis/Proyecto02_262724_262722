@@ -19,6 +19,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
 
 public class FrmEditarCliente extends JFrame {
 
@@ -108,6 +109,10 @@ public class FrmEditarCliente extends JFrame {
         btnRegresar.setOpaque(true);
         btnRegresar.setContentAreaFilled(true);
         btnRegresar.setBorderPainted(false);
+        btnRegresar.setBorder(BorderFactory.createEmptyBorder());
+        btnRegresar.setMargin(new Insets(0, 0, 0, 0));
+        btnRegresar.setHorizontalAlignment(SwingConstants.CENTER);
+        btnRegresar.setVerticalAlignment(SwingConstants.CENTER);
 
         JPanel panelBotonRegresar = new JPanel();
         panelBotonRegresar.setOpaque(false);

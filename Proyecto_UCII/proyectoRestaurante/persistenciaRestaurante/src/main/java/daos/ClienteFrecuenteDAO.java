@@ -119,4 +119,32 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
             em.close();
         }
     }
+
+    @Override
+    public void eliminarCliente(Long idCliente) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+
+        try {
+            em.getTransaction().begin();
+
+            ClienteFrecuente cliente = em.find(ClienteFrecuente.class, idCliente);
+            if (cliente == null) {
+                throw new PersistenciaException("No se encontró el cliente a eliminar.");
+            }
+//            if(cliente.getComandas() != null || !cliente.getComandas().isEmpty()){
+//                throw new PersistenciaException("No se pueden eliminar clientes asociados a una comanda");
+//            }
+
+            em.remove(cliente);
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Error al eliminar cliente.", e);
+        } finally {
+            em.close();
+        }
+    }
 }

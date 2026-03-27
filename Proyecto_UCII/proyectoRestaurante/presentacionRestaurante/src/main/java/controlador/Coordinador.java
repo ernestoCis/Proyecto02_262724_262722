@@ -6,6 +6,7 @@ package controlador;
 
 import dtos.ClienteFrecuenteDTO;
 import excepciones.NegocioException;
+import interfaces.ICoordinador;
 import java.util.List;
 import javax.swing.JOptionPane;
 import objetosnegocio.ClienteFrecuenteBO;
@@ -15,7 +16,7 @@ import pantallas.*;
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
-public class Coordinador {
+public class Coordinador implements ICoordinador{
     private final ClienteFrecuenteBO clienteFrecuenteBO;
     
     private FrmInicio frmInicio;
@@ -144,6 +145,18 @@ public class Coordinador {
     
     public List<ClienteFrecuenteDTO> getListaClientesActual() {
         return this.listaClientesActual;
+    }
+    
+    public void eliminarCliente(){
+        try{
+            clienteFrecuenteBO.eliminarCliente(clienteSeleccionado);
+            JOptionPane.showMessageDialog(null, "Cliente eliminado con exito");
+            clienteSeleccionado = null;
+            listaClientesActual = clienteFrecuenteBO.consultarTodos();
+            actualizarTablaClientes();
+        }catch(NegocioException ex){
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
     }
     
 }

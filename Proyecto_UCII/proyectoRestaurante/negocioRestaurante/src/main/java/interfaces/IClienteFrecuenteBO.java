@@ -22,4 +22,6 @@ public interface IClienteFrecuenteBO {
     
     public void actualizarCliente(ClienteFrecuenteDTO dto) throws NegocioException;
     
+    public void eliminarCliente(ClienteFrecuenteDTO dto) throws NegocioException;
+    
 }

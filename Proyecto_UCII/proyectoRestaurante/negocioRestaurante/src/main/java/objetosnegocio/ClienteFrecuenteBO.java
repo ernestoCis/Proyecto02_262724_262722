@@ -151,4 +151,18 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
             throw new NegocioException("Error al actualizar el cliente frecuente.", e);
         }
     }
+
+    @Override
+    public void eliminarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
+        if (dto.getIdCliente() == null) {
+            throw new NegocioException("No se puede eliminar un cliente sin ID.");
+        }
+
+        try {
+            //eliminar cliente
+            clienteFrecuenteDAO.eliminarCliente(dto.getIdCliente());
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al eliminar el cliente.", e);
+        }
+    }
 }

@@ -43,9 +43,9 @@ public class FrmClientes extends JFrame {
     private JTextField txtBuscar;
     private JButton btnRegresar;
     private JButton btnRegistrar;
+    private JButton btnEliminar;
 
     private List<ClienteFrecuenteDTO> listaOriginal;
-//    private List<ClienteFrecuenteDTO> listaMostrada;
 
     public FrmClientes(Coordinador coordinador) {
         this.coordinador = coordinador;
@@ -168,6 +168,12 @@ public class FrmClientes extends JFrame {
         tblClientes.getColumnModel().getColumn(0).setMinWidth(0);
         tblClientes.getColumnModel().getColumn(0).setMaxWidth(0);
         tblClientes.getColumnModel().getColumn(0).setPreferredWidth(0);
+        
+        tblClientes.getSelectionModel().addListSelectionListener(e -> {
+            if (!e.getValueIsAdjusting()) {
+                btnEliminar.setEnabled(tblClientes.getSelectedRow() != -1);
+            }
+        });
 
         JScrollPane scrollPane = new JScrollPane(tblClientes);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
@@ -177,8 +183,8 @@ public class FrmClientes extends JFrame {
         panelInferior.setBorder(BorderFactory.createEmptyBorder(18, 0, 0, 0));
         panelInferior.setLayout(new BoxLayout(panelInferior, BoxLayout.Y_AXIS));
 
-        JPanel panelBotonRegistrar = new JPanel();
-        panelBotonRegistrar.setOpaque(false);
+        JPanel panelBotones = new JPanel();
+        panelBotones.setOpaque(false);
 
         btnRegistrar = new JButton("+ Registrar");
         btnRegistrar.setFont(new Font("SansSerif", Font.PLAIN, 18));
@@ -188,10 +194,21 @@ public class FrmClientes extends JFrame {
         btnRegistrar.setForeground(new Color(80, 80, 80));
         btnRegistrar.setPreferredSize(new Dimension(190, 38));
 
-        panelBotonRegistrar.add(btnRegistrar);
+        btnEliminar = new JButton("Eliminar");
+        btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 18));
+        btnEliminar.setFocusPainted(false);
+        btnEliminar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnEliminar.setBackground(Color.WHITE);
+        btnEliminar.setForeground(new Color(80, 80, 80));
+        btnEliminar.setPreferredSize(new Dimension(190, 38));
+        btnEliminar.setEnabled(false);
+
+        panelBotones.add(btnRegistrar);
+        panelBotones.add(Box.createHorizontalStrut(15));
+        panelBotones.add(btnEliminar);
 
         panelInferior.add(Box.createVerticalStrut(8));
-        panelInferior.add(panelBotonRegistrar);
+        panelInferior.add(panelBotones);
 
         panelCentro.add(panelBusqueda, BorderLayout.NORTH);
         panelCentro.add(scrollPane, BorderLayout.CENTER);
@@ -237,10 +254,11 @@ public class FrmClientes extends JFrame {
             dispose();
             coordinador.mostrarAcciones();
         });
+        
+        btnEliminar.addActionListener(e -> eliminarClienteSeleccionado());
     }
 
     private void cargarDatosTabla(List<ClienteFrecuenteDTO> lista) {
-//        listaMostrada = lista;
         modeloTabla.setRowCount(0);
 
         if (lista != null) {
@@ -308,5 +326,27 @@ public class FrmClientes extends JFrame {
     public void actualizarTablaClientes(List<ClienteFrecuenteDTO> clientes) {
         this.listaOriginal = clientes;
         cargarDatosTabla(this.listaOriginal);
+    }
+    
+    private void eliminarClienteSeleccionado() {
+        int fila = tblClientes.getSelectedRow();
+
+        if (fila == -1) {
+            return;
+        }
+
+        ClienteFrecuenteDTO clienteSeleccionado = listaOriginal.get(fila);
+
+        int confirmacion = JOptionPane.showConfirmDialog(
+                this,
+                "¿Seguro que deseas eliminar al cliente " + clienteSeleccionado.getNombreCompleto() + "?",
+                "Confirmar eliminación",
+                JOptionPane.YES_NO_OPTION
+        );
+
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            coordinador.setClienteSeleccionado(clienteSeleccionado);
+            coordinador.eliminarCliente();
+        }
     }
 }
