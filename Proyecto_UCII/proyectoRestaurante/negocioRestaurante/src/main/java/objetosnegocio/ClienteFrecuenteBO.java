@@ -14,6 +14,7 @@ import excepciones.PersistenciaException;
 import interfaces.IClienteFrecuenteBO;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
@@ -101,6 +102,12 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         validarDatos(dto);
 
         try {
+            //validar que el cliente no este registrado
+            ClienteFrecuente existente = clienteFrecuenteDAO.buscarPorTelefono(dto.getTelefono());
+            if(existente != null){
+                throw new NegocioException("Ya existe un cliente registrado con el telefono: " + dto.getTelefono());
+            }
+            
             ClienteFrecuente entidad = ClienteFrecuenteAdapter.dtoAEntidadNuevo(dto);
             clienteFrecuenteDAO.guardar(entidad);
 
@@ -121,13 +128,21 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
 
     @Override
     public void actualizarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
+        try{
+            
+            if (dto.getIdCliente() == null) {
+                throw new NegocioException("No se puede actualizar un cliente sin ID.");
+            }
+            
+            //validar que el cliente no este registrado
+            ClienteFrecuente existente = clienteFrecuenteDAO.buscarPorTelefono(dto.getTelefono());
+            
+            if (existente != null && !existente.getIdCliente().equals(dto.getIdCliente())) {
+                throw new NegocioException("Ya existe un cliente registrado con el telefono: " + dto.getTelefono());
+            }
 
-        if (dto.getIdCliente() == null) {
-            throw new NegocioException("No se puede actualizar un cliente sin ID.");
-        }
+            validarDatos(dto);
 
-        validarDatos(dto);
-        try {
             ClienteFrecuente entidad = ClienteFrecuenteAdapter.dtoAEntidadExistente(dto);
             entidad.setIdCliente(dto.getIdCliente());
             clienteFrecuenteDAO.actualizar(entidad);

@@ -9,6 +9,7 @@ import entidades.ClienteFrecuente;
 import excepciones.PersistenciaException;
 import interfaces.IClienteFrecuenteDAO;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 import java.util.List;
 
 /**
@@ -90,6 +91,31 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
             em.getTransaction().rollback();
             throw new PersistenciaException("Error al actualizar cliente", e);
         } finally {
+            em.close();
+        }
+    }
+    
+    @Override
+    public ClienteFrecuente buscarPorTelefono(String telefono) throws PersistenciaException{
+        EntityManager em = ConexionBD.crearConexion();
+        
+        try{
+            
+            String comandoJPQL = "SELECT c FROM ClienteFrecuente c WHERE telefono = :tel";
+            TypedQuery<ClienteFrecuente> query = em.createQuery(comandoJPQL, ClienteFrecuente.class);
+            query.setParameter("tel", telefono);
+            
+            List<ClienteFrecuente> clientes = query.getResultList();
+            
+            if(clientes.isEmpty()){
+                return null;
+            }
+            
+            return clientes.get(0);
+            
+        }catch(Exception e){
+            throw new PersistenciaException("Error al consular clientes por telefono");
+        }finally{
             em.close();
         }
     }

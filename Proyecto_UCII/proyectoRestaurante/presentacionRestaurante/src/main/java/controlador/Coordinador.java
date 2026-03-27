@@ -59,9 +59,14 @@ public class Coordinador {
         }
     }
     
-    public void mostrarRegistrarCliente(List<ClienteFrecuenteDTO> clientes){
+    public void mostrarRegistrarCliente(){
+        try {
+            this.listaClientesActual =  clienteFrecuenteBO.consultarTodos();
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
         if(frmRegistrarCliente == null){
-            frmRegistrarCliente = new FrmRegistrarCliente(frmClientes, clientes, this);
+            frmRegistrarCliente = new FrmRegistrarCliente(this);
         }
         frmRegistrarCliente.setVisible(true);
         frmRegistrarCliente.toFront();
@@ -72,19 +77,17 @@ public class Coordinador {
             clienteFrecuenteBO.registrarCliente(clienteDTO);
             JOptionPane.showMessageDialog(null, "Cliente registrado correctamente");
             
-            if(frmRegistrarCliente != null){
-                frmRegistrarCliente.dispose();
-                frmRegistrarCliente = null;
-            }
-            
             //actualizar tabla
             actualizarTablaClientes();
-            
-            frmClientes.setVisible(true);
             
         }catch(NegocioException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
+        if (frmRegistrarCliente != null) {
+            frmRegistrarCliente.dispose();
+            frmRegistrarCliente = null;
+        }
+        frmClientes.setVisible(true);
     }
     
     public void actualizarTablaClientes(){
@@ -118,19 +121,17 @@ public class Coordinador {
         try{
             clienteFrecuenteBO.actualizarCliente(clienteDTO);
             JOptionPane.showMessageDialog(null, "Cliente editado correctamente");
-            
-            if(frmEditarCliente != null){
-                frmEditarCliente.dispose();
-                frmEditarCliente = null;
-            }
-            
+
             actualizarTablaClientes();
-            
-            frmClientes.setVisible(true);
-            
+
         }catch(NegocioException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
+        if (frmEditarCliente != null) {
+            frmEditarCliente.dispose();
+            frmEditarCliente = null;
+        }
+        frmClientes.setVisible(true);
     }
     
     public void setClienteSeleccionado(ClienteFrecuenteDTO cliente) {

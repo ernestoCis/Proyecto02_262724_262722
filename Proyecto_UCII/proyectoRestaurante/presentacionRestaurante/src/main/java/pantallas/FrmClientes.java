@@ -230,7 +230,7 @@ public class FrmClientes extends JFrame {
 
         btnRegistrar.addActionListener(e -> {
             dispose();
-            coordinador.mostrarRegistrarCliente(listaOriginal);
+            coordinador.mostrarRegistrarCliente();
         });
 
         btnRegresar.addActionListener(e -> {

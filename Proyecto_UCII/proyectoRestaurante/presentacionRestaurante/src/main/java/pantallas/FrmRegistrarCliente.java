@@ -42,10 +42,9 @@ public class FrmRegistrarCliente extends JFrame {
     private JButton btnRegresar;
     private JButton btnRegistrar;
 
-    public FrmRegistrarCliente(FrmClientes frmClientes, List<ClienteFrecuenteDTO> listaClientes, Coordinador coordinador) {
+    public FrmRegistrarCliente(Coordinador coordinador) {
         this.coordinador = coordinador;
-        this.frmClientes = frmClientes;
-        this.listaClientes = listaClientes;
+        this.listaClientes = coordinador.getListaClientesActual();
 
         configurarVentana();
         inicializarComponentes();
