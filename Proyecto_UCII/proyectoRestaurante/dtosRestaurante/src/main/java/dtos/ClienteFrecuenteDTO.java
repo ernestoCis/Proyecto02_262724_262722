@@ -12,7 +12,9 @@ import java.io.Serializable;
  */
 public class ClienteFrecuenteDTO implements Serializable {
     private Long idCliente;
-    private String nombreCompleto;
+    private String nombres;
+    private String apellidoPaterno;
+    private String apellidoMaterno;
     private String telefono;
     private String email;
 
@@ -23,9 +25,11 @@ public class ClienteFrecuenteDTO implements Serializable {
     public ClienteFrecuenteDTO() {
     }
 
-    public ClienteFrecuenteDTO(Long idCliente, String nombreCompleto, String telefono, String email, Integer numeroVisitas, Double totalGastado, Integer puntos) {
+    public ClienteFrecuenteDTO(Long idCliente, String nombres, String apellidoPaterno, String apellidoMaterno, String telefono, String email, Integer numeroVisitas, Double totalGastado, Integer puntos) {
         this.idCliente = idCliente;
-        this.nombreCompleto = nombreCompleto;
+        this.nombres = nombres;
+        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoMaterno = apellidoMaterno;
         this.telefono = telefono;
         this.email = email;
         this.numeroVisitas = numeroVisitas;
@@ -41,12 +45,28 @@ public class ClienteFrecuenteDTO implements Serializable {
         this.idCliente = idCliente;
     }
 
-    public String getNombreCompleto() {
-        return nombreCompleto;
+    public String getNombres() {
+        return nombres;
     }
 
-    public void setNombreCompleto(String nombreCompleto) {
-        this.nombreCompleto = nombreCompleto;
+    public void setNombres(String nombres) {
+        this.nombres = nombres;
+    }
+
+    public String getApellidoPaterno() {
+        return apellidoPaterno;
+    }
+
+    public void setApellidoPaterno(String apellidoPaterno) {
+        this.apellidoPaterno = apellidoPaterno;
+    }
+
+    public String getApellidoMaterno() {
+        return apellidoMaterno;
+    }
+
+    public void setApellidoMaterno(String apellidoMaterno) {
+        this.apellidoMaterno = apellidoMaterno;
     }
 
     public String getTelefono() {
@@ -87,5 +107,9 @@ public class ClienteFrecuenteDTO implements Serializable {
 
     public void setPuntos(Integer puntos) {
         this.puntos = puntos;
+    }
+    
+    public String getNombreCompleto(){
+        return nombres + " " + apellidoPaterno + " " + apellidoMaterno;
     }
 }
