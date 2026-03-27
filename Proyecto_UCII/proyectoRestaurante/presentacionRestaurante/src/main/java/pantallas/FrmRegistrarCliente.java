@@ -20,6 +20,7 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
+import utilerias.Validacion;
 
 /**
  * 
@@ -111,7 +112,7 @@ public class FrmRegistrarCliente extends JFrame {
         btnRegresar.setBackground(colorMostaza);
         btnRegresar.setFocusPainted(false);
         btnRegresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnRegresar.setPreferredSize(new Dimension(40, 35));
+        btnRegresar.setPreferredSize(new Dimension(40, 40));
         btnRegresar.setOpaque(true);
         btnRegresar.setContentAreaFilled(true);
         btnRegresar.setBorderPainted(false);
@@ -156,11 +157,11 @@ public class FrmRegistrarCliente extends JFrame {
         panelBotonInferior.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
         btnRegistrar = new JButton("Registrar");
-        btnRegistrar.setFont(new Font("SansSerif", Font.BOLD, 16));
-        btnRegistrar.setForeground(Color.WHITE);
-        btnRegistrar.setBackground(colorBoton);
+        btnRegistrar.setFont(new Font("SansSerif", Font.PLAIN, 16));
         btnRegistrar.setFocusPainted(false);
         btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnRegistrar.setBackground(new Color(229, 171, 75));
+        btnRegistrar.setForeground(new Color(80, 80, 80));
         btnRegistrar.setPreferredSize(new Dimension(140, 38));
 
         JPanel panelBtnDerecha = new JPanel();
@@ -207,36 +208,51 @@ public class FrmRegistrarCliente extends JFrame {
     }
 
     private void eventos() {
-        btnRegresar.addActionListener(e -> coordinador.mostrarClientes());
+        btnRegresar.addActionListener(e -> {
+            dispose();
+            coordinador.mostrarClientes();
+        });
 
         btnRegistrar.addActionListener(e -> registrarCliente());
     }
 
     private void registrarCliente() {
-        String nombre = txtNombre.getText().trim();
-        String apellidoPaterno = txtApellidoPaterno.getText().trim();
-        String apellidoMaterno = txtApellidoMaterno.getText().trim();
-        String telefono = txtTelefono.getText().trim();
-        String correo = txtCorreo.getText().trim();
+        String nombre = Validacion.limpiarCadena(txtNombre.getText());
+        String apellidoPaterno = Validacion.limpiarCadena(txtApellidoPaterno.getText());
+        String apellidoMaterno = Validacion.limpiarCadena(txtApellidoMaterno.getText());
+        String telefono = Validacion.limpiarCadena(txtTelefono.getText());
+        String correo = Validacion.limpiarCadena(txtCorreo.getText());
 
-        if (nombre.isEmpty() || apellidoPaterno.isEmpty() || telefono.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "Completa al menos nombre, apellido paterno y teléfono.");
+        if(!Validacion.esNombreValido(nombre)){
+            JOptionPane.showMessageDialog(null, "Nombre inválido");
+            return;
+        }
+        
+        if(!Validacion.esApellidoPaternoValido(apellidoPaterno)){
+            JOptionPane.showMessageDialog(null, "Apellido paterno inválido");
+            return;
+        }
+        
+        if(!Validacion.esApellidoMaternoValido(apellidoMaterno)){
+            JOptionPane.showMessageDialog(null, "Apellido materno inválido");
+            return;
+        }
+        
+        if(!Validacion.esTelefonoValido(telefono)){
+            JOptionPane.showMessageDialog(null, "Telefono inválido");
+            return;
+        }
+        
+        if(!Validacion.esEmailValido(correo)){
+            JOptionPane.showMessageDialog(null, "Email inválido");
             return;
         }
 
-        String nombreCompleto = nombre;
-        if (!apellidoPaterno.isEmpty()) {
-            nombreCompleto += " " + apellidoPaterno;
-        }
-        if (!apellidoMaterno.isEmpty()) {
-            nombreCompleto += " " + apellidoMaterno;
-        }
-
-        Long nuevoId = generarNuevoId();
-
         ClienteFrecuenteDTO nuevoCliente = new ClienteFrecuenteDTO(
-                nuevoId,
-                nombreCompleto,
+                null,
+                nombre,
+                apellidoPaterno,
+                apellidoMaterno,
                 telefono,
                 correo,
                 0,

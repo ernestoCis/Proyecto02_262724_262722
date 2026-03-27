@@ -104,7 +104,7 @@ public class FrmEditarCliente extends JFrame {
         btnRegresar.setBackground(colorMostaza);
         btnRegresar.setFocusPainted(false);
         btnRegresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnRegresar.setPreferredSize(new Dimension(40, 35));
+        btnRegresar.setPreferredSize(new Dimension(40, 40));
         btnRegresar.setOpaque(true);
         btnRegresar.setContentAreaFilled(true);
         btnRegresar.setBorderPainted(false);
@@ -147,13 +147,13 @@ public class FrmEditarCliente extends JFrame {
         JPanel panelBotonInferior = new JPanel(new BorderLayout());
         panelBotonInferior.setOpaque(false);
         panelBotonInferior.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-
+        
         btnEditar = new JButton("Editar");
-        btnEditar.setFont(new Font("SansSerif", Font.BOLD, 16));
-        btnEditar.setForeground(Color.WHITE);
-        btnEditar.setBackground(colorBoton);
+        btnEditar.setFont(new Font("SansSerif", Font.PLAIN, 16));
         btnEditar.setFocusPainted(false);
         btnEditar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnEditar.setBackground(new Color(229, 171, 75));
+        btnEditar.setForeground(new Color(80, 80, 80));
         btnEditar.setPreferredSize(new Dimension(140, 38));
 
         JPanel panelBtnDerecha = new JPanel();
@@ -211,30 +211,10 @@ public class FrmEditarCliente extends JFrame {
         if (clienteEditar == null) {
             return;
         }
-
-        String nombreCompleto = clienteEditar.getNombreCompleto() != null
-                ? clienteEditar.getNombreCompleto().trim()
-                : "";
-
-        String[] partes = nombreCompleto.split("\\s+");
-
-        if (partes.length >= 1) {
-            txtNombre.setText(partes[0]);
-        }
-        if (partes.length >= 2) {
-            txtApellidoPaterno.setText(partes[1]);
-        }
-        if (partes.length >= 3) {
-            StringBuilder apellidoMaterno = new StringBuilder();
-            for (int i = 2; i < partes.length; i++) {
-                apellidoMaterno.append(partes[i]);
-                if (i < partes.length - 1) {
-                    apellidoMaterno.append(" ");
-                }
-            }
-            txtApellidoMaterno.setText(apellidoMaterno.toString());
-        }
-
+        
+        txtNombre.setText(clienteEditar.getNombres() != null ? clienteEditar.getNombres() : "");
+        txtApellidoPaterno.setText(clienteEditar.getApellidoPaterno() != null ? clienteEditar.getApellidoPaterno() : "");
+        txtApellidoMaterno.setText(clienteEditar.getApellidoMaterno() != null ? clienteEditar.getApellidoMaterno() : "");
         txtTelefono.setText(clienteEditar.getTelefono() != null ? clienteEditar.getTelefono() : "");
         txtCorreo.setText(clienteEditar.getEmail() != null ? clienteEditar.getEmail() : "");
     }
@@ -251,17 +231,12 @@ public class FrmEditarCliente extends JFrame {
             return;
         }
 
-        String nombreCompleto = nombre;
-        if (!apellidoPaterno.isEmpty()) {
-            nombreCompleto += " " + apellidoPaterno;
-        }
-        if (!apellidoMaterno.isEmpty()) {
-            nombreCompleto += " " + apellidoMaterno;
-        }
 
         ClienteFrecuenteDTO clienteActualizado = new ClienteFrecuenteDTO(
                 clienteEditar.getIdCliente(),
-                nombreCompleto,
+                nombre,
+                apellidoPaterno,
+                apellidoMaterno,
                 telefono,
                 correo,
                 clienteEditar.getNumeroVisitas(),

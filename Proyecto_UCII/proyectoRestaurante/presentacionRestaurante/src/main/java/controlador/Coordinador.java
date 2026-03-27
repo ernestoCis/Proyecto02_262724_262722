@@ -79,6 +79,8 @@ public class Coordinador {
             //actualizar tabla
             actualizarTablaClientes();
             
+            frmClientes.setVisible(true);
+            
         }catch(NegocioException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }

@@ -29,12 +29,17 @@ public class ClienteFrecuenteAdapter {
         if(c.getApellidoMaterno() == null){
             c.setApellidoMaterno("");
         }
-        dto.setNombreCompleto(
-                c.getNombres() + " " + c.getApellidoPaterno() + " " + c.getApellidoMaterno()
-        );
+        
+        dto.setNombres(c.getNombres());
+        dto.setApellidoPaterno(c.getApellidoPaterno());
+        if(c.getApellidoMaterno() != null || !c.getApellidoMaterno().trim().isEmpty()){
+            dto.setApellidoMaterno(c.getApellidoMaterno());
+        }
         dto.setTelefono(c.getTelefono());
-        dto.setEmail(c.getEmail());
-
+        if(c.getEmail() != null || !c.getEmail().trim().isEmpty()){
+            dto.setEmail(c.getEmail());
+        }
+        
         return dto;
     }
 
@@ -56,13 +61,11 @@ public class ClienteFrecuenteAdapter {
 
         ClienteFrecuente cliente = new ClienteFrecuente();
         cliente.setIdCliente(dto.getIdCliente());
-
-        if (dto.getNombreCompleto() != null) {
-            String[] partes = dto.getNombreCompleto().split(" ");
-
-            cliente.setNombres(partes.length > 0 ? partes[0] : "");
-            cliente.setApellidoPaterno(partes.length > 1 ? partes[1] : "");
-            cliente.setApellidoMaterno(partes.length > 2 ? partes[2] : "");
+        
+        cliente.setNombres(dto.getNombres());
+        cliente.setApellidoPaterno(dto.getApellidoPaterno());
+        if(dto.getApellidoMaterno() != null || !dto.getApellidoMaterno().trim().isEmpty()){
+            cliente.setApellidoMaterno(dto.getApellidoMaterno());
         }
 
         cliente.setTelefono(dto.getTelefono());
@@ -78,14 +81,11 @@ public class ClienteFrecuenteAdapter {
 
         ClienteFrecuente cliente = new ClienteFrecuente();
         
-        cliente.setIdCliente(dto.getIdCliente());
 
-        if (dto.getNombreCompleto() != null) {
-            String[] partes = dto.getNombreCompleto().split(" ");
-
-            cliente.setNombres(partes.length > 0 ? partes[0] : "");
-            cliente.setApellidoPaterno(partes.length > 1 ? partes[1] : "");
-            cliente.setApellidoMaterno(partes.length > 2 ? partes[2] : "");
+        cliente.setNombres(dto.getNombres());
+        cliente.setApellidoPaterno(dto.getApellidoPaterno());
+        if(dto.getApellidoMaterno() != null || !dto.getApellidoMaterno().trim().isEmpty()){
+            cliente.setApellidoMaterno(dto.getApellidoMaterno());
         }
 
         cliente.setTelefono(dto.getTelefono());
