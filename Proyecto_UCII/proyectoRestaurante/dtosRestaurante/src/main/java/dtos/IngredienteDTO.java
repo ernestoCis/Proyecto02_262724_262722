@@ -2,57 +2,39 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package entidades;
+package dtos;
 
 import enums.UnidadMedida;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.EnumType;
-import jakarta.persistence.Enumerated;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
-import java.io.Serializable;
 
 /**
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
-@Entity
-@Table(name = "ingredientes")
-public class Ingrediente implements Serializable {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long idIngrediente;
-    
-    @Column(nullable = false)
-    private String nombre;
-    
-    @Enumerated(EnumType.STRING)
-    private UnidadMedida unidadMedida;
-    
-    @Column(nullable = false)
-    private Double cantidadActual;
-    
-    private String rutaImg;
+public class IngredienteDTO {
 
-    public Ingrediente() {
+    private Long idIngrediente;
+    private String nombre;
+    private UnidadMedida unidadMedida;
+    private Double cantidadActual;
+    private String rutaImagen;
+
+    public IngredienteDTO() {
     }
 
-    public Ingrediente(Long idIngrediente, String nombre, UnidadMedida unidadMedida, Double cantidadActual, String rutaImg) {
+    
+    public IngredienteDTO(Long idIngrediente, String nombre, UnidadMedida unidadMedida, Double cantidadActual, String rutaImagen) {
         this.idIngrediente = idIngrediente;
         this.nombre = nombre;
         this.unidadMedida = unidadMedida;
         this.cantidadActual = cantidadActual;
-        this.rutaImg = rutaImg;
+        this.rutaImagen = rutaImagen;
     }
 
-    public Ingrediente(String nombre, UnidadMedida unidadMedida, Double cantidadActual, String rutaImg) {
+    public IngredienteDTO(String nombre, UnidadMedida unidadMedida, Double cantidadActual, String rutaImagen) {
         this.nombre = nombre;
         this.unidadMedida = unidadMedida;
         this.cantidadActual = cantidadActual;
-        this.rutaImg = rutaImg;
+        this.rutaImagen = rutaImagen;
     }
 
     public Long getIdIngrediente() {
@@ -87,11 +69,11 @@ public class Ingrediente implements Serializable {
         this.cantidadActual = cantidadActual;
     }
 
-    public String getRutaImg() {
-        return rutaImg;
+    public String getRutaImagen() {
+        return rutaImagen;
     }
 
-    public void setRutaImg(String rutaImg) {
-        this.rutaImg = rutaImg;
+    public void setRutaImagen(String rutaImagen) {
+        this.rutaImagen = rutaImagen;
     }
 }

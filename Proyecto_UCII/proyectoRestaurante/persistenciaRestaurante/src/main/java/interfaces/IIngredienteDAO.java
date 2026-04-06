@@ -4,10 +4,27 @@
  */
 package interfaces;
 
+import entidades.Ingrediente;
+import enums.UnidadMedida;
+import excepciones.PersistenciaException;
+import java.util.List;
+
 /**
  *
- * @author RAYMUNDO
+ * @author Paulina Guevara, Ernesto Cisneros
  */
-public class IIngredienteDAO {
+public interface IIngredienteDAO {
+
+    public void guardar(Ingrediente ingrediente) throws PersistenciaException;
+
+    public void actualizar(Ingrediente ingrediente) throws PersistenciaException;
+
+    public Ingrediente buscarPorId(Long id) throws PersistenciaException;
+
+    public List<Ingrediente> obtenerIngredientes() throws PersistenciaException;
+
+    public List<Ingrediente> buscarPorFiltro(String filtro) throws PersistenciaException;
+
+    public Ingrediente buscarPorNombreYUnidad(String nombre, UnidadMedida unidad) throws PersistenciaException;
     
 }

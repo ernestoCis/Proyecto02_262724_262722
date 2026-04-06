@@ -6,7 +6,7 @@ package enums;
 
 /**
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * @author RAYMUNDO
  */
 public enum UnidadMedida {
     PIEZAS,
