@@ -5,11 +5,13 @@
 package controlador;
 
 import dtos.ClienteFrecuenteDTO;
+import dtos.MeseroDTO;
 import excepciones.NegocioException;
 import interfaces.ICoordinador;
 import java.util.List;
 import javax.swing.JOptionPane;
 import objetosnegocio.ClienteFrecuenteBO;
+import objetosnegocio.MeseroBO;
 import pantallas.*;
 
 /**
@@ -18,6 +20,7 @@ import pantallas.*;
  */
 public class Coordinador implements ICoordinador{
     private final ClienteFrecuenteBO clienteFrecuenteBO;
+    private final MeseroBO meseroBO;
     
     private FrmInicio frmInicio;
     private FrmAcciones frmAcciones;
@@ -28,9 +31,11 @@ public class Coordinador implements ICoordinador{
     
     private List<ClienteFrecuenteDTO> listaClientesActual;
     private ClienteFrecuenteDTO clienteSeleccionado;
+    private MeseroDTO meseroActual;
     
     public Coordinador(){
         this.clienteFrecuenteBO = ClienteFrecuenteBO.getInstance();
+        this.meseroBO = MeseroBO.getInstance();
     }
     
     public void iniciarSistema() {
@@ -126,6 +131,17 @@ public class Coordinador implements ICoordinador{
         frmInicioSesionMesero.setVisible(true);
     }
     
+    public void mostrarMesas(String usuario){
+        try{
+            this.meseroActual = meseroBO.buscarMeseroPorUsuario(usuario);
+            
+            JOptionPane.showMessageDialog(null, "Pantalla de comandas");
+            
+        }catch(NegocioException e){
+            JOptionPane.showMessageDialog(null, "Usuario invalido");
+        }
+    }
+    
     public void editarCliente(ClienteFrecuenteDTO clienteDTO){
         try{
             clienteFrecuenteBO.actualizarCliente(clienteDTO);
@@ -165,6 +181,10 @@ public class Coordinador implements ICoordinador{
         }catch(NegocioException ex){
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
+    }
+    
+    public MeseroDTO getMeseroActual(){
+        return meseroActual;
     }
     
 }
