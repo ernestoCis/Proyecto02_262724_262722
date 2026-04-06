@@ -207,6 +207,8 @@ public class Coordinador implements ICoordinador{
     
     public MeseroDTO getMeseroActual(){
         return meseroActual;
+    }
+    
     // INGREDIENTES 
     @Override
     public void mostrarIngredientes(){

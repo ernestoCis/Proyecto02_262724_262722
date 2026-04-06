@@ -75,6 +75,8 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             return em.find(ClienteFrecuente.class, id);
+        }catch(Exception e){
+            throw new PersistenciaException(e.getMessage());
         } finally {
             em.close();
         }

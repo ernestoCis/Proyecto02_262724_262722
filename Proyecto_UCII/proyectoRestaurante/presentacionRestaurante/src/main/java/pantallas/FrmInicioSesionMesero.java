@@ -181,7 +181,7 @@ public class FrmInicioSesionMesero extends JFrame {
         });
 
         btnAceptar.addActionListener(e -> {
-            JOptionPane.showMessageDialog(null, "Comandas, Mesero: " + txtUsuario.getText());
+            coordinador.mostrarMesas(txtUsuario.getText().trim());
         });
     }
 }
