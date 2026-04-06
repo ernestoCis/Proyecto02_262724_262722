@@ -54,7 +54,7 @@ public class FrmRegistrarCliente extends JFrame {
     private void configurarVentana() {
         setTitle("FrmRegistrarCliente");
         setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
         setLayout(new BorderLayout());

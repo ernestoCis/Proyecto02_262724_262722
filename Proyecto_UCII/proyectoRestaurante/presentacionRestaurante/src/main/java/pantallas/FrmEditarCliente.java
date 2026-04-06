@@ -47,7 +47,7 @@ public class FrmEditarCliente extends JFrame {
     private void configurarVentana() {
         setTitle("FrmEditarCliente");
         setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
         setLayout(new BorderLayout());

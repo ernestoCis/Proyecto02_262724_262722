@@ -157,15 +157,16 @@ public class FrmInicio extends JFrame {
         fondo.add(centro, BorderLayout.CENTER);
 
         add(fondo);
-
-        //evento para el botón Mesero
-        btnMesero.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Pantalla de mesero");
-        });
         
         //evento para el botón Administrador
         btnAdministrador.addActionListener(e -> {
             coordinador.mostrarAcciones();
+            setVisible(false);
+        });
+        
+        //evento para el botón Mesero
+        btnMesero.addActionListener(e -> {
+            coordinador.mostrarInicioSesionMesero();
             setVisible(false);
         });
     }

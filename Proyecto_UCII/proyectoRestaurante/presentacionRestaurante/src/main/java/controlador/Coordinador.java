@@ -24,6 +24,7 @@ public class Coordinador implements ICoordinador{
     private FrmClientes frmClientes;
     private FrmRegistrarCliente frmRegistrarCliente;
     private FrmEditarCliente frmEditarCliente;
+    private FrmInicioSesionMesero frmInicioSesionMesero;
     
     private List<ClienteFrecuenteDTO> listaClientesActual;
     private ClienteFrecuenteDTO clienteSeleccionado;
@@ -116,6 +117,13 @@ public class Coordinador implements ICoordinador{
         frmEditarCliente = new FrmEditarCliente(this);
         frmEditarCliente.setVisible(true);
         frmEditarCliente.toFront();
+    }
+    
+    public void mostrarInicioSesionMesero(){
+        if(frmInicioSesionMesero == null){
+            frmInicioSesionMesero = new FrmInicioSesionMesero(this);
+        }
+        frmInicioSesionMesero.setVisible(true);
     }
     
     public void editarCliente(ClienteFrecuenteDTO clienteDTO){
