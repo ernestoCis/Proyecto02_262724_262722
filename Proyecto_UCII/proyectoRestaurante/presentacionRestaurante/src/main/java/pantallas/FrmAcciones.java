@@ -24,11 +24,11 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 /**
- * 
+ *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmAcciones extends JFrame {
-    
+
     private final Coordinador coordinador;
 
     private JLabel lblLogo;
@@ -129,13 +129,16 @@ public class FrmAcciones extends JFrame {
         fondo.add(centro, BorderLayout.CENTER);
 
         add(fondo);
-        
+
         btnSalir.addActionListener(e -> {
             coordinador.iniciarSistema();
             dispose();
         });
         btnProductos.addActionListener(e -> System.out.println("Productos"));
-        btnIngredientes.addActionListener(e -> System.out.println("Ingredientes"));
+        btnIngredientes.addActionListener(e -> {
+            coordinador.mostrarIngredientes();
+            dispose();
+        });
         btnClientes.addActionListener(e -> {
             coordinador.mostrarClientes();
             dispose();

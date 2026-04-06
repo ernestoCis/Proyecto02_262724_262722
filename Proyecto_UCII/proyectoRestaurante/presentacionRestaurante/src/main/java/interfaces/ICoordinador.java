@@ -1,6 +1,7 @@
 package interfaces;
 
 import dtos.ClienteFrecuenteDTO;
+import dtos.IngredienteDTO;
 import java.util.List;
 
 /**
@@ -32,5 +33,13 @@ public interface ICoordinador {
     List<ClienteFrecuenteDTO> getListaClientesActual();
     
     void eliminarCliente();
+    
+    // INGREDIENTES
+    void mostrarIngredientes();
 
+    void setIngredienteSeleccionado(IngredienteDTO cliente);
+    
+    IngredienteDTO getIngredienteSeleccionado();
+    
+    List<IngredienteDTO> getListaIngredientesActual();
 }

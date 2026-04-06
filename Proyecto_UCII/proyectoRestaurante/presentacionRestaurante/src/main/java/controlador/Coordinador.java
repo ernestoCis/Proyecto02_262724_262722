@@ -6,12 +6,14 @@ package controlador;
 
 import dtos.ClienteFrecuenteDTO;
 import dtos.MeseroDTO;
+import dtos.IngredienteDTO;
 import excepciones.NegocioException;
 import interfaces.ICoordinador;
 import java.util.List;
 import javax.swing.JOptionPane;
 import objetosnegocio.ClienteFrecuenteBO;
 import objetosnegocio.MeseroBO;
+import objetosnegocio.IngredienteBO;
 import pantallas.*;
 
 /**
@@ -19,6 +21,7 @@ import pantallas.*;
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class Coordinador implements ICoordinador{
+    
     private final ClienteFrecuenteBO clienteFrecuenteBO;
     private final MeseroBO meseroBO;
     
@@ -33,11 +36,19 @@ public class Coordinador implements ICoordinador{
     private ClienteFrecuenteDTO clienteSeleccionado;
     private MeseroDTO meseroActual;
     
+    // INGREDIENTES
+    private final IngredienteBO ingredienteBO;
+    private FrmIngredientes frmIngredientes;
+    private List<IngredienteDTO> listaIngredientesActual;
+    private  IngredienteDTO ingredienteSeleccionado;
+    
     public Coordinador(){
         this.clienteFrecuenteBO = ClienteFrecuenteBO.getInstance();
         this.meseroBO = MeseroBO.getInstance();
+        this.ingredienteBO = IngredienteBO.getInstance();
     }
     
+    @Override
     public void iniciarSistema() {
         if (frmInicio == null) {
             frmInicio = new FrmInicio(this);
@@ -45,6 +56,7 @@ public class Coordinador implements ICoordinador{
         frmInicio.setVisible(true);
     }
     
+    @Override
     public void mostrarAcciones(){
         if(frmAcciones == null){
             frmAcciones = new FrmAcciones(this);
@@ -53,6 +65,7 @@ public class Coordinador implements ICoordinador{
         frmAcciones.toFront();
     }
     
+    @Override
     public void mostrarClientes(){
         try{
             this.listaClientesActual = clienteFrecuenteBO.consultarTodos();
@@ -66,6 +79,7 @@ public class Coordinador implements ICoordinador{
         }
     }
     
+    @Override
     public void mostrarRegistrarCliente(){
         try {
             this.listaClientesActual =  clienteFrecuenteBO.consultarTodos();
@@ -79,6 +93,7 @@ public class Coordinador implements ICoordinador{
         frmRegistrarCliente.toFront();
     }
     
+    @Override
     public void registrarCliente(ClienteFrecuenteDTO clienteDTO){
         try{
             clienteFrecuenteBO.registrarCliente(clienteDTO);
@@ -97,6 +112,7 @@ public class Coordinador implements ICoordinador{
         frmClientes.setVisible(true);
     }
     
+    @Override
     public void actualizarTablaClientes(){
         try{
             List<ClienteFrecuenteDTO> clientes = clienteFrecuenteBO.consultarTodos();
@@ -109,6 +125,7 @@ public class Coordinador implements ICoordinador{
         }
     }
     
+    @Override
     public void mostrarEditarCliente(){
         if(clienteSeleccionado == null) {
             JOptionPane.showMessageDialog(null, "Debe seleccionar un cliente primero");
@@ -142,6 +159,7 @@ public class Coordinador implements ICoordinador{
         }
     }
     
+    @Override
     public void editarCliente(ClienteFrecuenteDTO clienteDTO){
         try{
             clienteFrecuenteBO.actualizarCliente(clienteDTO);
@@ -159,18 +177,22 @@ public class Coordinador implements ICoordinador{
         frmClientes.setVisible(true);
     }
     
+    @Override
     public void setClienteSeleccionado(ClienteFrecuenteDTO cliente) {
         this.clienteSeleccionado = cliente;
     }
     
+    @Override
     public ClienteFrecuenteDTO getClienteSeleccionado() {
         return this.clienteSeleccionado;
     }
     
+    @Override
     public List<ClienteFrecuenteDTO> getListaClientesActual() {
         return this.listaClientesActual;
     }
     
+    @Override
     public void eliminarCliente(){
         try{
             clienteFrecuenteBO.eliminarCliente(clienteSeleccionado);
@@ -185,6 +207,34 @@ public class Coordinador implements ICoordinador{
     
     public MeseroDTO getMeseroActual(){
         return meseroActual;
+    // INGREDIENTES 
+    @Override
+    public void mostrarIngredientes(){
+        try{
+            this.listaIngredientesActual = ingredienteBO.consultarTodos();
+            if (frmIngredientes == null) {
+                frmIngredientes = new FrmIngredientes(this);
+            }
+            frmIngredientes.setVisible(true);
+            frmIngredientes.toFront();
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }
+    
+    @Override
+    public void setIngredienteSeleccionado(IngredienteDTO ingrediente) {
+        this.ingredienteSeleccionado = ingrediente;
+    }
+    
+    @Override
+    public IngredienteDTO getIngredienteSeleccionado() {
+        return this.ingredienteSeleccionado;
+    }
+    
+    @Override
+    public List<IngredienteDTO> getListaIngredientesActual() {
+        return this.listaIngredientesActual;
     }
     
 }
