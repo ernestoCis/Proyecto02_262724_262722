@@ -6,6 +6,7 @@ package interfaces;
 
 import entidades.Mesero;
 import excepciones.PersistenciaException;
+import java.util.List;
 
 /**
  *
@@ -13,4 +14,8 @@ import excepciones.PersistenciaException;
  */
 public interface IMeseroDAO {
     public Mesero consultarMeseroPorUsuario(String usuario) throws PersistenciaException;
+    
+    public void registrarMesero(Mesero mesero) throws PersistenciaException;
+    
+    public List<Mesero> consultarTodos() throws PersistenciaException;
 }

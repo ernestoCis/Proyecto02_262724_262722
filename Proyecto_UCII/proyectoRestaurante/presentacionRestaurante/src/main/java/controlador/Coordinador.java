@@ -145,6 +145,7 @@ public class Coordinador implements ICoordinador{
         if(frmInicioSesionMesero == null){
             frmInicioSesionMesero = new FrmInicioSesionMesero(this);
         }
+        precargarMeseros();
         frmInicioSesionMesero.setVisible(true);
     }
     
@@ -239,4 +240,22 @@ public class Coordinador implements ICoordinador{
         return this.listaIngredientesActual;
     }
     
+    //DATOS PRECARGADOS
+    public void precargarMeseros() {
+        try {
+            if (meseroBO.consultarTodos().isEmpty()) {
+                JOptionPane.showMessageDialog(null, "pasa");
+                MeseroDTO m = new MeseroDTO();
+                m.setRfc("CIVJ061128V25");
+                m.setApellidoPaterno("Cisneros");
+                m.setApellidoMaterno("Valenzuela");
+                m.setNombre("Ernesto");
+                m.setUsuario("m1");
+                meseroBO.registrarMesero(m);
+            }
+        }catch(NegocioException e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "error al precargar los datos");
+        }
+    }
 }

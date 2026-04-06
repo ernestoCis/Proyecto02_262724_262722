@@ -32,4 +32,23 @@ public class MeseroAdapter {
         
         return dto;
     }
+    
+    public static Mesero dtoAEntidad(MeseroDTO dto){
+        if(dto == null){
+            return null;
+        }
+        
+        Mesero entidad = new Mesero();
+        entidad.setUsuario(dto.getUsuario());
+        entidad.setRfc(dto.getRfc());
+        entidad.setNombres(dto.getNombre());
+        entidad.setApellidoPaterno(dto.getApellidoPaterno());
+        if(dto.getApellidoMaterno() == null || dto.getApellidoMaterno().trim().isEmpty()){
+            entidad.setApellidoMaterno("");
+        }else{
+            entidad.setApellidoMaterno(dto.getApellidoMaterno());
+        }
+        
+        return entidad;
+    }
 }

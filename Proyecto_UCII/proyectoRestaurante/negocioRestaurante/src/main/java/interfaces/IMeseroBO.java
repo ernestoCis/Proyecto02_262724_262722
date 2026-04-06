@@ -6,6 +6,7 @@ package interfaces;
 
 import dtos.MeseroDTO;
 import excepciones.NegocioException;
+import java.util.List;
 
 /**
  *
@@ -14,5 +15,9 @@ import excepciones.NegocioException;
 public interface IMeseroBO {
     
     public MeseroDTO buscarMeseroPorUsuario(String usuario) throws NegocioException;
+    
+    public void registrarMesero(MeseroDTO meseroDTO) throws NegocioException;
+    
+    public List<MeseroDTO> consultarTodos() throws NegocioException;
     
 }
