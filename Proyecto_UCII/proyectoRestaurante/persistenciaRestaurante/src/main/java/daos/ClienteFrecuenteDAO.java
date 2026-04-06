@@ -30,7 +30,7 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         return instance;
     }
 
-     @Override
+    @Override
     public List<ClienteFrecuente> obtenerFrecuentes() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
@@ -42,15 +42,15 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         }
     }
 
-     @Override
+    @Override
     public List<ClienteFrecuente> buscarPorFiltro(String filtro) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
             return em.createQuery(
-                    "SELECT c FROM ClienteFrecuente c " +
-                    "WHERE c.nombres LIKE :filtro " +
-                    "OR c.telefono LIKE :filtro " +
-                    "OR c.email LIKE :filtro", ClienteFrecuente.class)
+                    "SELECT c FROM ClienteFrecuente c "
+                    + "WHERE c.nombres LIKE :filtro "
+                    + "OR c.telefono LIKE :filtro "
+                    + "OR c.email LIKE :filtro", ClienteFrecuente.class)
                     .setParameter("filtro", "%" + filtro + "%")
                     .getResultList();
         } finally {
@@ -94,28 +94,28 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
             em.close();
         }
     }
-    
+
     @Override
-    public ClienteFrecuente buscarPorTelefono(String telefono) throws PersistenciaException{
+    public ClienteFrecuente buscarPorTelefono(String telefono) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
-        
-        try{
-            
+
+        try {
+
             String comandoJPQL = "SELECT c FROM ClienteFrecuente c WHERE telefono = :tel";
             TypedQuery<ClienteFrecuente> query = em.createQuery(comandoJPQL, ClienteFrecuente.class);
             query.setParameter("tel", telefono);
-            
+
             List<ClienteFrecuente> clientes = query.getResultList();
-            
-            if(clientes.isEmpty()){
+
+            if (clientes.isEmpty()) {
                 return null;
             }
-            
+
             return clientes.get(0);
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
             throw new PersistenciaException("Error al consular clientes por telefono");
-        }finally{
+        } finally {
             em.close();
         }
     }

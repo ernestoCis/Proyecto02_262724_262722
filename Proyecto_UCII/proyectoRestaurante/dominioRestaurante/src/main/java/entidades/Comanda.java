@@ -4,6 +4,7 @@
  */
 package entidades;
 
+import enums.EstadoComanda;
 import jakarta.persistence.*;
 import java.time.LocalDate;
 
