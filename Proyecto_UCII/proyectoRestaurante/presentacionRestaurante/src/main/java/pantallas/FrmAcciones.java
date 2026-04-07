@@ -134,7 +134,10 @@ public class FrmAcciones extends JFrame {
             coordinador.iniciarSistema();
             dispose();
         });
-        btnProductos.addActionListener(e -> System.out.println("Productos"));
+        btnProductos.addActionListener(e -> {
+            coordinador.mostrarProductos();
+            dispose();
+        });
         btnIngredientes.addActionListener(e -> {
             coordinador.mostrarIngredientes();
             dispose();

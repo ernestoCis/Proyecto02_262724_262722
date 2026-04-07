@@ -3,52 +3,36 @@ package pantallas;
 import componentes.BotonEstilizado;
 import componentes.BotonRegresar;
 import controlador.Coordinador;
-import dtos.IngredienteDTO;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.event.KeyAdapter;
-import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
+import dtos.ProductoDTO;
+import java.awt.*;
+import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
-import javax.swing.BorderFactory;
-import javax.swing.Box;
-import javax.swing.BoxLayout;
-import javax.swing.ImageIcon;
-import javax.swing.JButton;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JScrollPane;
-import javax.swing.JTable;
-import javax.swing.JTextField;
+import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
- *
+ * 
  * @author Paulina Guevara, Ernesto Cisneros
  */
-public class FrmIngredientes extends JFrame {
+public class FrmProductos extends JFrame {
 
     private final Coordinador coordinador;
-    private JTable tblIngredientes;
+
+    private JTable tblProductos;
     private DefaultTableModel modeloTabla;
     private JTextField txtBuscar;
+
     private BotonRegresar btnRegresar;
     private BotonEstilizado btnRegistrar;
     private BotonEstilizado btnEliminar;
-    private List<IngredienteDTO> listaOriginal;
 
-    public FrmIngredientes(Coordinador coordinador) {
+    private List<ProductoDTO> listaOriginal;
+
+    public FrmProductos(Coordinador coordinador) {
         this.coordinador = coordinador;
-        this.listaOriginal = this.coordinador.getListaIngredientesActual();
+        this.listaOriginal = this.coordinador.getListaProductosActual();
+
         configurarVentana();
         inicializarComponentes();
         cargarDatosTabla(this.listaOriginal);
@@ -91,9 +75,10 @@ public class FrmIngredientes extends JFrame {
         panelTitulo.setOpaque(false);
         panelTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 70));
 
-        JLabel lblTitulo = new JLabel("Ingredientes");
+        JLabel lblTitulo = new JLabel("Productos");
         lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 36));
         lblTitulo.setForeground(new Color(52, 58, 70));
+
         panelTitulo.add(lblTitulo);
 
         panelSuperior.add(lblLogo, BorderLayout.WEST);
@@ -121,8 +106,8 @@ public class FrmIngredientes extends JFrame {
                 BorderFactory.createLineBorder(new Color(210, 210, 210), 1),
                 BorderFactory.createEmptyBorder(5, 12, 5, 12)
         ));
+        txtBuscar.setToolTipText("Buscar productos");
 
-        txtBuscar.setToolTipText("Buscar ingredientes");
         ponerPlaceholder();
 
         JPanel panelCentroBusqueda = new JPanel();
@@ -133,7 +118,7 @@ public class FrmIngredientes extends JFrame {
         panelBusqueda.add(panelCentroBusqueda, BorderLayout.CENTER);
 
         String[] columnas = {
-            "Nombre", "Unidad de medida", "Cantidad actual"
+            "Nombre", "Precio", "Tipo", "Disponibilidad"
         };
 
         modeloTabla = new DefaultTableModel(columnas, 0) {
@@ -143,22 +128,24 @@ public class FrmIngredientes extends JFrame {
             }
         };
 
-        tblIngredientes = new JTable(modeloTabla);
-        tblIngredientes.setRowHeight(40);
-        tblIngredientes.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        tblIngredientes.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 14));
-        tblIngredientes.getTableHeader().setBackground(colorTablaHeader);
-        tblIngredientes.getTableHeader().setForeground(Color.BLACK);
-        tblIngredientes.setSelectionBackground(new Color(220, 230, 220));
-        tblIngredientes.setSelectionForeground(Color.BLACK);
+        tblProductos = new JTable(modeloTabla);
+        tblProductos.setRowHeight(40);
+        tblProductos.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
-        tblIngredientes.getSelectionModel().addListSelectionListener(e -> {
+        tblProductos.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 14));
+        tblProductos.getTableHeader().setBackground(colorTablaHeader);
+        tblProductos.getTableHeader().setForeground(Color.BLACK);
+
+        tblProductos.setSelectionBackground(new Color(220, 230, 220));
+        tblProductos.setSelectionForeground(Color.BLACK);
+
+        tblProductos.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
-                btnEliminar.setEnabled(tblIngredientes.getSelectedRow() != -1);
+                btnEliminar.setEnabled(tblProductos.getSelectedRow() != -1);
             }
         });
 
-        JScrollPane scrollPane = new JScrollPane(tblIngredientes);
+        JScrollPane scrollPane = new JScrollPane(tblProductos);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
         JPanel panelInferior = new JPanel();
@@ -170,20 +157,7 @@ public class FrmIngredientes extends JFrame {
         panelBotones.setOpaque(false);
 
         btnRegistrar = new BotonEstilizado("+ Registrar");
-//        btnRegistrar.setFont(new Font("SansSerif", Font.PLAIN, 18));
-//        btnRegistrar.setFocusPainted(false);
-//        btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//        btnRegistrar.setBackground(Color.WHITE);
-//        btnRegistrar.setForeground(new Color(80, 80, 80));
-//        btnRegistrar.setPreferredSize(new Dimension(190, 38));
-
         btnEliminar = new BotonEstilizado("Eliminar");
-//        btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 18));
-//        btnEliminar.setFocusPainted(false);
-//        btnEliminar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//        btnEliminar.setBackground(Color.WHITE);
-//        btnEliminar.setForeground(new Color(80, 80, 80));
-//        btnEliminar.setPreferredSize(new Dimension(190, 38));
         btnEliminar.setEnabled(false);
 
         panelBotones.add(btnRegistrar);
@@ -201,6 +175,7 @@ public class FrmIngredientes extends JFrame {
         panelPrincipal.add(panelCentro, BorderLayout.CENTER);
 
         add(panelPrincipal);
+
         registrarEventos();
     }
 
@@ -213,15 +188,15 @@ public class FrmIngredientes extends JFrame {
             }
         });
 
-        tblIngredientes.addMouseListener(new MouseAdapter() {
+        tblProductos.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
-                    int fila = tblIngredientes.getSelectedRow();
+                    int fila = tblProductos.getSelectedRow();
                     if (fila != -1) {
-                        IngredienteDTO ingrediente = listaOriginal.get(fila);
-                        coordinador.setIngredienteSeleccionado(ingrediente);
-                        //    coordinador.mostrarEditarIngrediente();
+                        ProductoDTO producto = listaOriginal.get(fila);
+                        coordinador.setProductoSeleccionado(producto);
+                        // coordinador.mostrarEditarProducto();
                     }
                 }
             }
@@ -229,7 +204,7 @@ public class FrmIngredientes extends JFrame {
 
         btnRegistrar.addActionListener(e -> {
             dispose();
-            coordinador.mostrarRegistrarIngrediente();
+           // coordinador.mostrarRegistrarProducto();
         });
 
         btnRegresar.addActionListener(e -> {
@@ -237,18 +212,19 @@ public class FrmIngredientes extends JFrame {
             coordinador.mostrarAcciones();
         });
 
-        btnEliminar.addActionListener(e -> eliminarIngredienteSeleccionado());
+        btnEliminar.addActionListener(e -> eliminarProductoSeleccionado());
     }
 
-    private void cargarDatosTabla(List<IngredienteDTO> lista) {
+    private void cargarDatosTabla(List<ProductoDTO> lista) {
         modeloTabla.setRowCount(0);
 
         if (lista != null) {
-            for (IngredienteDTO ingrediente : lista) {
+            for (ProductoDTO p : lista) {
                 Object[] fila = {
-                    ingrediente.getNombre(),
-                    ingrediente.getUnidadMedida(),
-                    ingrediente.getCantidadActual()
+                    p.getNombre(),
+                    p.getPrecio(),
+                    p.getTipo(),
+                    p.getDisponibilidad()
                 };
                 modeloTabla.addRow(fila);
             }
@@ -263,13 +239,13 @@ public class FrmIngredientes extends JFrame {
             return;
         }
 
-        List<IngredienteDTO> filtrados = new ArrayList<>();
+        List<ProductoDTO> filtrados = new ArrayList<>();
 
-        for (IngredienteDTO ingrediente : listaOriginal) {
-            String nombre = ingrediente.getNombre() != null ? ingrediente.getNombre().toLowerCase() : "";
+        for (ProductoDTO p : listaOriginal) {
+            String nombre = p.getNombre() != null ? p.getNombre().toLowerCase() : "";
 
             if (nombre.contains(texto)) {
-                filtrados.add(ingrediente);
+                filtrados.add(p);
             }
         }
 
@@ -277,51 +253,50 @@ public class FrmIngredientes extends JFrame {
     }
 
     private void ponerPlaceholder() {
-        txtBuscar.setText("Buscar ingrediente");
+        txtBuscar.setText("Buscar producto");
         txtBuscar.setForeground(Color.GRAY);
 
-        txtBuscar.addFocusListener(new java.awt.event.FocusAdapter() {
+        txtBuscar.addFocusListener(new FocusAdapter() {
             @Override
-            public void focusGained(java.awt.event.FocusEvent e) {
-                if (txtBuscar.getText().equals("Buscar ingrediente")) {
+            public void focusGained(FocusEvent e) {
+                if (txtBuscar.getText().equals("Buscar producto")) {
                     txtBuscar.setText("");
                     txtBuscar.setForeground(Color.BLACK);
                 }
             }
 
             @Override
-            public void focusLost(java.awt.event.FocusEvent e) {
+            public void focusLost(FocusEvent e) {
                 if (txtBuscar.getText().trim().isEmpty()) {
-                    txtBuscar.setText("Buscar ingrediente");
+                    txtBuscar.setText("Buscar producto");
                     txtBuscar.setForeground(Color.GRAY);
                 }
             }
         });
     }
 
-    public void actualizarTablaIngredientes(List<IngredienteDTO> ingredientes) {
-        this.listaOriginal = ingredientes;
-        cargarDatosTabla(this.listaOriginal);
+    public void actualizarTablaProductos(List<ProductoDTO> productos) {
+        this.listaOriginal = productos;
+        cargarDatosTabla(productos);
     }
 
-    private void eliminarIngredienteSeleccionado() {
-        int fila = tblIngredientes.getSelectedRow();
-        if (fila == -1) {
-            return;
-        }
+    private void eliminarProductoSeleccionado() {
+        int fila = tblProductos.getSelectedRow();
 
-        IngredienteDTO ingrediente = listaOriginal.get(fila);
+        if (fila == -1) return;
+
+        ProductoDTO producto = listaOriginal.get(fila);
 
         int confirmacion = JOptionPane.showConfirmDialog(
                 this,
-                "¿Seguro que deseas eliminar el ingrediente " + ingrediente.getNombre() + "?",
+                "¿Seguro que deseas eliminar el producto " + producto.getNombre() + "?",
                 "Confirmar eliminación",
                 JOptionPane.YES_NO_OPTION
         );
 
         if (confirmacion == JOptionPane.YES_OPTION) {
-            coordinador.setIngredienteSeleccionado(ingrediente);
-            //   coordinador.eliminarIngrediente();
+            coordinador.setProductoSeleccionado(producto);
+            // coordinador.eliminarProducto();
         }
     }
 }
