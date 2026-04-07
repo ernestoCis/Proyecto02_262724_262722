@@ -8,7 +8,7 @@ package enums;
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
-public enum EstadoMesa {
+public enum EstadoMesaDTO {
     DISPONIBLE,
     NO_DISPONIBLE
 }

@@ -4,10 +4,18 @@
  */
 package interfaces;
 
+import dtos.MesaDTO;
+import excepciones.NegocioException;
+import java.util.List;
+
 /**
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public interface IMesaBO {
-//    public void registrarMesa(MesaDTO mesaDTO){}
+    public MesaDTO registrarMesa(MesaDTO mesaDTO)throws NegocioException;
+    
+    public List<MesaDTO> consultarTodas() throws NegocioException;
+    
+    public MesaDTO buscarMesaPorNumero(Integer numero) throws NegocioException;
 }

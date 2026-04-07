@@ -39,8 +39,9 @@ public class MeseroBO implements IMeseroBO{
     public MeseroDTO buscarMeseroPorUsuario(String usuario) throws NegocioException {
         try{
             Mesero entidadMesero = meseroDAO.consultarMeseroPorUsuario(usuario);
+            
             if(entidadMesero == null){
-                throw new NegocioException("No se encontró el usuario: " + usuario);
+                throw new NegocioException("Usuario no encotrado");
             }
             
             MeseroDTO meseroDTO = MeseroAdapter.entidadADto(entidadMesero);

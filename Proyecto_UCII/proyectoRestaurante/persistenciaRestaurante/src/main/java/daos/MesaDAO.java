@@ -31,7 +31,7 @@ public class MesaDAO implements IMesaDAO{
     }
 
     @Override
-    public void registrarMesa(Mesa mesa) throws PersistenciaException {
+    public Mesa registrarMesa(Mesa mesa) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try{
             em.getTransaction().begin();
@@ -39,6 +39,9 @@ public class MesaDAO implements IMesaDAO{
             em.persist(mesa);
             
             em.getTransaction().commit();
+            
+            return mesa;
+            
         }catch(Exception e){
             throw new PersistenciaException("Error al registrar la mesa", e);
         }finally{
@@ -65,7 +68,7 @@ public class MesaDAO implements IMesaDAO{
     public Mesa consultarMesaPorNumero(Integer numeroMesa) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try{
-            String consultaJPQL = "SELECT m FROM Mesa M WHERE numero = :num";
+            String consultaJPQL = "SELECT m FROM Mesa m WHERE numero = :num";
             TypedQuery<Mesa> query = em.createQuery(consultaJPQL, Mesa.class);
             query.setParameter("num", numeroMesa);
             
