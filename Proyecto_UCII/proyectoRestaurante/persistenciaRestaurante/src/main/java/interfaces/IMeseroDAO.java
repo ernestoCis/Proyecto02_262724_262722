@@ -15,7 +15,7 @@ import java.util.List;
 public interface IMeseroDAO {
     public Mesero consultarMeseroPorUsuario(String usuario) throws PersistenciaException;
     
-    public void registrarMesero(Mesero mesero) throws PersistenciaException;
+    public Mesero registrarMesero(Mesero mesero) throws PersistenciaException;
     
     public List<Mesero> consultarTodos() throws PersistenciaException;
 }
