@@ -30,7 +30,7 @@ public class BotonEstilizado extends JButton {
         setContentAreaFilled(false);
         setBorderPainted(false);
         setOpaque(false);
-        setPreferredSize(new Dimension(170, 45));
+        setPreferredSize(new Dimension(150, 45));
     }
 
     private void eventosHover() {
