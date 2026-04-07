@@ -16,7 +16,7 @@ public interface IMeseroBO {
     
     public MeseroDTO buscarMeseroPorUsuario(String usuario) throws NegocioException;
     
-    public void registrarMesero(MeseroDTO meseroDTO) throws NegocioException;
+    public MeseroDTO registrarMesero(MeseroDTO meseroDTO) throws NegocioException;
     
     public List<MeseroDTO> consultarTodos() throws NegocioException;
     

@@ -181,7 +181,16 @@ public class FrmInicioSesionMesero extends JFrame {
         });
 
         btnAceptar.addActionListener(e -> {
-            coordinador.mostrarMesas(txtUsuario.getText().trim());
+            
+            if(txtUsuario.getText().trim() == null || txtUsuario.getText().trim().isEmpty()){
+                JOptionPane.showMessageDialog(null, "Ingrese un usuario");
+                return;
+            }
+            
+            if(coordinador.buscarMeseroPorUsuario(txtUsuario.getText().trim()) != null){
+                coordinador.mostrarMesas();
+                dispose();
+            }
         });
     }
 }

@@ -22,6 +22,7 @@ public class Mesa implements Serializable{
     @Column(nullable = false, unique = true)
     private Integer numero;
     
+    @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private EstadoMesa disponibilidad;
 

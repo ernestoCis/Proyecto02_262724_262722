@@ -14,7 +14,7 @@ import java.util.List;
  */
 public interface IMesaDAO {
     
-    public void registrarMesa(Mesa mesa)throws PersistenciaException;
+    public Mesa registrarMesa(Mesa mesa)throws PersistenciaException;
     
     public List<Mesa> consultarTodas() throws PersistenciaException;
     

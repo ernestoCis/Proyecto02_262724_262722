@@ -39,8 +39,9 @@ public class MeseroBO implements IMeseroBO{
     public MeseroDTO buscarMeseroPorUsuario(String usuario) throws NegocioException {
         try{
             Mesero entidadMesero = meseroDAO.consultarMeseroPorUsuario(usuario);
+            
             if(entidadMesero == null){
-                throw new NegocioException("No se encontró el usuario: " + usuario);
+                throw new NegocioException("Usuario no encotrado");
             }
             
             MeseroDTO meseroDTO = MeseroAdapter.entidadADto(entidadMesero);
@@ -53,7 +54,7 @@ public class MeseroBO implements IMeseroBO{
     }
 
     @Override
-    public void registrarMesero(MeseroDTO meseroDTO) throws NegocioException {
+    public MeseroDTO registrarMesero(MeseroDTO meseroDTO) throws NegocioException {
         if(meseroDTO.getUsuario() == null || meseroDTO.getUsuario().trim().isEmpty()){
             throw new NegocioException("El usuario es oblihatorio");
         }
@@ -67,7 +68,9 @@ public class MeseroBO implements IMeseroBO{
             
             Mesero meseroEntidad = MeseroAdapter.dtoAEntidad(meseroDTO);
             
-            meseroDAO.registrarMesero(meseroEntidad);
+            Mesero registrado = meseroDAO.registrarMesero(meseroEntidad);
+            
+            return MeseroAdapter.entidadADto(registrado);
         }catch(PersistenciaException e){
             throw new NegocioException("Error al registrar al mesero", e);
         }

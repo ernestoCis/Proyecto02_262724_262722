@@ -7,14 +7,18 @@ package controlador;
 import dtos.ClienteFrecuenteDTO;
 import dtos.MeseroDTO;
 import dtos.IngredienteDTO;
+import dtos.MesaDTO;
 import dtos.ProductoDTO;
+import enums.EstadoMesaDTO;
 import excepciones.NegocioException;
 import interfaces.ICoordinador;
+import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import objetosnegocio.ClienteFrecuenteBO;
 import objetosnegocio.MeseroBO;
 import objetosnegocio.IngredienteBO;
+import objetosnegocio.MesaBO;
 import objetosnegocio.ProductoBO;
 import pantallas.*;
 
@@ -26,6 +30,7 @@ public class Coordinador implements ICoordinador {
 
     private final ClienteFrecuenteBO clienteFrecuenteBO;
     private final MeseroBO meseroBO;
+    private final MesaBO mesaBO;
 
     private FrmInicio frmInicio;
     private FrmAcciones frmAcciones;
@@ -33,6 +38,7 @@ public class Coordinador implements ICoordinador {
     private FrmRegistrarCliente frmRegistrarCliente;
     private FrmEditarCliente frmEditarCliente;
     private FrmInicioSesionMesero frmInicioSesionMesero;
+    private FrmMesas frmMesas;
 
     private List<ClienteFrecuenteDTO> listaClientesActual;
     private ClienteFrecuenteDTO clienteSeleccionado;
@@ -56,12 +62,14 @@ public class Coordinador implements ICoordinador {
 
     private List<ProductoDTO> listaProductosActual;
     private ProductoDTO productoSeleccionado;
+    private List<MesaDTO> mesas;
 
     public Coordinador() {
         this.clienteFrecuenteBO = ClienteFrecuenteBO.getInstance();
         this.meseroBO = MeseroBO.getInstance();
         this.ingredienteBO = IngredienteBO.getInstance();
         this.productoBO = ProductoBO.getInstance();
+        this.mesaBO = MesaBO.getInstance();
     }
 
     @Override
@@ -165,17 +173,6 @@ public class Coordinador implements ICoordinador {
         frmInicioSesionMesero.setVisible(true);
     }
 
-    public void mostrarMesas(String usuario) {
-        try {
-            this.meseroActual = meseroBO.buscarMeseroPorUsuario(usuario);
-
-            JOptionPane.showMessageDialog(null, "Pantalla de comandas");
-
-        } catch (NegocioException e) {
-            JOptionPane.showMessageDialog(null, "Usuario invalido");
-        }
-    }
-
     @Override
     public void editarCliente(ClienteFrecuenteDTO clienteDTO) {
         try {
@@ -224,6 +221,21 @@ public class Coordinador implements ICoordinador {
 
     public MeseroDTO getMeseroActual() {
         return meseroActual;
+    }
+    
+    public MeseroDTO buscarMeseroPorUsuario(String usuario){
+        try{
+            MeseroDTO mesero = meseroBO.buscarMeseroPorUsuario(usuario);
+            
+            meseroActual = mesero;
+            
+            return meseroActual;
+            
+        }catch(NegocioException e){
+            JOptionPane.showMessageDialog(null, "No se encontro al mesero con usuario: " + usuario);
+            return null;
+        }
+        
     }
 
     // INGREDIENTES 
@@ -435,7 +447,53 @@ public class Coordinador implements ICoordinador {
     public List<ProductoDTO> getListaProductosActual() {
         return this.listaProductosActual;
     }
-
+    
+    public void mostrarMesas(){   
+        if (frmMesas == null) {
+            frmMesas = new FrmMesas(this);
+        }
+        frmMesas.setVisible(true);
+    }
+    
+    public List<MesaDTO> obtenerMesas(){
+        try{
+            if(mesas == null || mesas.isEmpty()){
+                mesas = mesaBO.consultarTodas();
+            }
+            
+            return mesas;
+            
+        }catch(NegocioException e){
+            return null;
+        }
+    }
+    
+    public List<MesaDTO> cargaMasivaMesas(){
+        if(mesas == null || mesas.isEmpty()){
+            
+            try{
+                List<MesaDTO> mesasGeneradas = new ArrayList<>();
+                for (int i = 1; i <= 20; i++) {
+                    mesasGeneradas.add(new MesaDTO(i, EstadoMesaDTO.DISPONIBLE));
+                }
+                
+                //persistir las mesas generadas
+                for(MesaDTO m : mesasGeneradas){
+                    mesaBO.registrarMesa(m);
+                }
+                
+                mesas = mesasGeneradas;
+                
+            }catch(NegocioException e){
+                JOptionPane.showMessageDialog(null, "Error al cargar las mesas generadas");
+                e.printStackTrace();
+                return null;
+            }
+        }
+        
+        return mesas;
+    }
+    
     //DATOS PRECARGADOS
     public void precargarMeseros() {
         try {

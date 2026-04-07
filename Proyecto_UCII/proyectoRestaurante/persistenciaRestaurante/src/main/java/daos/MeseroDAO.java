@@ -54,7 +54,7 @@ public class MeseroDAO implements IMeseroDAO{
     }
 
     @Override
-    public void registrarMesero(Mesero mesero) throws PersistenciaException {
+    public Mesero registrarMesero(Mesero mesero) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         
         try{
@@ -63,6 +63,8 @@ public class MeseroDAO implements IMeseroDAO{
             em.persist(mesero);
             
             em.getTransaction().commit();
+            
+            return mesero;
             
         }catch(Exception e){
             if(em.getTransaction().isActive()){
