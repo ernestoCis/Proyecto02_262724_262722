@@ -282,7 +282,6 @@ public class FrmRegistrarIngrediente extends JFrame {
         UnidadMedidaDTO unidad = UnidadMedidaDTO.valueOf(unidadTexto);
 
         IngredienteDTO ingrediente = new IngredienteDTO(
-                null,
                 nombre,
                 unidad,
                 cantidad,
@@ -290,6 +289,5 @@ public class FrmRegistrarIngrediente extends JFrame {
         );
 
         coordinador.registrarIngrediente(ingrediente);
-        dispose();
     }
 }

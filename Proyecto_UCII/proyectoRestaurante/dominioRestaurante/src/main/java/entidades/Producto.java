@@ -34,6 +34,8 @@ public class Producto implements Serializable {
 
     @Enumerated(EnumType.STRING)
     private DisponibilidadProducto disponibilidad;
+    
+    private String rutaImg;
 
     @OneToMany(mappedBy = "producto",  cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Receta> recetas = new ArrayList<>();
@@ -41,19 +43,21 @@ public class Producto implements Serializable {
     public Producto() {
     }
 
-    public Producto(Long idProducto, String nombre, Double precio, TipoProducto tipo, DisponibilidadProducto disponibilidad) {
+    public Producto(Long idProducto, String nombre, Double precio, TipoProducto tipo, DisponibilidadProducto disponibilidad, String rutaImg) {
         this.idProducto = idProducto;
         this.nombre = nombre;
         this.precio = precio;
         this.tipo = tipo;
         this.disponibilidad = disponibilidad;
+        this.rutaImg = rutaImg;
     }
 
-    public Producto(String nombre, Double precio, TipoProducto tipo, DisponibilidadProducto disponibilidad) {
+    public Producto(String nombre, Double precio, TipoProducto tipo, DisponibilidadProducto disponibilidad, String rutaImg) {
         this.nombre = nombre;
         this.precio = precio;
         this.tipo = tipo;
         this.disponibilidad = disponibilidad;
+        this.rutaImg = rutaImg;
     }
 
     public Long getIdProducto() {
@@ -102,6 +106,14 @@ public class Producto implements Serializable {
 
     public void setRecetas(List<Receta> recetas) {
         this.recetas = recetas;
+    }
+
+    public String getRutaImg() {
+        return rutaImg;
+    }
+
+    public void setRutaImg(String rutaImg) {
+        this.rutaImg = rutaImg;
     }
     
     public void agregarReceta(Receta receta) {

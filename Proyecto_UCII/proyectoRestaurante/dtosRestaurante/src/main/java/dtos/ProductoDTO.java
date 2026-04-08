@@ -19,26 +19,28 @@ public class ProductoDTO {
     private Double precio;
     private TipoProductoDTO tipo;
     private DisponibilidadProductoDTO disponibilidad;
-
+    private String rutaImagen;
     private List<RecetaDTO> recetas;
 
     public ProductoDTO() {
     }
 
-    public ProductoDTO(Long idProducto, String nombre, Double precio, TipoProductoDTO tipo, DisponibilidadProductoDTO disponibilidad, List<RecetaDTO> recetas) {
+    public ProductoDTO(Long idProducto, String nombre, Double precio, TipoProductoDTO tipo, DisponibilidadProductoDTO disponibilidad, String rutaImagen, List<RecetaDTO> recetas) {
         this.idProducto = idProducto;
         this.nombre = nombre;
         this.precio = precio;
         this.tipo = tipo;
         this.disponibilidad = disponibilidad;
+        this.rutaImagen = rutaImagen;
         this.recetas = recetas;
     }
 
-    public ProductoDTO(String nombre, Double precio, TipoProductoDTO tipo, DisponibilidadProductoDTO disponibilidad, List<RecetaDTO> recetas) {
+    public ProductoDTO(String nombre, Double precio, TipoProductoDTO tipo, DisponibilidadProductoDTO disponibilidad, String rutaImagen, List<RecetaDTO> recetas) {
         this.nombre = nombre;
         this.precio = precio;
         this.tipo = tipo;
         this.disponibilidad = disponibilidad;
+        this.rutaImagen = rutaImagen;
         this.recetas = recetas;
     }
 
@@ -82,6 +84,14 @@ public class ProductoDTO {
         this.disponibilidad = disponibilidad;
     }
 
+    public String getRutaImagen() {
+        return rutaImagen;
+    }
+
+    public void setRutaImagen(String rutaImagen) {
+        this.rutaImagen = rutaImagen;
+    }
+
     public List<RecetaDTO> getRecetas() {
         return recetas;
     }
@@ -89,6 +99,4 @@ public class ProductoDTO {
     public void setRecetas(List<RecetaDTO> recetas) {
         this.recetas = recetas;
     }
-    
-    
 }

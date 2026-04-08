@@ -196,7 +196,7 @@ public class FrmProductos extends JFrame {
                     if (fila != -1) {
                         ProductoDTO producto = listaOriginal.get(fila);
                         coordinador.setProductoSeleccionado(producto);
-                        // coordinador.mostrarEditarProducto();
+                        coordinador.mostrarDetalleProducto();
                     }
                 }
             }

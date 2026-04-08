@@ -103,8 +103,7 @@ public class IngredienteBO implements IIngredienteBO {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    private void validarDatos(IngredienteDTO dto)
-            throws NegocioException {
+    private void validarDatos(IngredienteDTO dto) throws NegocioException {
 
         if (dto.getNombre() == null || dto.getNombre().isBlank()) {
             throw new NegocioException("El nombre es obligatorio");
@@ -114,8 +113,7 @@ public class IngredienteBO implements IIngredienteBO {
             throw new NegocioException("La unidad es obligatoria");
         }
 
-        if (dto.getCantidadActual() == null
-                || dto.getCantidadActual() < 0) {
+        if (dto.getCantidadActual() == null || dto.getCantidadActual() < 0) {
 
             throw new NegocioException("La cantidad debe ser mayor o igual a 0");
         }
