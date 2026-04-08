@@ -7,6 +7,7 @@ package entidades;
 import enums.EstadoComanda;
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  *
@@ -44,11 +45,104 @@ public class Comanda {
     @JoinColumn(name = "idMesero", nullable = false)
     private Mesero mesero;
     
-//    @OneToMany(mappedBy = "comanda", cascade = CascadeType.ALL)
-//    private List<DetallePedido> detalles;
+    @OneToMany(mappedBy = "comanda", cascade = CascadeType.ALL)
+    private List<DetallePedido> detalles;
 
     public Comanda() {
-        this.fecha = LocalDateTime.now();
-        this.estado = EstadoComanda.ABIERTA;
+    }
+
+    public Comanda(Long idComanda, String folio, LocalDateTime fecha, Double total, EstadoComanda estado, Mesa mesa, Cliente cliente, Mesero mesero, List<DetallePedido> detalles) {
+        this.idComanda = idComanda;
+        this.folio = folio;
+        this.fecha = fecha;
+        this.total = total;
+        this.estado = estado;
+        this.mesa = mesa;
+        this.cliente = cliente;
+        this.mesero = mesero;
+        this.detalles = detalles;
+    }
+
+    public Comanda(String folio, LocalDateTime fecha, Double total, EstadoComanda estado, Mesa mesa, Cliente cliente, Mesero mesero, List<DetallePedido> detalles) {
+        this.folio = folio;
+        this.fecha = fecha;
+        this.total = total;
+        this.estado = estado;
+        this.mesa = mesa;
+        this.cliente = cliente;
+        this.mesero = mesero;
+        this.detalles = detalles;
+    }
+
+    public Long getIdComanda() {
+        return idComanda;
+    }
+
+    public void setIdComanda(Long idComanda) {
+        this.idComanda = idComanda;
+    }
+
+    public String getFolio() {
+        return folio;
+    }
+
+    public void setFolio(String folio) {
+        this.folio = folio;
+    }
+
+    public LocalDateTime getFecha() {
+        return fecha;
+    }
+
+    public void setFecha(LocalDateTime fecha) {
+        this.fecha = fecha;
+    }
+
+    public Double getTotal() {
+        return total;
+    }
+
+    public void setTotal(Double total) {
+        this.total = total;
+    }
+
+    public EstadoComanda getEstado() {
+        return estado;
+    }
+
+    public void setEstado(EstadoComanda estado) {
+        this.estado = estado;
+    }
+
+    public Mesa getMesa() {
+        return mesa;
+    }
+
+    public void setMesa(Mesa mesa) {
+        this.mesa = mesa;
+    }
+
+    public Cliente getCliente() {
+        return cliente;
+    }
+
+    public void setCliente(Cliente cliente) {
+        this.cliente = cliente;
+    }
+
+    public Mesero getMesero() {
+        return mesero;
+    }
+
+    public void setMesero(Mesero mesero) {
+        this.mesero = mesero;
+    }
+
+    public List<DetallePedido> getDetalles() {
+        return detalles;
+    }
+
+    public void setDetalles(List<DetallePedido> detalles) {
+        this.detalles = detalles;
     }
 }
