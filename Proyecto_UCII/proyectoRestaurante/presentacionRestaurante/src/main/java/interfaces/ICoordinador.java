@@ -59,11 +59,14 @@ public interface ICoordinador {
 
     void actualizarTablaIngredientes();
 
+    // PRODUCTOS
     void mostrarProductos();
 
 //    void mostrarRegistrarProducto();
 //
 //    void registrarProducto(ProductoDTO productoDTO);
+    
+    void mostrarDetalleProducto();
 
     void actualizarTablaProductos();
 

@@ -2,30 +2,16 @@ package pantallas;
 
 import componentes.BotonEstilizado;
 import componentes.BotonRegresar;
+import componentes.PanelRedondeado;
 import controlador.Coordinador;
 import dtos.IngredienteDTO;
 import enums.UnidadMedidaDTO;
-import java.awt.BorderLayout;
-import java.awt.Color;
-import java.awt.Cursor;
-import java.awt.Dimension;
-import java.awt.Font;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Image;
-import java.awt.Insets;
-import javax.swing.BorderFactory;
-import javax.swing.ImageIcon;
-import javax.swing.JComboBox;
-import javax.swing.JFrame;
-import javax.swing.JLabel;
-import javax.swing.JOptionPane;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
+import java.awt.*;
+import javax.swing.*;
 import utilerias.Validacion;
 
 /**
- *
+ * 
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmRegistrarIngrediente extends JFrame {
@@ -35,10 +21,8 @@ public class FrmRegistrarIngrediente extends JFrame {
     private JTextField txtNombre;
     private JTextField txtCantidad;
     private JComboBox<String> comboUnidad;
-
     private BotonRegresar btnRegresar;
     private BotonEstilizado btnRegistrar;
-
     private JLabel lblImagen;
     private BotonEstilizado btnSeleccionarImagen;
     private String rutaImagen;
@@ -51,8 +35,7 @@ public class FrmRegistrarIngrediente extends JFrame {
 
     private void configurarVentana() {
         setTitle("Ingredientes");
-        setSize(1000, 700);
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(1000, 650);
         setLocationRelativeTo(null);
         setResizable(false);
         setLayout(new BorderLayout());
@@ -68,118 +51,98 @@ public class FrmRegistrarIngrediente extends JFrame {
         JPanel panelPrincipal = new JPanel(new BorderLayout());
         panelPrincipal.setBackground(colorFondo);
 
-        // PANEL SUPERIOR
         JPanel panelSuperior = new JPanel(new BorderLayout());
         panelSuperior.setBackground(colorMostaza);
         panelSuperior.setPreferredSize(new Dimension(1000, 110));
 
         JLabel lblLogo = new JLabel();
         lblLogo.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
-        lblLogo.setPreferredSize(new Dimension(100, 90));
 
         ImageIcon iconoLogo = new ImageIcon("src\\main\\resources\\imagenes\\icono_restaurante.png");
         Image logoEscalado = iconoLogo.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
         lblLogo.setIcon(new ImageIcon(logoEscalado));
 
-        JPanel panelTitulo = new JPanel(new GridBagLayout());
-        panelTitulo.setOpaque(false);
-
         JLabel lblTitulo = new JLabel("Ingredientes");
         lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 36));
         lblTitulo.setForeground(new Color(52, 58, 70));
-        panelTitulo.add(lblTitulo);
 
-        JPanel panelDerecho = new JPanel();
-        panelDerecho.setOpaque(false);
-        panelDerecho.setPreferredSize(new Dimension(100, 90));
+        JPanel panelTitulo = new JPanel(new GridBagLayout());
+        panelTitulo.setOpaque(false);
+        panelTitulo.add(lblTitulo);
 
         panelSuperior.add(lblLogo, BorderLayout.WEST);
         panelSuperior.add(panelTitulo, BorderLayout.CENTER);
-        panelSuperior.add(panelDerecho, BorderLayout.EAST);
 
-        // PANEL CENTRO
         JPanel panelCentro = new JPanel(new BorderLayout());
         panelCentro.setBackground(colorFondo);
         panelCentro.setBorder(BorderFactory.createEmptyBorder(20, 35, 30, 35));
 
-        JPanel panelArriba = new JPanel(new BorderLayout());
-        panelArriba.setOpaque(false);
-
         btnRegresar = new BotonRegresar();
 
-        JPanel panelBotonRegresar = new JPanel();
-        panelBotonRegresar.setOpaque(false);
-        panelBotonRegresar.add(btnRegresar);
+        JPanel panelArriba = new JPanel(new FlowLayout(FlowLayout.LEFT));
+        panelArriba.setOpaque(false);
+        panelArriba.add(btnRegresar);
 
-        panelArriba.add(panelBotonRegresar, BorderLayout.WEST);
-
-        // PANEL FORMULARIO
-        JPanel panelFormulario = new JPanel(new BorderLayout());
+        PanelRedondeado panelFormulario = new PanelRedondeado(30);
+        panelFormulario.setLayout(new BorderLayout());
         panelFormulario.setBackground(colorPanel);
-        panelFormulario.setBorder(BorderFactory.createEmptyBorder(25, 35, 25, 35));
+        panelFormulario.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
         JLabel lblSubtitulo = new JLabel("Registrar Ingrediente");
         lblSubtitulo.setFont(new Font("SansSerif", Font.BOLD, 24));
         lblSubtitulo.setForeground(colorTexto);
-        lblSubtitulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 25, 0));
+        lblSubtitulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 20, 0));
 
-        JPanel panelCampos = new JPanel(new GridBagLayout());
+        JPanel panelContenido = new JPanel();
+        panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.X_AXIS));
+        panelContenido.setOpaque(false);
+
+        JPanel panelCampos = new JPanel();
+        panelCampos.setLayout(new BoxLayout(panelCampos, BoxLayout.Y_AXIS));
         panelCampos.setOpaque(false);
-        GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15);
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-        gbc.weightx = 1.0;
 
         txtNombre = new JTextField();
         txtCantidad = new JTextField();
+
         comboUnidad = new JComboBox<>(new String[]{
-            "PIEZAS",
-            "GRAMOS",
-            "MILILITROS",});
+            "PIEZAS", "GRAMOS", "MILILITROS"
+        });
 
-        agregarCampo(panelCampos, gbc, 0, 0, "Nombre", txtNombre);
-        agregarCombo(panelCampos, gbc, 0, 1, "Unidad de medida", comboUnidad);
-        agregarCampo(panelCampos, gbc, 0, 2, "Cantidad actual en inventario", txtCantidad);
+        panelCampos.add(crearCampo("Nombre", txtNombre));
+        panelCampos.add(Box.createVerticalStrut(15));
+        panelCampos.add(crearCombo("Unidad de medida", comboUnidad));
+        panelCampos.add(Box.createVerticalStrut(15));
+        panelCampos.add(crearCampo("Cantidad actual en inventario", txtCantidad));
 
-        lblImagen = new JLabel("Sin imagen", JLabel.CENTER);
-        lblImagen.setPreferredSize(new Dimension(250, 250));
-        lblImagen.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+        JPanel panelImagen = new JPanel();
+        panelImagen.setLayout(new BoxLayout(panelImagen, BoxLayout.Y_AXIS));
+        panelImagen.setOpaque(false);
+
+        lblImagen = new JLabel("Sin imagen", SwingConstants.CENTER);
+        lblImagen.setPreferredSize(new Dimension(210, 220));
+        lblImagen.setMaximumSize(new Dimension(210, 220));
+        lblImagen.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2, true));
 
         btnSeleccionarImagen = new BotonEstilizado("Seleccionar imagen");
 
-        JPanel panelImagen = new JPanel(new BorderLayout(10, 10));
-        panelImagen.setOpaque(false);
-        panelImagen.add(lblImagen, BorderLayout.CENTER);
-        panelImagen.add(btnSeleccionarImagen, BorderLayout.SOUTH);
+        panelImagen.add(lblImagen);
+        panelImagen.add(Box.createVerticalStrut(10));
+        panelImagen.add(btnSeleccionarImagen);
 
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridheight = 3;
-        gbc.weighty = 1.0;              // permite crecer verticalmente
-        gbc.fill = GridBagConstraints.BOTH; // ocupa todo el espacio
-        gbc.anchor = GridBagConstraints.NORTH;
-        panelCampos.add(panelImagen, gbc);
-
-        gbc.gridheight = 1;
-        gbc.weighty = 0;
-        gbc.fill = GridBagConstraints.HORIZONTAL;
-
-        // BOTON REGISTRAR
-        JPanel panelBotonInferior = new JPanel(new BorderLayout());
-        panelBotonInferior.setOpaque(false);
-        panelBotonInferior.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
+        panelContenido.add(panelCampos);
+        panelContenido.add(Box.createHorizontalStrut(60));
+        panelContenido.add(panelImagen);
 
         btnRegistrar = new BotonEstilizado("Registrar");
 
-        JPanel panelBtnDerecha = new JPanel();
-        panelBtnDerecha.setOpaque(false);
-        panelBtnDerecha.add(btnRegistrar);
-
-        panelBotonInferior.add(panelBtnDerecha, BorderLayout.EAST);
+        JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
+        panelBoton.setOpaque(false);
+        panelBoton.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
+        panelBoton.add(btnRegistrar);
 
         panelFormulario.add(lblSubtitulo, BorderLayout.NORTH);
-        panelFormulario.add(panelCampos, BorderLayout.CENTER);
-        panelFormulario.add(panelBotonInferior, BorderLayout.SOUTH);
+        panelFormulario.add(panelContenido, BorderLayout.CENTER);
+        panelFormulario.add(panelBoton, BorderLayout.SOUTH);
 
         panelCentro.add(panelArriba, BorderLayout.NORTH);
         panelCentro.add(panelFormulario, BorderLayout.CENTER);
@@ -192,44 +155,47 @@ public class FrmRegistrarIngrediente extends JFrame {
         eventos();
     }
 
-    private void agregarCampo(JPanel panel, GridBagConstraints gbc, int x, int y, String textoLabel, JTextField textField) {
-        JLabel label = new JLabel(textoLabel);
+    private JPanel crearCampo(String texto, JTextField campo) {
+        JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
 
-        textField.setPreferredSize(new Dimension(400, 42)); 
+        campo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
-        JPanel contenedor = new JPanel(new BorderLayout(0, 8));
+        JPanel contenedor = new JPanel();
+        contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
         contenedor.setOpaque(false);
-        contenedor.add(label, BorderLayout.NORTH);
-        contenedor.add(textField, BorderLayout.CENTER);
 
-        gbc.gridx = x;
-        gbc.gridy = y;
-        gbc.weightx = 1.0;  // ocupa espacio horizontal
-        gbc.fill = GridBagConstraints.HORIZONTAL;
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        campo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
-        panel.add(contenedor, gbc);
+        contenedor.add(label);
+        contenedor.add(Box.createVerticalStrut(5));
+        contenedor.add(campo);
+
+        return contenedor;
     }
 
-    private void agregarCombo(JPanel panel, GridBagConstraints gbc, int x, int y, String textoLabel, JComboBox combo) {
-
-        JLabel label = new JLabel(textoLabel);
+    private JPanel crearCombo(String texto, JComboBox combo) {
+        JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
 
-        combo.setPreferredSize(new Dimension(420, 42));
+        combo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
 
-        JPanel contenedor = new JPanel(new BorderLayout(0, 8));
+        JPanel contenedor = new JPanel();
+        contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
         contenedor.setOpaque(false);
-        contenedor.add(label, BorderLayout.NORTH);
-        contenedor.add(combo, BorderLayout.CENTER);
 
-        gbc.gridx = x;
-        gbc.gridy = y;
-        panel.add(contenedor, gbc);
+        label.setAlignmentX(Component.LEFT_ALIGNMENT);
+        combo.setAlignmentX(Component.LEFT_ALIGNMENT);
+
+        contenedor.add(label);
+        contenedor.add(Box.createVerticalStrut(5));
+        contenedor.add(combo);
+
+        return contenedor;
     }
 
     private void eventos() {
-
         btnRegresar.addActionListener(e -> {
             dispose();
             coordinador.mostrarIngredientes();
@@ -238,22 +204,25 @@ public class FrmRegistrarIngrediente extends JFrame {
         btnRegistrar.addActionListener(e -> registrarIngrediente());
 
         btnSeleccionarImagen.addActionListener(e -> seleccionarImagen());
-
     }
 
     private void seleccionarImagen() {
-        javax.swing.JFileChooser fileChooser = new javax.swing.JFileChooser();
+        JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Seleccionar imagen");
 
         int resultado = fileChooser.showOpenDialog(this);
 
-        if (resultado == javax.swing.JFileChooser.APPROVE_OPTION) {
+        if (resultado == JFileChooser.APPROVE_OPTION) {
             java.io.File archivo = fileChooser.getSelectedFile();
             rutaImagen = archivo.getAbsolutePath();
 
             ImageIcon icono = new ImageIcon(rutaImagen);
+
             Image imagenEscalada = icono.getImage().getScaledInstance(
-                    150, 150, Image.SCALE_SMOOTH);
+                    lblImagen.getWidth(),
+                    lblImagen.getHeight(),
+                    Image.SCALE_SMOOTH
+            );
 
             lblImagen.setText("");
             lblImagen.setIcon(new ImageIcon(imagenEscalada));
@@ -278,11 +247,9 @@ public class FrmRegistrarIngrediente extends JFrame {
         }
 
         double cantidad = Double.parseDouble(cantidadTexto);
-
         UnidadMedidaDTO unidad = UnidadMedidaDTO.valueOf(unidadTexto);
 
         IngredienteDTO ingrediente = new IngredienteDTO(
-                null,
                 nombre,
                 unidad,
                 cantidad,
@@ -290,6 +257,5 @@ public class FrmRegistrarIngrediente extends JFrame {
         );
 
         coordinador.registrarIngrediente(ingrediente);
-        dispose();
     }
 }

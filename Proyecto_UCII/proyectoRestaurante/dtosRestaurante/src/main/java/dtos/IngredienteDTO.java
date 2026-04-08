@@ -5,6 +5,7 @@
 package dtos;
 
 import enums.UnidadMedidaDTO;
+import java.util.List;
 
 /**
  *
@@ -21,7 +22,6 @@ public class IngredienteDTO {
     public IngredienteDTO() {
     }
 
-    
     public IngredienteDTO(Long idIngrediente, String nombre, UnidadMedidaDTO unidadMedida, Double cantidadActual, String rutaImagen) {
         this.idIngrediente = idIngrediente;
         this.nombre = nombre;
