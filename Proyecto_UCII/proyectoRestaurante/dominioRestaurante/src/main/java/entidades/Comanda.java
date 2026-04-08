@@ -39,19 +39,19 @@ public class Comanda {
     
     @ManyToOne
     @JoinColumn(name = "idCliente", nullable = false)
-    private Cliente cliente;
+    private ClienteFrecuente cliente;
     
     @ManyToOne
     @JoinColumn(name = "idMesero", nullable = false)
     private Mesero mesero;
     
-    @OneToMany(mappedBy = "comanda", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "comanda", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<DetallePedido> detalles;
 
     public Comanda() {
     }
 
-    public Comanda(Long idComanda, String folio, LocalDateTime fecha, Double total, EstadoComanda estado, Mesa mesa, Cliente cliente, Mesero mesero, List<DetallePedido> detalles) {
+    public Comanda(Long idComanda, String folio, LocalDateTime fecha, Double total, EstadoComanda estado, Mesa mesa, ClienteFrecuente cliente, Mesero mesero, List<DetallePedido> detalles) {
         this.idComanda = idComanda;
         this.folio = folio;
         this.fecha = fecha;
@@ -63,7 +63,7 @@ public class Comanda {
         this.detalles = detalles;
     }
 
-    public Comanda(String folio, LocalDateTime fecha, Double total, EstadoComanda estado, Mesa mesa, Cliente cliente, Mesero mesero, List<DetallePedido> detalles) {
+    public Comanda(String folio, LocalDateTime fecha, Double total, EstadoComanda estado, Mesa mesa, ClienteFrecuente cliente, Mesero mesero, List<DetallePedido> detalles) {
         this.folio = folio;
         this.fecha = fecha;
         this.total = total;
@@ -122,11 +122,11 @@ public class Comanda {
         this.mesa = mesa;
     }
 
-    public Cliente getCliente() {
+    public ClienteFrecuente getCliente() {
         return cliente;
     }
 
-    public void setCliente(Cliente cliente) {
+    public void setCliente(ClienteFrecuente cliente) {
         this.cliente = cliente;
     }
 

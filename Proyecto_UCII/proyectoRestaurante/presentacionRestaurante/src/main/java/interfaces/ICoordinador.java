@@ -1,6 +1,7 @@
 package interfaces;
 
 import dtos.ClienteFrecuenteDTO;
+import dtos.ComandaDTO;
 import dtos.DetallePedidoDTO;
 import dtos.IngredienteDTO;
 import dtos.MesaDTO;
@@ -100,5 +101,10 @@ public interface ICoordinador {
     
     List<ClienteFrecuenteDTO> consultarClientes();
     
+    ComandaDTO getComanda();
+    
+    void setComanda(ComandaDTO comanda);
+    
+    void mostrarConfirmacionComanda();
     
 }

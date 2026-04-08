@@ -5,6 +5,7 @@
 package controlador;
 
 import dtos.ClienteFrecuenteDTO;
+import dtos.ComandaDTO;
 import dtos.DetallePedidoDTO;
 import dtos.MeseroDTO;
 import dtos.IngredienteDTO;
@@ -84,6 +85,11 @@ public class Coordinador implements ICoordinador {
     private List<ProductoDTO> listaProductosActual;
     private ProductoDTO productoSeleccionado;
     private List<MesaDTO> mesas;
+    
+    //COMANDAS
+    FrmConfirmacionComanda frmConfirmacionComanda;
+    
+    private ComandaDTO comanda;
 
     public Coordinador() {
         this.clienteFrecuenteBO = ClienteFrecuenteBO.getInstance();
@@ -617,6 +623,7 @@ public class Coordinador implements ICoordinador {
         this.carrito = carrito;
     }
     
+    @Override
     public void mostrarResumenPedido(){
         if(frmResumenPedido != null){
             frmResumenPedido.dispose();
@@ -624,5 +631,21 @@ public class Coordinador implements ICoordinador {
         frmResumenPedido = new FrmResumenPedido(this);
         frmResumenPedido.setVisible(true);
     }
+    
+    //----- COMANDAS -----
+    @Override
+    public ComandaDTO getComanda(){
+        return this.comanda;
+    }
+    
+    @Override
+    public void setComanda(ComandaDTO comanda){
+        this.comanda = comanda;
+    }
 
+    @Override
+    public void mostrarConfirmacionComanda() {
+        new FrmConfirmacionComanda(this).setVisible(true);
+    }
+    
 }

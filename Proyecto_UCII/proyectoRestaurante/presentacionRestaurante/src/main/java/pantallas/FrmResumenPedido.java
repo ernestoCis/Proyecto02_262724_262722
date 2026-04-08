@@ -2,6 +2,7 @@ package pantallas;
 
 import controlador.Coordinador;
 import dtos.ClienteFrecuenteDTO;
+import dtos.ComandaDTO;
 import dtos.DetallePedidoDTO;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -51,6 +52,8 @@ public class FrmResumenPedido extends JFrame {
     private List<DetallePedidoDTO> listaDetalles;
     private List<ClienteFrecuenteDTO> listaClientes;
     private ClienteFrecuenteDTO clienteSeleccionado;
+    
+    private Double total = 0.0;
 
     public FrmResumenPedido(Coordinador coordinador) {
         this.coordinador = coordinador;
@@ -326,8 +329,14 @@ public class FrmResumenPedido extends JFrame {
             if (clienteSeleccionado != null) {
                 coordinador.setClienteSeleccionado(clienteSeleccionado);
             }
-
-            System.out.println("Comanda terminada");
+            
+            ComandaDTO comanda = new ComandaDTO();
+            comanda.setCliente(coordinador.getClienteSeleccionado());
+            comanda.setTotal(total);
+            coordinador.setComanda(comanda);
+            
+            coordinador.mostrarConfirmacionComanda();
+            dispose();
         });
 
         btnBuscarCliente.addActionListener(e -> {
@@ -355,6 +364,8 @@ public class FrmResumenPedido extends JFrame {
             total += detalle.getSubtotal();
         }
 
+        this.total = total;
+        
         lblTotal.setText("Total: $" + total);
     }
 
