@@ -1,18 +1,12 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
- */
 package adaptadores;
 
 import dtos.IngredienteDTO;
 import entidades.Ingrediente;
+import enums.UnidadMedida;
+import enums.UnidadMedidaDTO;
 import java.util.ArrayList;
 import java.util.List;
 
-/**
- *
- * @author Paulina Guevara, Ernesto Cisneros
- */
 public class IngredienteAdapter {
 
     public static IngredienteDTO entidadADTO(Ingrediente i) {
@@ -21,23 +15,22 @@ public class IngredienteAdapter {
         }
 
         IngredienteDTO dto = new IngredienteDTO();
-
         dto.setIdIngrediente(i.getIdIngrediente());
         dto.setNombre(i.getNombre());
-        dto.setUnidadMedida(i.getUnidadMedida());
         dto.setCantidadActual(i.getCantidadActual());
         dto.setRutaImagen(i.getRutaImg());
 
+        dto.setUnidadMedida(
+                UnidadMedidaDTO.valueOf(i.getUnidadMedida().name())
+        );
         return dto;
     }
 
     public static List<IngredienteDTO> listaEntidadADTO(List<Ingrediente> entidades) {
         List<IngredienteDTO> lista = new ArrayList<>();
-
         for (Ingrediente i : entidades) {
             lista.add(entidadADTO(i));
         }
-
         return lista;
     }
 
@@ -47,12 +40,14 @@ public class IngredienteAdapter {
         }
 
         Ingrediente entidad = new Ingrediente();
-
         entidad.setIdIngrediente(dto.getIdIngrediente());
         entidad.setNombre(dto.getNombre());
-        entidad.setUnidadMedida(dto.getUnidadMedida());
         entidad.setCantidadActual(dto.getCantidadActual());
         entidad.setRutaImg(dto.getRutaImagen());
+
+        entidad.setUnidadMedida(
+                UnidadMedida.valueOf(dto.getUnidadMedida().name())
+        );
 
         return entidad;
     }
@@ -63,12 +58,15 @@ public class IngredienteAdapter {
         }
 
         Ingrediente entidad = new Ingrediente();
-
         entidad.setNombre(dto.getNombre());
-        entidad.setUnidadMedida(dto.getUnidadMedida());
         entidad.setCantidadActual(dto.getCantidadActual());
         entidad.setRutaImg(dto.getRutaImagen());
 
+        // convertir enum
+        entidad.setUnidadMedida(
+                UnidadMedida.valueOf(dto.getUnidadMedida().name())
+        );
+        
         return entidad;
     }
 }

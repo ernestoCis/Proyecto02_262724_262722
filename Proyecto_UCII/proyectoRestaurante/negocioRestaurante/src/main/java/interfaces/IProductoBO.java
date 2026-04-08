@@ -1,7 +1,7 @@
 package interfaces;
 
 import dtos.ProductoDTO;
-import enums.DisponibilidadProducto;
+import enums.DisponibilidadProductoDTO;
 import excepciones.NegocioException;
 import java.util.List;
 
@@ -19,5 +19,5 @@ public interface IProductoBO {
 
     List<ProductoDTO> buscarPorNombre(String nombre) throws NegocioException;
 
-    void cambiarDisponibilidad(Long id, DisponibilidadProducto estado) throws NegocioException;
+    void cambiarDisponibilidad(Long id, DisponibilidadProductoDTO estado) throws NegocioException;
 }

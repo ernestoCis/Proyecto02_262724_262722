@@ -6,9 +6,9 @@ package enums;
 
 /**
  *
- * @author RAYMUNDO
+ * @author Paulina Guevara, Ernesto Cisneros
  */
-public enum UnidadMedida {
+public enum UnidadMedidaDTO {
     PIEZAS,
     GRAMOS,
     MILILITROS

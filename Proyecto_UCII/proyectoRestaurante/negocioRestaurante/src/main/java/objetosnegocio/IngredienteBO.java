@@ -39,10 +39,8 @@ public class IngredienteBO implements IIngredienteBO {
         validarDatos(dto);
 
         try {
-            Ingrediente existente = ingredienteDAO.buscarPorNombreYUnidad(
-                    dto.getNombre(),
-                    dto.getUnidadMedida()
-            );
+
+            Ingrediente existente = ingredienteDAO.buscarPorNombreYUnidad(dto.getNombre(), enums.UnidadMedida.valueOf(dto.getUnidadMedida().name()));
 
             if (existente != null) {
                 throw new NegocioException("Ya existe un ingrediente con ese nombre y unidad"
@@ -68,11 +66,7 @@ public class IngredienteBO implements IIngredienteBO {
 
         try {
 
-            Ingrediente existente
-                    = ingredienteDAO.buscarPorNombreYUnidad(
-                            dto.getNombre(),
-                            dto.getUnidadMedida()
-                    );
+            Ingrediente existente = ingredienteDAO.buscarPorNombreYUnidad(dto.getNombre(), enums.UnidadMedida.valueOf(dto.getUnidadMedida().name()));
 
             if (existente != null && !existente.getIdIngrediente().equals(dto.getIdIngrediente())) {
                 throw new NegocioException("Ya existe un ingrediente con ese nombre y unidad");

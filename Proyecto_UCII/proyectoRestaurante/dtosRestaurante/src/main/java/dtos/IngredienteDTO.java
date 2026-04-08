@@ -4,7 +4,7 @@
  */
 package dtos;
 
-import enums.UnidadMedida;
+import enums.UnidadMedidaDTO;
 
 /**
  *
@@ -14,7 +14,7 @@ public class IngredienteDTO {
 
     private Long idIngrediente;
     private String nombre;
-    private UnidadMedida unidadMedida;
+    private UnidadMedidaDTO unidadMedida;
     private Double cantidadActual;
     private String rutaImagen;
 
@@ -22,7 +22,7 @@ public class IngredienteDTO {
     }
 
     
-    public IngredienteDTO(Long idIngrediente, String nombre, UnidadMedida unidadMedida, Double cantidadActual, String rutaImagen) {
+    public IngredienteDTO(Long idIngrediente, String nombre, UnidadMedidaDTO unidadMedida, Double cantidadActual, String rutaImagen) {
         this.idIngrediente = idIngrediente;
         this.nombre = nombre;
         this.unidadMedida = unidadMedida;
@@ -30,7 +30,7 @@ public class IngredienteDTO {
         this.rutaImagen = rutaImagen;
     }
 
-    public IngredienteDTO(String nombre, UnidadMedida unidadMedida, Double cantidadActual, String rutaImagen) {
+    public IngredienteDTO(String nombre, UnidadMedidaDTO unidadMedida, Double cantidadActual, String rutaImagen) {
         this.nombre = nombre;
         this.unidadMedida = unidadMedida;
         this.cantidadActual = cantidadActual;
@@ -53,11 +53,11 @@ public class IngredienteDTO {
         this.nombre = nombre;
     }
 
-    public UnidadMedida getUnidadMedida() {
+    public UnidadMedidaDTO getUnidadMedida() {
         return unidadMedida;
     }
 
-    public void setUnidadMedida(UnidadMedida unidadMedida) {
+    public void setUnidadMedida(UnidadMedidaDTO unidadMedida) {
         this.unidadMedida = unidadMedida;
     }
 

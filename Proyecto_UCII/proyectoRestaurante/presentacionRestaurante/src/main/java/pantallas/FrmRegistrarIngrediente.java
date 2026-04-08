@@ -4,7 +4,7 @@ import componentes.BotonEstilizado;
 import componentes.BotonRegresar;
 import controlador.Coordinador;
 import dtos.IngredienteDTO;
-import enums.UnidadMedida;
+import enums.UnidadMedidaDTO;
 import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Cursor;
@@ -279,7 +279,7 @@ public class FrmRegistrarIngrediente extends JFrame {
 
         double cantidad = Double.parseDouble(cantidadTexto);
 
-        UnidadMedida unidad = UnidadMedida.valueOf(unidadTexto);
+        UnidadMedidaDTO unidad = UnidadMedidaDTO.valueOf(unidadTexto);
 
         IngredienteDTO ingrediente = new IngredienteDTO(
                 null,
