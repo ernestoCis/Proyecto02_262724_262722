@@ -1,6 +1,7 @@
 package interfaces;
 
 import dtos.ClienteFrecuenteDTO;
+import dtos.DetallePedidoDTO;
 import dtos.IngredienteDTO;
 import dtos.MesaDTO;
 import dtos.MeseroDTO;
@@ -87,5 +88,9 @@ public interface ICoordinador {
     List<ProductoDTO> obtenerProductos();
     
     void setMesaSeleccionada(MesaDTO mesa);
+    
+    List<DetallePedidoDTO> getCarrito();
+    
+    void setCarrito(List<DetallePedidoDTO> carrito);
     
 }

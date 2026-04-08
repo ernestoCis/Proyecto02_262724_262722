@@ -5,6 +5,7 @@
 package controlador;
 
 import dtos.ClienteFrecuenteDTO;
+import dtos.DetallePedidoDTO;
 import dtos.MeseroDTO;
 import dtos.IngredienteDTO;
 import dtos.MesaDTO;
@@ -58,6 +59,8 @@ public class Coordinador implements ICoordinador {
     
     // SELECCION DE PRODUCTOS
     private FrmSeleccionProductos frmSeleccionProductos;
+    
+    private List<DetallePedidoDTO> carrito;
 
     // INGREDIENTES
     private final IngredienteBO ingredienteBO;
@@ -233,10 +236,11 @@ public class Coordinador implements ICoordinador {
     
     @Override
     public void mostrarInicioSesionMesero() {
+        precargarMeseros();
+        
         if (frmInicioSesionMesero == null) {
             frmInicioSesionMesero = new FrmInicioSesionMesero(this);
         }
-        precargarMeseros();
         frmInicioSesionMesero.setVisible(true);
     }
     
@@ -264,7 +268,7 @@ public class Coordinador implements ICoordinador {
     @Override
     public void precargarMeseros() {
         try {
-            if (meseroBO.consultarTodos().isEmpty()) {
+            if (meseroBO.consultarTodos() == null || meseroBO.consultarTodos().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "pasa");
                 MeseroDTO m = new MeseroDTO();
                 m.setRfc("CIVJ061128V25");
@@ -574,5 +578,15 @@ public class Coordinador implements ICoordinador {
     @Override
     public void setListaProductosAtual(List<ProductoDTO> productos) {
         listaProductosActual = productos;
+    }
+
+    @Override
+    public List<DetallePedidoDTO> getCarrito() {
+        return carrito;
+    }
+
+    @Override
+    public void setCarrito(List<DetallePedidoDTO> carrito) {
+        this.carrito = carrito;
     }
 }

@@ -1,6 +1,7 @@
 package pantallas;
 
 import controlador.Coordinador;
+import dtos.DetallePedidoDTO;
 import dtos.ProductoDTO;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -12,6 +13,7 @@ import java.awt.GridBagLayout;
 import java.awt.GridLayout;
 import java.awt.Image;
 import java.awt.Insets;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -36,6 +38,7 @@ public class FrmSeleccionProductos extends JFrame {
     private JPanel panelProductos;
 
     private final Map<Long, Integer> cantidades = new HashMap<>();
+    private final Map<Long, String> notas = new HashMap<>();
 
     public FrmSeleccionProductos(Coordinador coordinador) {
         this.coordinador = coordinador;
@@ -211,11 +214,34 @@ public class FrmSeleccionProductos extends JFrame {
         
 
         btnTerminar.addActionListener(e -> {
-            System.out.println("Cantidades seleccionadas:");
-            for (Map.Entry<Long, Integer> entry : cantidades.entrySet()) {
-                if (entry.getValue() > 0) {
-                    System.out.println("Producto ID " + entry.getKey() + " -> " + entry.getValue());
+            List<DetallePedidoDTO> listaDetalles = new ArrayList<>();
+
+            // Obtenemos la lista completa de productos para sacar los precios y nombres
+            List<ProductoDTO> productosBD = coordinador.getListaProductosActual();
+
+            for (ProductoDTO p : productosBD) {
+                Integer cantidad = cantidades.get(p.getIdProducto());
+
+                if (cantidad != null && cantidad > 0) {
+                    DetallePedidoDTO detalle = new DetallePedidoDTO();
+
+                    detalle.setProductoDTO(p); // El producto completo
+                    detalle.setCantidad(cantidad);
+                    detalle.setPrecioUnitario(p.getPrecio()); // Tomamos el precio actual del producto
+                    detalle.setSubtotal(cantidad * p.getPrecio());
+                    detalle.setNota(notas.getOrDefault(p.getIdProducto(), "")); // La nota o vacío
+
+                    listaDetalles.add(detalle);
                 }
+            }
+
+            if (listaDetalles.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Debe seleccionar al menos un producto.");
+            } else {
+                // ENVIAR AL COORDINADOR
+                coordinador.setCarrito(listaDetalles);
+
+                
             }
         });
     }
@@ -313,16 +339,16 @@ public class FrmSeleccionProductos extends JFrame {
         });
         
         btnNota.addActionListener(e -> {
-//            String notaActual = notas.get(producto.getIdProducto());
-
             String nuevaNota = JOptionPane.showInputDialog(
                     this,
-                    "Escribe una nota para " + producto.getNombre() + ":"
+                    "Escribe una nota para " + producto.getNombre() + ":",
+                    notas.getOrDefault(producto.getIdProducto(), "") // muestra si ya habia una nota
             );
 
-//            if (nuevaNota != null) {
-//                notas.put(producto.getIdProducto(), nuevaNota.trim());
-//            }
+            if (nuevaNota != null) {
+                notas.put(producto.getIdProducto(), nuevaNota.trim());
+                btnNota.setText("Editar nota");
+            }
         });
 
         panel.add(panelImagen);
