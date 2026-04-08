@@ -20,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
  /**
@@ -247,7 +248,12 @@ public class FrmMesas extends JFrame {
         }
 
         btnMesa.addActionListener(e -> {
-            System.out.println("Mesa seleccionada: " + mesa.getNumero());
+            if(mesa.getDisponibilidad() == EstadoMesaDTO.DISPONIBLE){
+                coordinador.mostrarSeleccionProductos();
+                dispose();
+            }else if(mesa.getDisponibilidad() == EstadoMesaDTO.NO_DISPONIBLE){
+                JOptionPane.showMessageDialog(null, "Pantalla para editar comanda");
+            }
         });
 
         panel.add(btnMesa);

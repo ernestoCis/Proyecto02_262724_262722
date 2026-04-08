@@ -1,7 +1,10 @@
 package interfaces;
 
 import dtos.ClienteFrecuenteDTO;
+import dtos.DetallePedidoDTO;
 import dtos.IngredienteDTO;
+import dtos.MesaDTO;
+import dtos.MeseroDTO;
 import dtos.ProductoDTO;
 import java.util.List;
 
@@ -24,6 +27,8 @@ public interface ICoordinador {
     void actualizarTablaClientes();
 
     void mostrarEditarCliente();
+    
+    void mostrarInicioSesionMesero();
 
     void editarCliente(ClienteFrecuenteDTO clienteDTO);
 
@@ -34,6 +39,10 @@ public interface ICoordinador {
     List<ClienteFrecuenteDTO> getListaClientesActual();
 
     void eliminarCliente();
+    
+    MeseroDTO getMeseroActual();
+    
+    MeseroDTO buscarMeseroPorUsuario(String usuario);
 
     // INGREDIENTES
     void mostrarIngredientes();
@@ -66,5 +75,25 @@ public interface ICoordinador {
     ProductoDTO getProductoSeleccionado();
 
     List<ProductoDTO> getListaProductosActual();
+    
+    void setListaProductosAtual(List<ProductoDTO> productos);
+    
+    void mostrarMesas();
+    
+    List<MesaDTO> obtenerMesas();
+    
+    List<MesaDTO> cargaMasivaMesas();
+    
+    void precargarMeseros();
+    
+    void mostrarSeleccionProductos();
+    
+    List<ProductoDTO> obtenerProductos();
+    
+    void setMesaSeleccionada(MesaDTO mesa);
+    
+    List<DetallePedidoDTO> getCarrito();
+    
+    void setCarrito(List<DetallePedidoDTO> carrito);
     
 }
