@@ -56,7 +56,7 @@ public class FrmIngredientes extends JFrame {
 
     private void configurarVentana() {
         setTitle("Restaurante");
-        setSize(1000, 700);
+        setSize(1000, 650);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -114,17 +114,19 @@ public class FrmIngredientes extends JFrame {
         panelIzquierdoBusqueda.setOpaque(false);
         panelIzquierdoBusqueda.add(btnRegresar);
 
-        txtBuscar = new JTextField(30);
-        txtBuscar.setPreferredSize(new Dimension(420, 35));
-        txtBuscar.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        txtBuscar = new JTextField();
+        txtBuscar.setPreferredSize(new Dimension(420, 40));
+        txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtBuscar.setForeground(Color.GRAY);
+        txtBuscar.setBackground(Color.WHITE);
+
         txtBuscar.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(210, 210, 210), 1),
-                BorderFactory.createEmptyBorder(5, 12, 5, 12)
+                BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+                BorderFactory.createEmptyBorder(8, 15, 8, 15)
         ));
 
-        txtBuscar.setToolTipText("Buscar ingredientes");
         ponerPlaceholder();
-
+        
         JPanel panelCentroBusqueda = new JPanel();
         panelCentroBusqueda.setOpaque(false);
         panelCentroBusqueda.add(txtBuscar);
@@ -198,7 +200,7 @@ public class FrmIngredientes extends JFrame {
                 accionBuscar();
             }
         });
-        
+
         tblIngredientes.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
@@ -206,7 +208,7 @@ public class FrmIngredientes extends JFrame {
                     int fila = tblIngredientes.getSelectedRow();
                     if (fila != -1) {
                         IngredienteDTO ingredienteSeleccionado = listaOriginal.get(fila);
-                        
+
                         coordinador.setIngredienteSeleccionado(ingredienteSeleccionado);
                         coordinador.mostrarAjustarStock();
                     }
