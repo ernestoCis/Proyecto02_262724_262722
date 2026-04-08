@@ -72,6 +72,8 @@ public interface ICoordinador {
 
     List<ProductoDTO> getListaProductosActual();
     
+    void setListaProductosAtual(List<ProductoDTO> productos);
+    
     void mostrarMesas();
     
     List<MesaDTO> obtenerMesas();

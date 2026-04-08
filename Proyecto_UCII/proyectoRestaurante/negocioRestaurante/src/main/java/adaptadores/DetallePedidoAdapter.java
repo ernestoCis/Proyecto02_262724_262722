@@ -28,8 +28,26 @@ public class DetallePedidoAdapter {
         return dto;
     }
     
-    public static DetallePedido dtoAEntidad(DetallePedidoDTO dto){
+    public static DetallePedido dtoAEntidadExistente(DetallePedidoDTO dto){
         DetallePedido entidad = new DetallePedido();
+        entidad.setIdDetallePedido(dto.getIdDetallePedido());
+        entidad.setCantidad(dto.getCantidad());
+        entidad.setPrecioUnitario(dto.getPrecioUnitario());
+        entidad.setSubtotal(dto.getSubtotal());
+        entidad.setNota(dto.getNota());
+        
+        entidad.setProducto(ProductoAdapter.dtoAEntidadNuevo(dto.getProductoDTO()));
+        
+        Comanda comanda = new Comanda();
+        comanda.setIdComanda(dto.getIdComanda());
+        entidad.setComanda(comanda);
+        
+        return entidad;
+    }
+    
+    public static DetallePedido dtoAEntidadNueva(DetallePedidoDTO dto){
+        DetallePedido entidad = new DetallePedido();
+        entidad.setIdDetallePedido(null);
         entidad.setCantidad(dto.getCantidad());
         entidad.setPrecioUnitario(dto.getPrecioUnitario());
         entidad.setSubtotal(dto.getSubtotal());
