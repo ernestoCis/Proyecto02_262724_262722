@@ -33,7 +33,9 @@ public class ProductoDAO implements IProductoDAO {
             em.persist(producto); 
             em.getTransaction().commit();
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            if(em.getTransaction().isActive()){
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al guardar producto", e);
         } finally {
             em.close();
@@ -60,6 +62,8 @@ public class ProductoDAO implements IProductoDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             return em.find(Producto.class, id);
+        }catch(Exception e){
+            throw new PersistenciaException("Error al buscar por id", e);
         } finally {
             em.close();
         }
@@ -72,6 +76,8 @@ public class ProductoDAO implements IProductoDAO {
             return em.createQuery(
                 "SELECT p FROM Producto p", Producto.class
             ).getResultList();
+        }catch(Exception e){
+            throw new PersistenciaException("Error al obtener los productos", e);
         } finally {
             em.close();
         }
@@ -87,6 +93,8 @@ public class ProductoDAO implements IProductoDAO {
             return em.createQuery(jpql, Producto.class)
                     .setParameter("nombre", "%" + nombre + "%")
                     .getResultList();
+        }catch(Exception e){
+            throw new PersistenciaException("Error al buscar pro nombre", e);
         } finally {
             em.close();
         }
@@ -110,6 +118,8 @@ public class ProductoDAO implements IProductoDAO {
             }
             return lista.get(0);
 
+        }catch(Exception e){
+            throw new PersistenciaException("Error al consultar por nombre exacto", e);
         } finally {
             em.close();
         }
