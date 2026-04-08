@@ -170,21 +170,7 @@ public class FrmIngredientes extends JFrame {
         panelBotones.setOpaque(false);
 
         btnRegistrar = new BotonEstilizado("+ Registrar");
-//        btnRegistrar.setFont(new Font("SansSerif", Font.PLAIN, 18));
-//        btnRegistrar.setFocusPainted(false);
-//        btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//        btnRegistrar.setBackground(Color.WHITE);
-//        btnRegistrar.setForeground(new Color(80, 80, 80));
-//        btnRegistrar.setPreferredSize(new Dimension(190, 38));
-
         btnEliminar = new BotonEstilizado("Eliminar");
-//        btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 18));
-//        btnEliminar.setFocusPainted(false);
-//        btnEliminar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-//        btnEliminar.setBackground(Color.WHITE);
-//        btnEliminar.setForeground(new Color(80, 80, 80));
-//        btnEliminar.setPreferredSize(new Dimension(190, 38));
-        btnEliminar.setEnabled(false);
 
         panelBotones.add(btnRegistrar);
         panelBotones.add(Box.createHorizontalStrut(15));
@@ -212,16 +198,17 @@ public class FrmIngredientes extends JFrame {
                 accionBuscar();
             }
         });
-
+        
         tblIngredientes.addMouseListener(new MouseAdapter() {
             @Override
             public void mouseClicked(MouseEvent e) {
                 if (e.getClickCount() == 2) {
                     int fila = tblIngredientes.getSelectedRow();
                     if (fila != -1) {
-                        IngredienteDTO ingrediente = listaOriginal.get(fila);
-                        coordinador.setIngredienteSeleccionado(ingrediente);
-                        //    coordinador.mostrarEditarIngrediente();
+                        IngredienteDTO ingredienteSeleccionado = listaOriginal.get(fila);
+                        
+                        coordinador.setIngredienteSeleccionado(ingredienteSeleccionado);
+                        coordinador.mostrarAjustarStock();
                     }
                 }
             }

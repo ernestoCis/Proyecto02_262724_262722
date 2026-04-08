@@ -5,8 +5,8 @@
 package dtos;
 
 import java.util.List;
-import enums.DisponibilidadProducto;
-import enums.TipoProducto;
+import enums.DisponibilidadProductoDTO;
+import enums.TipoProductoDTO;
 
 /**
  *
@@ -17,15 +17,15 @@ public class ProductoDTO {
     private Long idProducto;
     private String nombre;
     private Double precio;
-    private TipoProducto tipo;
-    private DisponibilidadProducto disponibilidad;
+    private TipoProductoDTO tipo;
+    private DisponibilidadProductoDTO disponibilidad;
 
     private List<RecetaDTO> recetas;
 
     public ProductoDTO() {
     }
 
-    public ProductoDTO(Long idProducto, String nombre, Double precio, TipoProducto tipo, DisponibilidadProducto disponibilidad, List<RecetaDTO> recetas) {
+    public ProductoDTO(Long idProducto, String nombre, Double precio, TipoProductoDTO tipo, DisponibilidadProductoDTO disponibilidad, List<RecetaDTO> recetas) {
         this.idProducto = idProducto;
         this.nombre = nombre;
         this.precio = precio;
@@ -34,7 +34,7 @@ public class ProductoDTO {
         this.recetas = recetas;
     }
 
-    public ProductoDTO(String nombre, Double precio, TipoProducto tipo, DisponibilidadProducto disponibilidad, List<RecetaDTO> recetas) {
+    public ProductoDTO(String nombre, Double precio, TipoProductoDTO tipo, DisponibilidadProductoDTO disponibilidad, List<RecetaDTO> recetas) {
         this.nombre = nombre;
         this.precio = precio;
         this.tipo = tipo;
@@ -66,19 +66,19 @@ public class ProductoDTO {
         this.precio = precio;
     }
 
-    public TipoProducto getTipo() {
+    public TipoProductoDTO getTipo() {
         return tipo;
     }
 
-    public void setTipo(TipoProducto tipo) {
+    public void setTipo(TipoProductoDTO tipo) {
         this.tipo = tipo;
     }
 
-    public DisponibilidadProducto getDisponibilidad() {
+    public DisponibilidadProductoDTO getDisponibilidad() {
         return disponibilidad;
     }
 
-    public void setDisponibilidad(DisponibilidadProducto disponibilidad) {
+    public void setDisponibilidad(DisponibilidadProductoDTO disponibilidad) {
         this.disponibilidad = disponibilidad;
     }
 

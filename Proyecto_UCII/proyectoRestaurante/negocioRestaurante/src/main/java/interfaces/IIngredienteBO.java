@@ -21,4 +21,7 @@ public interface IIngredienteBO {
     public List<IngredienteDTO> consultarTodos() throws NegocioException;
 
     public List<IngredienteDTO> buscarPorFiltro(String filtro) throws NegocioException;
+    
+    public IngredienteDTO buscarPorId(Long id) throws NegocioException;
+    
 }

@@ -39,10 +39,8 @@ public class IngredienteBO implements IIngredienteBO {
         validarDatos(dto);
 
         try {
-            Ingrediente existente = ingredienteDAO.buscarPorNombreYUnidad(
-                    dto.getNombre(),
-                    dto.getUnidadMedida()
-            );
+
+            Ingrediente existente = ingredienteDAO.buscarPorNombreYUnidad(dto.getNombre(), enums.UnidadMedida.valueOf(dto.getUnidadMedida().name()));
 
             if (existente != null) {
                 throw new NegocioException("Ya existe un ingrediente con ese nombre y unidad"
@@ -68,11 +66,7 @@ public class IngredienteBO implements IIngredienteBO {
 
         try {
 
-            Ingrediente existente
-                    = ingredienteDAO.buscarPorNombreYUnidad(
-                            dto.getNombre(),
-                            dto.getUnidadMedida()
-                    );
+            Ingrediente existente = ingredienteDAO.buscarPorNombreYUnidad(dto.getNombre(), enums.UnidadMedida.valueOf(dto.getUnidadMedida().name()));
 
             if (existente != null && !existente.getIdIngrediente().equals(dto.getIdIngrediente())) {
                 throw new NegocioException("Ya existe un ingrediente con ese nombre y unidad");
@@ -124,6 +118,26 @@ public class IngredienteBO implements IIngredienteBO {
                 || dto.getCantidadActual() < 0) {
 
             throw new NegocioException("La cantidad debe ser mayor o igual a 0");
+        }
+    }
+
+    @Override
+    public IngredienteDTO buscarPorId(Long id) throws NegocioException {
+        if (id == null) {
+            throw new NegocioException("El ID del ingrediente es obligatorio");
+        }
+
+        try {
+            Ingrediente entidad = ingredienteDAO.buscarPorId(id);
+
+            if (entidad == null) {
+                throw new NegocioException("Ingrediente no encontrado");
+            }
+
+            return IngredienteAdapter.entidadADTO(entidad);
+
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al buscar ingrediente", e);
         }
     }
 }

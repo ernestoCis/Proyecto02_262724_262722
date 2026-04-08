@@ -4,7 +4,7 @@ import adaptadores.ProductoAdapter;
 import daos.ProductoDAO;
 import dtos.ProductoDTO;
 import entidades.Producto;
-import enums.DisponibilidadProducto;
+import enums.DisponibilidadProductoDTO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
 import interfaces.IProductoBO;
@@ -110,9 +110,9 @@ public class ProductoBO implements IProductoBO {
     }
 
     @Override
-    public void cambiarDisponibilidad(Long id, DisponibilidadProducto estado) throws NegocioException {
+    public void cambiarDisponibilidad(Long id, DisponibilidadProductoDTO estado) throws NegocioException {
         try {
-            productoDAO.cambiarDisponibilidad(id, estado);
+            productoDAO.cambiarDisponibilidad(id, enums.DisponibilidadProducto.valueOf(estado.name()));
         } catch (PersistenciaException e) {
             throw new NegocioException("Error al cambiar disponibilidad", e);
         }

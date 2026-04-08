@@ -4,6 +4,10 @@ import dtos.ProductoDTO;
 import dtos.RecetaDTO;
 import entidades.Producto;
 import entidades.Receta;
+import enums.DisponibilidadProducto;
+import enums.DisponibilidadProductoDTO;
+import enums.TipoProducto;
+import enums.TipoProductoDTO;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,8 +24,19 @@ public class ProductoAdapter {
         dto.setIdProducto(p.getIdProducto());
         dto.setNombre(p.getNombre());
         dto.setPrecio(p.getPrecio());
-        dto.setTipo(p.getTipo());
-        dto.setDisponibilidad(p.getDisponibilidad());
+
+        // convertir enums
+        if (p.getTipo() != null) {
+            dto.setTipo(
+                TipoProductoDTO.valueOf(p.getTipo().name())
+            );
+        }
+
+        if (p.getDisponibilidad() != null) {
+            dto.setDisponibilidad(
+                DisponibilidadProductoDTO.valueOf(p.getDisponibilidad().name())
+            );
+        }
 
         // recetas
 //        List<RecetaDTO> recetasDTO = new ArrayList<>();
@@ -56,8 +71,19 @@ public class ProductoAdapter {
         Producto entidad = new Producto();
         entidad.setNombre(dto.getNombre());
         entidad.setPrecio(dto.getPrecio());
-        entidad.setTipo(dto.getTipo());
-        entidad.setDisponibilidad(dto.getDisponibilidad());
+
+        // convertir enums
+        if (dto.getTipo() != null) {
+            entidad.setTipo(
+                TipoProducto.valueOf(dto.getTipo().name())
+            );
+        }
+
+        if (dto.getDisponibilidad() != null) {
+            entidad.setDisponibilidad(
+                DisponibilidadProducto.valueOf(dto.getDisponibilidad().name())
+            );
+        }
 
         if (dto.getRecetas() != null) {
             for (RecetaDTO rDTO : dto.getRecetas()) {
@@ -66,8 +92,7 @@ public class ProductoAdapter {
                 receta.setIngrediente(
                         IngredienteAdapter.dtoAEntidadExistente(rDTO.getIngrediente())
                 );
-
-                entidad.agregarReceta(receta); // 🔥 IMPORTANTE
+                entidad.agregarReceta(receta);
             }
         }
 
@@ -81,8 +106,19 @@ public class ProductoAdapter {
         entidad.setIdProducto(dto.getIdProducto());
         entidad.setNombre(dto.getNombre());
         entidad.setPrecio(dto.getPrecio());
-        entidad.setTipo(dto.getTipo());
-        entidad.setDisponibilidad(dto.getDisponibilidad());
+
+        // convertir enums
+        if (dto.getTipo() != null) {
+            entidad.setTipo(
+                TipoProducto.valueOf(dto.getTipo().name())
+            );
+        }
+
+        if (dto.getDisponibilidad() != null) {
+            entidad.setDisponibilidad(
+                DisponibilidadProducto.valueOf(dto.getDisponibilidad().name())
+            );
+        }
 
         if (dto.getRecetas() != null) {
             for (RecetaDTO rDTO : dto.getRecetas()) {
@@ -92,7 +128,6 @@ public class ProductoAdapter {
                 receta.setIngrediente(
                         IngredienteAdapter.dtoAEntidadExistente(rDTO.getIngrediente())
                 );
-
                 entidad.agregarReceta(receta);
             }
         }

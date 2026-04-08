@@ -49,6 +49,7 @@ public class Coordinador implements ICoordinador {
 
     private FrmIngredientes frmIngredientes;
     private FrmRegistrarIngrediente frmRegistrarIngrediente;
+    private FrmAjustarStock frmAjustarStock;
 
     private List<IngredienteDTO> listaIngredientesActual;
     private IngredienteDTO ingredienteSeleccionado;
@@ -313,6 +314,57 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    public void mostrarAjustarStock() {
+        if (ingredienteSeleccionado == null) {
+            JOptionPane.showMessageDialog(null, "Seleccione un ingrediente");
+            return;
+        }
+
+        if (frmAjustarStock != null) {
+            frmAjustarStock.dispose();
+        }
+
+        frmIngredientes.dispose();
+        frmAjustarStock = new FrmAjustarStock(this);
+        frmAjustarStock.setVisible(true);
+        frmAjustarStock.toFront();
+    }
+
+    public void ajustarStock(Long idIngrediente, double cantidad, boolean agregar) {
+        try {
+            IngredienteDTO ingrediente = ingredienteBO.buscarPorId(idIngrediente);
+
+            double stockActual = ingrediente.getCantidadActual();
+
+            if (agregar) {
+                ingrediente.setCantidadActual(stockActual + cantidad);
+            } else {
+                if (stockActual < cantidad) {
+                    JOptionPane.showMessageDialog(null, "No hay suficiente stock");
+                    return;
+                }
+                ingrediente.setCantidadActual(stockActual - cantidad);
+            }
+
+            ingredienteBO.actualizarIngrediente(ingrediente);
+
+            JOptionPane.showMessageDialog(null, "Stock actualizado correctamente");
+            actualizarTablaIngredientes();
+
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+
+        if (frmAjustarStock != null) {
+            frmAjustarStock.dispose();
+            frmAjustarStock = null;
+        }
+
+        if (frmIngredientes != null) {
+            frmIngredientes.setVisible(true);
+        }
+    }
+
     // PRODUCTOS
     @Override
     public void mostrarProductos() {
@@ -367,7 +419,6 @@ public class Coordinador implements ICoordinador {
 //
 //        frmProductos.setVisible(true);
 //    }
-
     @Override
     public void actualizarTablaProductos() {
         try {
@@ -381,7 +432,7 @@ public class Coordinador implements ICoordinador {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
-    
+
     @Override
     public void setProductoSeleccionado(ProductoDTO producto) {
         this.productoSeleccionado = producto;
