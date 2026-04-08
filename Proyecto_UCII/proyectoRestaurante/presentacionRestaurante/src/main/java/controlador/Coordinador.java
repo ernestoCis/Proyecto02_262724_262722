@@ -624,5 +624,5 @@ public class Coordinador implements ICoordinador {
         frmResumenPedido = new FrmResumenPedido(this);
         frmResumenPedido.setVisible(true);
     }
-}
+
 }

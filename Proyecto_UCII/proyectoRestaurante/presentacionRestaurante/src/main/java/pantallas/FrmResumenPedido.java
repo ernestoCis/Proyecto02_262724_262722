@@ -218,35 +218,35 @@ public class FrmResumenPedido extends JFrame {
         panelTotal.add(lblTotal);
 
         JPanel panelBuscarCliente = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
-panelBuscarCliente.setOpaque(false);
+        panelBuscarCliente.setOpaque(false);
 
-JLabel lblAsociar = new JLabel("Asociar cliente:");
-lblAsociar.setFont(new Font("SansSerif", Font.PLAIN, 14));
-lblAsociar.setBorder(BorderFactory.createCompoundBorder(
-        BorderFactory.createLineBorder(new Color(190, 190, 190), 1),
-        BorderFactory.createEmptyBorder(6, 10, 6, 10)
-));
+        JLabel lblAsociar = new JLabel("Asociar cliente:");
+        lblAsociar.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        lblAsociar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(190, 190, 190), 1),
+                BorderFactory.createEmptyBorder(6, 10, 6, 10)
+        ));
 
-txtBuscarCliente = new JTextField(28);
-txtBuscarCliente.setPreferredSize(new Dimension(360, 35));
-txtBuscarCliente.setFont(new Font("SansSerif", Font.PLAIN, 16));
-txtBuscarCliente.setBorder(BorderFactory.createCompoundBorder(
-        BorderFactory.createLineBorder(new Color(210, 210, 210), 1),
-        BorderFactory.createEmptyBorder(5, 12, 5, 12)
-));
+        txtBuscarCliente = new JTextField(28);
+        txtBuscarCliente.setPreferredSize(new Dimension(360, 35));
+        txtBuscarCliente.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        txtBuscarCliente.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(210, 210, 210), 1),
+                BorderFactory.createEmptyBorder(5, 12, 5, 12)
+        ));
 
-ponerPlaceholder();
+        ponerPlaceholder();
 
-btnBuscarCliente = new JButton("Buscar");
-btnBuscarCliente.setFont(new Font("SansSerif", Font.PLAIN, 14));
-btnBuscarCliente.setFocusPainted(false);
-btnBuscarCliente.setCursor(new Cursor(Cursor.HAND_CURSOR));
-btnBuscarCliente.setBackground(Color.WHITE);
-btnBuscarCliente.setPreferredSize(new Dimension(90, 35));
+        btnBuscarCliente = new JButton("Buscar");
+        btnBuscarCliente.setFont(new Font("SansSerif", Font.PLAIN, 14));
+        btnBuscarCliente.setFocusPainted(false);
+        btnBuscarCliente.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnBuscarCliente.setBackground(Color.WHITE);
+        btnBuscarCliente.setPreferredSize(new Dimension(90, 35));
 
-panelBuscarCliente.add(lblAsociar);
-panelBuscarCliente.add(txtBuscarCliente);
-panelBuscarCliente.add(btnBuscarCliente);
+        panelBuscarCliente.add(lblAsociar);
+        panelBuscarCliente.add(txtBuscarCliente);
+        panelBuscarCliente.add(btnBuscarCliente);
 
         JPanel panelClienteSeleccionado = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
         panelClienteSeleccionado.setOpaque(false);
@@ -326,15 +326,15 @@ panelBuscarCliente.add(btnBuscarCliente);
             if (clienteSeleccionado != null) {
                 coordinador.setClienteSeleccionado(clienteSeleccionado);
             }
-            
+
             System.out.println("Comanda terminada");
         });
-        
+
         btnBuscarCliente.addActionListener(e -> {
-    accionBuscarCliente();
-    
-});
-        
+            accionBuscarCliente();
+
+        });
+
         txtBuscarCliente.addActionListener(e -> {
             accionBuscarCliente();
         });
@@ -359,34 +359,34 @@ panelBuscarCliente.add(btnBuscarCliente);
     }
 
     private void accionBuscarCliente() {
-    String texto = txtBuscarCliente.getText().trim().toLowerCase();
+        String texto = txtBuscarCliente.getText().trim().toLowerCase();
 
-    if (texto.isEmpty() || texto.equals("buscar por nombre, teléfono o correo")) {
-        JOptionPane.showMessageDialog(this, "Escribe un nombre, teléfono o correo para buscar.");
-        return;
-    }
-
-    if (listaClientes == null || listaClientes.isEmpty()) {
-        JOptionPane.showMessageDialog(this, "No hay clientes cargados para buscar.");
-        return;
-    }
-
-    for (ClienteFrecuenteDTO cliente : listaClientes) {
-        String nombre = cliente.getNombreCompleto() != null ? cliente.getNombreCompleto().toLowerCase() : "";
-        String telefono = cliente.getTelefono() != null ? cliente.getTelefono().toLowerCase() : "";
-        String correo = cliente.getEmail() != null ? cliente.getEmail().toLowerCase() : "";
-
-        if (nombre.contains(texto) || telefono.contains(texto) || correo.contains(texto)) {
-            clienteSeleccionado = cliente;
-            actualizarClienteSeleccionado();
+        if (texto.isEmpty() || texto.equals("buscar por nombre, teléfono o correo")) {
+            JOptionPane.showMessageDialog(this, "Escribe un nombre, teléfono o correo para buscar.");
             return;
         }
-    }
 
-    clienteSeleccionado = null;
-    actualizarClienteSeleccionado();
-    JOptionPane.showMessageDialog(this, "No se encontró ningún cliente con ese criterio.");
-}
+        if (listaClientes == null || listaClientes.isEmpty()) {
+            JOptionPane.showMessageDialog(this, "No hay clientes cargados para buscar.");
+            return;
+        }
+
+        for (ClienteFrecuenteDTO cliente : listaClientes) {
+            String nombre = cliente.getNombreCompleto() != null ? cliente.getNombreCompleto().toLowerCase() : "";
+            String telefono = cliente.getTelefono() != null ? cliente.getTelefono().toLowerCase() : "";
+            String correo = cliente.getEmail() != null ? cliente.getEmail().toLowerCase() : "";
+
+            if (nombre.contains(texto) || telefono.contains(texto) || correo.contains(texto)) {
+                clienteSeleccionado = cliente;
+                actualizarClienteSeleccionado();
+                return;
+            }
+        }
+
+        clienteSeleccionado = null;
+        actualizarClienteSeleccionado();
+        JOptionPane.showMessageDialog(this, "No se encontró ningún cliente con ese criterio.");
+    }
 
     private void actualizarClienteSeleccionado() {
         if (clienteSeleccionado == null) {
