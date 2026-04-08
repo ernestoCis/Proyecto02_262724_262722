@@ -93,4 +93,9 @@ public interface ICoordinador {
     
     void setCarrito(List<DetallePedidoDTO> carrito);
     
+    void mostrarResumenPedido();
+    
+    List<ClienteFrecuenteDTO> consultarClientes();
+    
+    
 }

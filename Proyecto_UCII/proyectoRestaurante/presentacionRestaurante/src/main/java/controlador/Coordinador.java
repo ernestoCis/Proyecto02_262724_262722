@@ -59,6 +59,7 @@ public class Coordinador implements ICoordinador {
     
     // SELECCION DE PRODUCTOS
     private FrmSeleccionProductos frmSeleccionProductos;
+    private FrmResumenPedido frmResumenPedido;
     
     private List<DetallePedidoDTO> carrito;
 
@@ -229,6 +230,17 @@ public class Coordinador implements ICoordinador {
             actualizarTablaClientes();
         } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }
+    
+    @Override
+    public List<ClienteFrecuenteDTO> consultarClientes(){
+        try{
+            listaClientesActual = clienteFrecuenteBO.consultarTodos();
+            return listaClientesActual;
+        }catch(NegocioException e){
+            JOptionPane.showMessageDialog(null, "Error al consultar el cliente");
+            return null;
         }
     }
     
@@ -588,5 +600,13 @@ public class Coordinador implements ICoordinador {
     @Override
     public void setCarrito(List<DetallePedidoDTO> carrito) {
         this.carrito = carrito;
+    }
+    
+    public void mostrarResumenPedido(){
+        if(frmResumenPedido != null){
+            frmResumenPedido.dispose();
+        }
+        frmResumenPedido = new FrmResumenPedido(this);
+        frmResumenPedido.setVisible(true);
     }
 }

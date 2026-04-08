@@ -27,9 +27,10 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
+import javax.swing.JTextField;
 
 public class FrmSeleccionProductos extends JFrame {
-    
+
     private final Coordinador coordinador;
 
     private JButton btnSalir;
@@ -39,6 +40,9 @@ public class FrmSeleccionProductos extends JFrame {
 
     private final Map<Long, Integer> cantidades = new HashMap<>();
     private final Map<Long, String> notas = new HashMap<>();
+
+    private JTextField txtBuscar;
+    private List<ProductoDTO> listaOriginalProductos;
 
     public FrmSeleccionProductos(Coordinador coordinador) {
         this.coordinador = coordinador;
@@ -153,6 +157,26 @@ public class FrmSeleccionProductos extends JFrame {
         panelCentro.setLayout(new BoxLayout(panelCentro, BoxLayout.Y_AXIS));
         panelCentro.setBorder(BorderFactory.createEmptyBorder(10, 40, 25, 40));
 
+        JPanel panelBusqueda = new JPanel(new BorderLayout());
+        panelBusqueda.setOpaque(false);
+        panelBusqueda.setBorder(BorderFactory.createEmptyBorder(0, 0, 18, 0));
+
+        txtBuscar = new JTextField(30);
+        txtBuscar.setPreferredSize(new Dimension(420, 35));
+        txtBuscar.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        txtBuscar.setBorder(BorderFactory.createCompoundBorder(
+                BorderFactory.createLineBorder(new Color(210, 210, 210), 1),
+                BorderFactory.createEmptyBorder(5, 12, 5, 12)
+        ));
+
+        ponerPlaceholderBusquedaProductos();
+
+        JPanel panelCentroBusqueda = new JPanel();
+        panelCentroBusqueda.setOpaque(false);
+        panelCentroBusqueda.add(txtBuscar);
+
+        panelBusqueda.add(panelCentroBusqueda, BorderLayout.CENTER);
+
         panelProductos = new JPanel();
         panelProductos.setBackground(new Color(235, 235, 235));
         panelProductos.setBorder(BorderFactory.createCompoundBorder(
@@ -187,6 +211,7 @@ public class FrmSeleccionProductos extends JFrame {
 
         panelInferior.add(btnTerminar);
 
+        panelCentro.add(panelBusqueda);
         panelCentro.add(scrollProductos);
         panelCentro.add(Box.createVerticalStrut(35));
         panelCentro.add(panelInferior);
@@ -197,8 +222,9 @@ public class FrmSeleccionProductos extends JFrame {
         add(panelPrincipal);
 
         eventos();
-        
-        cargarProductos(coordinador.obtenerProductos());
+
+        listaOriginalProductos = coordinador.obtenerProductos();
+        cargarProductos(listaOriginalProductos);
     }
 
     private void eventos() {
@@ -206,12 +232,11 @@ public class FrmSeleccionProductos extends JFrame {
             coordinador.mostrarInicioSesionMesero();
             dispose();
         });
-        
+
         btnRegresar.addActionListener(e -> {
             coordinador.mostrarMesas();
             dispose();
         });
-        
 
         btnTerminar.addActionListener(e -> {
             List<DetallePedidoDTO> listaDetalles = new ArrayList<>();
@@ -238,21 +263,36 @@ public class FrmSeleccionProductos extends JFrame {
             if (listaDetalles.isEmpty()) {
                 JOptionPane.showMessageDialog(this, "Debe seleccionar al menos un producto.");
             } else {
-                // ENVIAR AL COORDINADOR
                 coordinador.setCarrito(listaDetalles);
-
+//                listaDetalles.forEach(d -> System.out.println(d.getProductoDTO().getNombre() + " "+d.getCantidad()));
+                coordinador.mostrarResumenPedido();
+                dispose();
                 
             }
         });
+
+        txtBuscar.addKeyListener(new java.awt.event.KeyAdapter() {
+            @Override
+            public void keyReleased(java.awt.event.KeyEvent e) {
+                accionBuscarProductos();
+            }
+        });
+
     }
 
     private void cargarProductos(List<ProductoDTO> productos) {
         panelProductos.removeAll();
-        cantidades.clear();
 
         if (productos != null) {
             for (ProductoDTO producto : productos) {
-                cantidades.put(producto.getIdProducto(), 0);
+                if (!cantidades.containsKey(producto.getIdProducto())) {
+                    cantidades.put(producto.getIdProducto(), 0);
+                }
+
+                if (!notas.containsKey(producto.getIdProducto())) {
+                    notas.put(producto.getIdProducto(), "");
+                }
+
                 panelProductos.add(crearPanelProducto(producto));
             }
         }
@@ -262,103 +302,151 @@ public class FrmSeleccionProductos extends JFrame {
     }
 
     private JPanel crearPanelProducto(ProductoDTO producto) {
-        JPanel panel = new JPanel();
-        panel.setOpaque(false);
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
+    JPanel panel = new JPanel();
+    panel.setOpaque(false);
+    panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
-        JPanel panelImagen = new JPanel(new GridBagLayout());
-        panelImagen.setBackground(Color.WHITE);
-        panelImagen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-        panelImagen.setPreferredSize(new Dimension(90, 70));
-        panelImagen.setMaximumSize(new Dimension(90, 70));
-        panelImagen.setMinimumSize(new Dimension(90, 70));
-        panelImagen.setAlignmentX(CENTER_ALIGNMENT);
+    JPanel panelImagen = new JPanel(new GridBagLayout());
+    panelImagen.setBackground(Color.WHITE);
+    panelImagen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+    panelImagen.setPreferredSize(new Dimension(90, 70));
+    panelImagen.setMaximumSize(new Dimension(90, 70));
+    panelImagen.setMinimumSize(new Dimension(90, 70));
+    panelImagen.setAlignmentX(CENTER_ALIGNMENT);
 
-        JLabel lblSinImagen = new JLabel("Sin imagen");
-        lblSinImagen.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        panelImagen.add(lblSinImagen);
+    JLabel lblSinImagen = new JLabel("Sin imagen");
+    lblSinImagen.setFont(new Font("SansSerif", Font.PLAIN, 11));
+    panelImagen.add(lblSinImagen);
 
-        JLabel lblNombre = new JLabel(producto.getNombre());
-        lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        lblNombre.setForeground(new Color(65, 65, 65));
-        lblNombre.setAlignmentX(CENTER_ALIGNMENT);
+    JLabel lblNombre = new JLabel(producto.getNombre());
+    lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
+    lblNombre.setForeground(new Color(65, 65, 65));
+    lblNombre.setAlignmentX(CENTER_ALIGNMENT);
 
-        JPanel panelCantidad = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
-        panelCantidad.setOpaque(false);
+    JPanel panelCantidad = new JPanel(new FlowLayout(FlowLayout.CENTER, 12, 0));
+    panelCantidad.setOpaque(false);
 
-        JButton btnMenos = new JButton("−");
-        btnMenos.setFont(new Font("SansSerif", Font.PLAIN, 18));
-        btnMenos.setFocusPainted(false);
-        btnMenos.setPreferredSize(new Dimension(45, 34));
-        btnMenos.setMargin(new Insets(0, 0, 0, 0));
+    JButton btnMenos = new JButton("−");
+    btnMenos.setFont(new Font("SansSerif", Font.PLAIN, 18));
+    btnMenos.setFocusPainted(false);
+    btnMenos.setPreferredSize(new Dimension(45, 34));
+    btnMenos.setMargin(new Insets(0, 0, 0, 0));
 
-        JLabel lblCantidad = new JLabel("0", JLabel.CENTER);
-        lblCantidad.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        lblCantidad.setBorder(BorderFactory.createLineBorder(new Color(190, 190, 190), 1));
-        lblCantidad.setPreferredSize(new Dimension(36, 32));
+    int cantidadGuardada = cantidades.getOrDefault(producto.getIdProducto(), 0);
 
-        JButton btnMas = new JButton("+");
-        btnMas.setFont(new Font("SansSerif", Font.PLAIN, 18));
-        btnMas.setFocusPainted(false);
-        btnMenos.setPreferredSize(new Dimension(45, 34));
-        btnMenos.setMargin(new Insets(0, 0, 0, 0));
+    JLabel lblCantidad = new JLabel(String.valueOf(cantidadGuardada), JLabel.CENTER);
+    lblCantidad.setFont(new Font("SansSerif", Font.PLAIN, 16));
+    lblCantidad.setBorder(BorderFactory.createLineBorder(new Color(190, 190, 190), 1));
+    lblCantidad.setPreferredSize(new Dimension(36, 32));
 
-        panelCantidad.add(btnMenos);
-        panelCantidad.add(lblCantidad);
-        panelCantidad.add(btnMas);
+    JButton btnMas = new JButton("+");
+    btnMas.setFont(new Font("SansSerif", Font.PLAIN, 18));
+    btnMas.setFocusPainted(false);
+    btnMas.setPreferredSize(new Dimension(45, 34));
+    btnMas.setMargin(new Insets(0, 0, 0, 0));
 
-        JButton btnNota = new JButton("+Agregar nota");
-        btnNota.setFont(new Font("SansSerif", Font.BOLD, 12));
-        btnNota.setAlignmentX(CENTER_ALIGNMENT);
-        btnNota.setVisible(false);
-        btnNota.setFocusPainted(false);
-        btnNota.setBorderPainted(false);
-        btnNota.setContentAreaFilled(false);
-        btnNota.setOpaque(false);
-        btnNota.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnNota.setForeground(Color.BLACK);
-        btnNota.setMargin(new Insets(0, 0, 0, 0));
+    panelCantidad.add(btnMenos);
+    panelCantidad.add(lblCantidad);
+    panelCantidad.add(btnMas);
 
-        btnMas.addActionListener(e -> {
-            int cantidadActual = cantidades.get(producto.getIdProducto());
-            cantidadActual++;
+    String notaGuardada = notas.getOrDefault(producto.getIdProducto(), "");
+
+    JButton btnNota = new JButton(notaGuardada.isBlank() ? "+Agregar nota" : "Editar nota");
+    btnNota.setFont(new Font("SansSerif", Font.BOLD, 12));
+    btnNota.setAlignmentX(CENTER_ALIGNMENT);
+    btnNota.setVisible(cantidadGuardada >= 1);
+    btnNota.setFocusPainted(false);
+    btnNota.setBorderPainted(false);
+    btnNota.setContentAreaFilled(false);
+    btnNota.setOpaque(false);
+    btnNota.setCursor(new Cursor(Cursor.HAND_CURSOR));
+    btnNota.setForeground(Color.BLACK);
+    btnNota.setMargin(new Insets(0, 0, 0, 0));
+
+    btnMas.addActionListener(e -> {
+        int cantidadActual = cantidades.get(producto.getIdProducto());
+        cantidadActual++;
+        cantidades.put(producto.getIdProducto(), cantidadActual);
+        lblCantidad.setText(String.valueOf(cantidadActual));
+        btnNota.setVisible(cantidadActual >= 1);
+    });
+
+    btnMenos.addActionListener(e -> {
+        int cantidadActual = cantidades.get(producto.getIdProducto());
+
+        if (cantidadActual > 0) {
+            cantidadActual--;
             cantidades.put(producto.getIdProducto(), cantidadActual);
             lblCantidad.setText(String.valueOf(cantidadActual));
             btnNota.setVisible(cantidadActual >= 1);
-        });
+        }
+    });
 
-        btnMenos.addActionListener(e -> {
-            int cantidadActual = cantidades.get(producto.getIdProducto());
+    btnNota.addActionListener(e -> {
+        String nuevaNota = JOptionPane.showInputDialog(
+                this,
+                "Escribe una nota para " + producto.getNombre() + ":",
+                notas.getOrDefault(producto.getIdProducto(), "")
+        );
 
-            if (cantidadActual > 0) {
-                cantidadActual--;
-                cantidades.put(producto.getIdProducto(), cantidadActual);
-                lblCantidad.setText(String.valueOf(cantidadActual));
-                btnNota.setVisible(cantidadActual >= 1);
+        if (nuevaNota != null) {
+            notas.put(producto.getIdProducto(), nuevaNota.trim());
+            btnNota.setText(nuevaNota.trim().isEmpty() ? "+Agregar nota" : "Editar nota");
+        }
+    });
+
+    panel.add(panelImagen);
+    panel.add(Box.createVerticalStrut(8));
+    panel.add(lblNombre);
+    panel.add(Box.createVerticalStrut(8));
+    panel.add(panelCantidad);
+    panel.add(Box.createVerticalStrut(5));
+    panel.add(btnNota);
+
+    return panel;
+}
+
+    private void accionBuscarProductos() {
+        String texto = txtBuscar.getText().trim().toLowerCase();
+
+        if (texto.isEmpty() || texto.equals("buscar producto")) {
+            cargarProductos(listaOriginalProductos);
+            return;
+        }
+
+        List<ProductoDTO> filtrados = new ArrayList<>();
+
+        for (ProductoDTO producto : listaOriginalProductos) {
+            String nombre = producto.getNombre() != null ? producto.getNombre().toLowerCase() : "";
+
+            if (nombre.contains(texto)) {
+                filtrados.add(producto);
+            }
+        }
+
+        cargarProductos(filtrados);
+    }
+
+    private void ponerPlaceholderBusquedaProductos() {
+        txtBuscar.setText("Buscar producto");
+        txtBuscar.setForeground(Color.GRAY);
+
+        txtBuscar.addFocusListener(new java.awt.event.FocusAdapter() {
+            @Override
+            public void focusGained(java.awt.event.FocusEvent e) {
+                if (txtBuscar.getText().equals("Buscar producto")) {
+                    txtBuscar.setText("");
+                    txtBuscar.setForeground(Color.BLACK);
+                }
+            }
+
+            @Override
+            public void focusLost(java.awt.event.FocusEvent e) {
+                if (txtBuscar.getText().trim().isEmpty()) {
+                    txtBuscar.setText("Buscar producto");
+                    txtBuscar.setForeground(Color.GRAY);
+                }
             }
         });
-        
-        btnNota.addActionListener(e -> {
-            String nuevaNota = JOptionPane.showInputDialog(
-                    this,
-                    "Escribe una nota para " + producto.getNombre() + ":",
-                    notas.getOrDefault(producto.getIdProducto(), "") // muestra si ya habia una nota
-            );
-
-            if (nuevaNota != null) {
-                notas.put(producto.getIdProducto(), nuevaNota.trim());
-                btnNota.setText("Editar nota");
-            }
-        });
-
-        panel.add(panelImagen);
-        panel.add(Box.createVerticalStrut(8));
-        panel.add(lblNombre);
-        panel.add(Box.createVerticalStrut(8));
-        panel.add(panelCantidad);
-        panel.add(Box.createVerticalStrut(5));
-        panel.add(btnNota);
-
-        return panel;
     }
 }
