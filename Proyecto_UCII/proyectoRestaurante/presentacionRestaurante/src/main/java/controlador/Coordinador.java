@@ -39,10 +39,12 @@ public class Coordinador implements ICoordinador {
     private FrmEditarCliente frmEditarCliente;
     private FrmInicioSesionMesero frmInicioSesionMesero;
     private FrmMesas frmMesas;
+    private FrmSeleccionProductos frmSeleccionProductos;
 
     private List<ClienteFrecuenteDTO> listaClientesActual;
     private ClienteFrecuenteDTO clienteSeleccionado;
     private MeseroDTO meseroActual;
+    private MesaDTO mesaSeleccionada;
 
     // INGREDIENTES
     private final IngredienteBO ingredienteBO;
@@ -164,7 +166,8 @@ public class Coordinador implements ICoordinador {
         frmEditarCliente.setVisible(true);
         frmEditarCliente.toFront();
     }
-
+    
+    @Override
     public void mostrarInicioSesionMesero() {
         if (frmInicioSesionMesero == null) {
             frmInicioSesionMesero = new FrmInicioSesionMesero(this);
@@ -218,11 +221,13 @@ public class Coordinador implements ICoordinador {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
-
+    
+    @Override
     public MeseroDTO getMeseroActual() {
         return meseroActual;
     }
     
+    @Override
     public MeseroDTO buscarMeseroPorUsuario(String usuario){
         try{
             MeseroDTO mesero = meseroBO.buscarMeseroPorUsuario(usuario);
@@ -448,6 +453,7 @@ public class Coordinador implements ICoordinador {
         return this.listaProductosActual;
     }
     
+    @Override
     public void mostrarMesas(){   
         if (frmMesas == null) {
             frmMesas = new FrmMesas(this);
@@ -455,6 +461,7 @@ public class Coordinador implements ICoordinador {
         frmMesas.setVisible(true);
     }
     
+    @Override
     public List<MesaDTO> obtenerMesas(){
         try{
             if(mesas == null || mesas.isEmpty()){
@@ -468,6 +475,7 @@ public class Coordinador implements ICoordinador {
         }
     }
     
+    @Override
     public List<MesaDTO> cargaMasivaMesas(){
         if(mesas == null || mesas.isEmpty()){
             
@@ -495,6 +503,7 @@ public class Coordinador implements ICoordinador {
     }
     
     //DATOS PRECARGADOS
+    @Override
     public void precargarMeseros() {
         try {
             if (meseroBO.consultarTodos().isEmpty()) {
@@ -509,7 +518,35 @@ public class Coordinador implements ICoordinador {
             }
         } catch (NegocioException e) {
             e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "error al precargar los datos");
+            JOptionPane.showMessageDialog(null, "Error al precargar los datos");
+        }
+    }
+
+    @Override
+    public void mostrarSeleccionProductos() {
+        if(frmSeleccionProductos == null){
+            frmSeleccionProductos = new FrmSeleccionProductos(this);
+        }
+        frmSeleccionProductos.setVisible(true);
+    }
+
+    @Override
+    public List<ProductoDTO> obtenerProductos() {
+        try{
+            listaProductosActual = productoBO.consultarTodos();
+            return listaProductosActual;
+        }catch(NegocioException e){
+            JOptionPane.showMessageDialog(null, "Error al consultar los productos");
+            return null;
+        }
+    }
+
+    @Override
+    public void setMesaSeleccionada(MesaDTO mesa) {
+        if(mesaSeleccionada != null){
+            JOptionPane.showMessageDialog(null, "La mesa numero " + mesaSeleccionada.getNumero() + " ya esta seleccionada");
+        }else{
+            mesaSeleccionada = mesa;
         }
     }
 }
