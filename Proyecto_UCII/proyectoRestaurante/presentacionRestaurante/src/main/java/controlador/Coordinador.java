@@ -89,6 +89,12 @@ public class Coordinador implements ICoordinador {
     private ProductoDTO productoSeleccionado;
     private List<MesaDTO> mesas;
     
+    //Limpiar todo
+    public void limpiarSesionComanda(){
+        this.mesaSeleccionada = null;
+        this.mesas = null;
+    }
+    
     //COMANDAS
     private final ComandaBO comandaBO;
     
@@ -520,19 +526,19 @@ public class Coordinador implements ICoordinador {
     
     @Override
     public void mostrarMesas() {
-        if (frmMesas == null) {
+//        if (frmMesas == null) {
             frmMesas = new FrmMesas(this);
-        }
+//        }
         frmMesas.setVisible(true);
     }
 
     @Override
     public List<MesaDTO> obtenerMesas() {
         try {
-            if (mesas == null || mesas.isEmpty()) {
+            if(mesas == null || mesas.isEmpty()){
                 mesas = mesaBO.consultarTodas();
             }
-
+            
             return mesas;
 
         } catch (NegocioException e) {
@@ -586,7 +592,6 @@ public class Coordinador implements ICoordinador {
     public void precargarMeseros() {
         try {
             if (meseroBO.consultarTodos().isEmpty()) {
-                JOptionPane.showMessageDialog(null, "pasa");
                 MeseroDTO m = new MeseroDTO();
                 m.setRfc("CIVJ061128V25");
                 m.setApellidoPaterno("Cisneros");
@@ -667,6 +672,10 @@ public class Coordinador implements ICoordinador {
             comanda.setFecha(LocalDateTime.now());
             comanda.setEstado(EstadoComandaDTO.ABIERTA);
             mesaSeleccionada.setDisponibilidad(EstadoMesaDTO.NO_DISPONIBLE);
+            
+            mesaSeleccionada = mesaBO.actualizarMesa(mesaSeleccionada);
+            
+            mesas = mesaBO.consultarTodas();
             
 
             ComandaDTO registrado = comandaBO.registrarComanda(comanda);

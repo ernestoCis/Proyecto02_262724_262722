@@ -18,4 +18,6 @@ public interface IMesaBO {
     public List<MesaDTO> consultarTodas() throws NegocioException;
     
     public MesaDTO buscarMesaPorNumero(Integer numero) throws NegocioException;
+    
+    public MesaDTO actualizarMesa(MesaDTO mesaDTO) throws NegocioException;
 }

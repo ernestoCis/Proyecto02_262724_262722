@@ -20,4 +20,5 @@ public interface IMesaDAO {
     
     public Mesa consultarMesaPorNumero(Integer numeroMesa) throws PersistenciaException;
     
+    public Mesa actualizarMesa(Mesa mesa) throws PersistenciaException;
 }

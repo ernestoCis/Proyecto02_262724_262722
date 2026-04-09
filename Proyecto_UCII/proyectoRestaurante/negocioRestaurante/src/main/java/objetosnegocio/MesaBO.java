@@ -86,5 +86,16 @@ public class MesaBO implements IMesaBO{
             throw new NegocioException("Error al consultar la mesa", e);
         }
     }
+
+    @Override
+    public MesaDTO actualizarMesa(MesaDTO mesaDTO) throws NegocioException {
+        try {
+            Mesa entidad = MesaAdapter.dtoAEntidad(mesaDTO);
+            Mesa actualizada = mesaDAO.actualizarMesa(entidad);
+            return MesaAdapter.entidadADto(actualizada);
+        } catch (PersistenciaException e) {
+            throw new NegocioException("No se pudo actualizar la mesa", e);
+        }
+    }
     
 }

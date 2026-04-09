@@ -19,6 +19,7 @@ public class ComandaDTO {
     private LocalDateTime fecha;
     private Double total;
     private EstadoComandaDTO estado;
+    private Integer numeroMesa;
     
     private MesaDTO mesa;
     private MeseroDTO mesero;
@@ -29,11 +30,12 @@ public class ComandaDTO {
     public ComandaDTO() {
     }
 
-    public ComandaDTO(Long idComanda, String folio, LocalDateTime fecha, Double total, EstadoComandaDTO estado, MesaDTO mesa, MeseroDTO mesero, ClienteFrecuenteDTO cliente) {
+    public ComandaDTO(Long idComanda, String folio, LocalDateTime fecha, Double total, Integer numeroMesa, EstadoComandaDTO estado, MesaDTO mesa, MeseroDTO mesero, ClienteFrecuenteDTO cliente) {
         this.idComanda = idComanda;
         this.folio = folio;
         this.fecha = fecha;
         this.total = total;
+        this.numeroMesa = numeroMesa;
         this.estado = estado;
         this.mesa = mesa;
         this.mesero = mesero;
@@ -70,6 +72,14 @@ public class ComandaDTO {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public Integer getNumeroMesa() {
+        return numeroMesa;
+    }
+
+    public void setNumeroMesa(Integer numeroMesa) {
+        this.numeroMesa = numeroMesa;
     }
 
     public EstadoComandaDTO getEstado() {

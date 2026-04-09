@@ -109,4 +109,6 @@ public interface ICoordinador {
     
     MesaDTO getMesaSeleccionada();
     
+    void limpiarSesionComanda();
+    
 }

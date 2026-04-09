@@ -86,5 +86,23 @@ public class MesaDAO implements IMesaDAO{
             em.close();
         }
     }
+
+    @Override
+    public Mesa actualizarMesa(Mesa mesa) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            em.getTransaction().begin();
+            Mesa actualizada = em.merge(mesa);
+            em.getTransaction().commit();
+            return actualizada;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Error al cambiar el estado de la mesa");
+        } finally {
+            em.close();
+        }
+    }
     
 }

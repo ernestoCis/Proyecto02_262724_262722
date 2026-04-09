@@ -254,6 +254,7 @@ public class FrmMesas extends JFrame {
                 comanda.setMesero(coordinador.getMeseroActual());
                 coordinador.setMesaSeleccionada(mesa);
                 comanda.setMesa(mesa);
+                comanda.setNumeroMesa(mesa.getNumero());
                 
                 coordinador.setComanda(comanda);
                 

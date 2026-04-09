@@ -28,6 +28,7 @@ public class ComandaAdapter {
         entidad.setFolio(dto.getFolio());
         entidad.setFecha(dto.getFecha());
         entidad.setTotal(dto.getTotal());
+        entidad.setNumeroMesa(dto.getNumeroMesa());
         
         if(dto.getEstado() == EstadoComandaDTO.ABIERTA){
             entidad.setEstado(EstadoComanda.ABIERTA);
@@ -68,6 +69,7 @@ public class ComandaAdapter {
         dto.setFolio(entidad.getFolio());
         dto.setFecha(entidad.getFecha());
         dto.setTotal(entidad.getTotal());
+        dto.setNumeroMesa(entidad.getNumeroMesa());
 
         if(entidad.getEstado() == EstadoComanda.ABIERTA){
             dto.setEstado(EstadoComandaDTO.ABIERTA);

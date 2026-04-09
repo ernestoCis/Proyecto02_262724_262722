@@ -30,6 +30,9 @@ public class Comanda {
     @Column(nullable = false)
     private Double total;
     
+    @Column(nullable = true)
+    private Integer numeroMesa;
+    
     @Enumerated(EnumType.STRING)
     private EstadoComanda estado;
     
@@ -51,11 +54,12 @@ public class Comanda {
     public Comanda() {
     }
 
-    public Comanda(Long idComanda, String folio, LocalDateTime fecha, Double total, EstadoComanda estado, Mesa mesa, ClienteFrecuente cliente, Mesero mesero, List<DetallePedido> detalles) {
+    public Comanda(Long idComanda, String folio, LocalDateTime fecha, Double total, Integer numeroMesa, EstadoComanda estado, Mesa mesa, ClienteFrecuente cliente, Mesero mesero, List<DetallePedido> detalles) {
         this.idComanda = idComanda;
         this.folio = folio;
         this.fecha = fecha;
         this.total = total;
+        this.numeroMesa = numeroMesa;
         this.estado = estado;
         this.mesa = mesa;
         this.cliente = cliente;
@@ -63,10 +67,11 @@ public class Comanda {
         this.detalles = detalles;
     }
 
-    public Comanda(String folio, LocalDateTime fecha, Double total, EstadoComanda estado, Mesa mesa, ClienteFrecuente cliente, Mesero mesero, List<DetallePedido> detalles) {
+    public Comanda(String folio, LocalDateTime fecha, Double total, Integer numeroMesa, EstadoComanda estado, Mesa mesa, ClienteFrecuente cliente, Mesero mesero, List<DetallePedido> detalles) {
         this.folio = folio;
         this.fecha = fecha;
         this.total = total;
+        this.numeroMesa = numeroMesa;
         this.estado = estado;
         this.mesa = mesa;
         this.cliente = cliente;
@@ -104,6 +109,14 @@ public class Comanda {
 
     public void setTotal(Double total) {
         this.total = total;
+    }
+
+    public Integer getNumeroMesa() {
+        return numeroMesa;
+    }
+
+    public void setNumeroMesa(Integer numeroMesa) {
+        this.numeroMesa = numeroMesa;
     }
 
     public EstadoComanda getEstado() {
