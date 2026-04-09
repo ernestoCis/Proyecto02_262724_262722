@@ -224,6 +224,7 @@ public class FrmConfirmacionComanda extends JFrame {
 
         btnAceptar.addActionListener(e -> {
             coordinador.mostrarMesas();
+            coordinador.limpiarSesionComanda();
             dispose();
         });
     }

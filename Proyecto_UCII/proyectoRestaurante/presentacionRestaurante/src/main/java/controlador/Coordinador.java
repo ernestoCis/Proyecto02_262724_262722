@@ -94,6 +94,10 @@ public class Coordinador implements ICoordinador {
     public void limpiarSesionComanda(){
         this.mesaSeleccionada = null;
         this.mesas = null;
+        this.clienteSeleccionado = null;
+        this.carrito = null;
+        this.comanda = null;
+        
     }
     
     //COMANDAS
