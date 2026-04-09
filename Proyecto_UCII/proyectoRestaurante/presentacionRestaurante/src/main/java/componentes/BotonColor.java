@@ -9,22 +9,22 @@ import java.awt.event.MouseEvent;
  * 
  * @author Paulina Guevara, Ernesto Cisneros
  */
-public class BotonEstilizado extends JButton {
+public class BotonColor extends JButton {
 
-    private final Color colorBorde = Color.decode("#3B3B3B");
-    private final Color colorHover = Color.decode("#875D5B");
-    private final Color colorNormal = Color.decode("#CC514E");
+    private final Color colorBorde = Color.decode("#182533");
+    private final Color colorHover = Color.decode("#616E80");
+    private final Color colorNormal = Color.decode("#243547");
 
     private boolean hover = false;
 
-    public BotonEstilizado(String texto) {
+    public BotonColor(String texto) {
         super(texto);
         configurar();
         eventosHover();
     }
 
     private void configurar() {
-        setFont(new Font("SansSerif", Font.PLAIN, 20));
+        setFont(new Font("SansSerif", Font.PLAIN, 16));
         setCursor(new Cursor(Cursor.HAND_CURSOR));
         setFocusPainted(false);
         setContentAreaFilled(false);

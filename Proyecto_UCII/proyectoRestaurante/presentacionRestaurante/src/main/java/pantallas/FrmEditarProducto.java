@@ -4,6 +4,8 @@ import componentes.BotonEstilizado;
 import componentes.BotonRegresar;
 import componentes.PanelRedondeado;
 import controlador.Coordinador;
+import dtos.ProductoDTO;
+
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
@@ -11,9 +13,9 @@ import javax.swing.table.DefaultTableModel;
 
 /**
  * 
- * @author Paulina Guevara, Ernesto Cisneros 
+ * @author Paulina Guevara, Ernesto Cisneros
  */
-public class FrmRegistrarProducto extends JFrame {
+public class FrmEditarProducto extends JFrame {
 
     private final Coordinador coordinador;
 
@@ -27,21 +29,25 @@ public class FrmRegistrarProducto extends JFrame {
     private JLabel lblImagen;
     private String rutaImagen;
 
-    private BotonEstilizado btnRegistrar;
+    private BotonEstilizado btnGuardar;
     private BotonEstilizado btnAgregarIngrediente;
     private BotonEstilizado btnEliminarIngrediente;
     private BotonEstilizado btnSeleccionarImagen;
     private BotonRegresar btnRegresar;
 
-    
-    public FrmRegistrarProducto(Coordinador coordinador) {
+    private ProductoDTO producto;
+
+    public FrmEditarProducto(Coordinador coordinador) {
         this.coordinador = coordinador;
+        this.producto = coordinador.getProductoSeleccionado();
+
         configurarVentana();
         inicializarComponentes();
+        cargarDatos(); 
     }
 
     private void configurarVentana() {
-        setTitle("Productos");
+        setTitle("Editar Producto");
         setSize(1000, 650);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -103,7 +109,7 @@ public class FrmRegistrarProducto extends JFrame {
         panelFormulario.setBackground(colorPanel);
         panelFormulario.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
-        JLabel lblSubtitulo = new JLabel("Registrar Producto");
+        JLabel lblSubtitulo = new JLabel("Editar Producto");
         lblSubtitulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
         lblSubtitulo.setFont(new Font("SansSerif", Font.BOLD, 24));
         lblSubtitulo.setForeground(colorTexto);
@@ -113,7 +119,7 @@ public class FrmRegistrarProducto extends JFrame {
         panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.X_AXIS));
         panelContenido.setOpaque(false);
 
-        // FORMULARIO
+        // CAMPOS
         JPanel panelCampos = new JPanel();
         panelCampos.setLayout(new BoxLayout(panelCampos, BoxLayout.Y_AXIS));
         panelCampos.setOpaque(false);
@@ -121,6 +127,9 @@ public class FrmRegistrarProducto extends JFrame {
         txtNombre = new JTextField();
         txtPrecio = new JTextField();
         comboTipo = new JComboBox<>(new String[]{"PLATILLO", "BEBIDA", "POSTRE"});
+
+        txtNombre.setEditable(false);
+        comboTipo.setEnabled(false);
 
         panelCampos.add(crearCampo("Nombre", txtNombre));
         panelCampos.add(Box.createVerticalStrut(15));
@@ -188,12 +197,12 @@ public class FrmRegistrarProducto extends JFrame {
         panelContenido.add(panelIngredientes);
 
         // BOTÓN
-        btnRegistrar = new BotonEstilizado("Registrar");
+        btnGuardar = new BotonEstilizado("Guardar");
 
-        JPanel panelBoton = new JPanel(new FlowLayout(FlowLayout.CENTER));
-        panelBoton.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
+        JPanel panelBoton = new JPanel();
         panelBoton.setOpaque(false);
-        panelBoton.add(btnRegistrar);
+        panelBoton.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
+        panelBoton.add(btnGuardar);
 
         panelFormulario.add(lblSubtitulo, BorderLayout.NORTH);
         panelFormulario.add(panelContenido, BorderLayout.CENTER);
@@ -208,6 +217,19 @@ public class FrmRegistrarProducto extends JFrame {
         add(panelPrincipal);
 
         eventos();
+    }
+
+    // CARGAR DATOS
+    private void cargarDatos() {
+        if (producto == null) {
+            return;
+        }
+
+        txtNombre.setText(producto.getNombre());
+        txtPrecio.setText(String.valueOf(producto.getPrecio()));
+        comboTipo.setSelectedItem(producto.getTipo().toString());
+
+        // ingre
     }
 
     private JPanel crearCampo(String texto, JTextField campo) {
@@ -237,9 +259,9 @@ public class FrmRegistrarProducto extends JFrame {
 
         combo.setPreferredSize(size);
         combo.setMaximumSize(size);
-        combo.setMinimumSize(size); 
+        combo.setMinimumSize(size);
 
-        combo.setAlignmentX(Component.LEFT_ALIGNMENT); 
+        combo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JPanel contenedor = new JPanel();
         contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
@@ -275,14 +297,13 @@ public class FrmRegistrarProducto extends JFrame {
             }
         });
 
-        btnRegistrar.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Producto registrado (demo)");
+        btnGuardar.addActionListener(e -> {
+            JOptionPane.showMessageDialog(this, "Cambios guardados (demo)");
         });
     }
 
     private void seleccionarImagen() {
         JFileChooser fileChooser = new JFileChooser();
-
         int resultado = fileChooser.showOpenDialog(this);
 
         if (resultado == JFileChooser.APPROVE_OPTION) {
@@ -291,9 +312,7 @@ public class FrmRegistrarProducto extends JFrame {
 
             ImageIcon icono = new ImageIcon(rutaImagen);
             Image img = icono.getImage().getScaledInstance(
-                    lblImagen.getWidth(),
-                    lblImagen.getHeight(),
-                    Image.SCALE_SMOOTH
+                    170, 195, Image.SCALE_SMOOTH
             );
 
             lblImagen.setText("");

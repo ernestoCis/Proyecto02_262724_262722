@@ -84,6 +84,7 @@ public class Coordinador implements ICoordinador {
     private FrmProductos frmProductos;
     private FrmRegistrarProducto frmRegistrarProducto;
     private FrmDetalleProducto frmDetalleProducto;
+    private FrmEditarProducto frmEditarProducto;
 
     private List<ProductoDTO> listaProductosActual;
     private ProductoDTO productoSeleccionado;
@@ -296,7 +297,7 @@ public class Coordinador implements ICoordinador {
 
     }
 
-    //----- INGREDIENTES -----
+    // INGREDIENTES 
     @Override
     public void mostrarIngredientes() {
         try {
@@ -441,42 +442,43 @@ public class Coordinador implements ICoordinador {
         }
     }
 
-//    @Override
-//    public void mostrarRegistrarProducto() {
-//        try {
-//            this.listaProductosActual = productoBO.consultarTodos();
-//        } catch (NegocioException ex) {
-//            JOptionPane.showMessageDialog(null, ex.getMessage());
-//        }
-//
-//        if (frmRegistrarProducto == null) {
-//            frmRegistrarProducto = new FrmRegistrarProducto(this);
-//        }
-//
-//        frmRegistrarProducto.setVisible(true);
-//        frmRegistrarProducto.toFront();
-//    }
-//
-//    @Override
-//    public void registrarProducto(ProductoDTO productoDTO) {
-//        try {
-//            productoBO.registrarProducto(productoDTO);
-//
-//            JOptionPane.showMessageDialog(null, "Producto registrado correctamente");
-//
-//            actualizarTablaProductos();
-//
-//        } catch (NegocioException ex) {
-//            JOptionPane.showMessageDialog(null, ex.getMessage());
-//        }
-//
-//        if (frmRegistrarProducto != null) {
-//            frmRegistrarProducto.dispose();
-//            frmRegistrarProducto = null;
-//        }
-//
-//        frmProductos.setVisible(true);
-//    }
+    @Override
+    public void mostrarRegistrarProducto() {
+        try {
+            this.listaProductosActual = productoBO.consultarTodos();
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+
+        if (frmRegistrarProducto == null) {
+            frmRegistrarProducto = new FrmRegistrarProducto(this);
+        }
+
+        frmRegistrarProducto.setVisible(true);
+        frmRegistrarProducto.toFront();
+    }
+
+    @Override
+    public void registrarProducto(ProductoDTO productoDTO) {
+        try {
+            productoBO.registrarProducto(productoDTO);
+
+            JOptionPane.showMessageDialog(null, "Producto registrado correctamente");
+
+            actualizarTablaProductos();
+
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+
+        if (frmRegistrarProducto != null) {
+            frmRegistrarProducto.dispose();
+            frmRegistrarProducto = null;
+        }
+
+        frmProductos.setVisible(true);
+    }
+
     @Override
     public void mostrarDetalleProducto() {
         if (productoSeleccionado == null) {
@@ -492,7 +494,23 @@ public class Coordinador implements ICoordinador {
         frmDetalleProducto.setVisible(true);
         frmDetalleProducto.toFront();
     }
+    
+    @Override
+    public void mostrarEditarProducto() {
+        if (productoSeleccionado == null) {
+            JOptionPane.showMessageDialog(null, "Seleccione un producto");
+            return;
+        }
 
+        if (frmEditarProducto != null) {
+            frmEditarProducto.dispose();
+        }
+
+        frmEditarProducto = new FrmEditarProducto(this);
+        frmEditarProducto.setVisible(true);
+        frmEditarProducto.toFront();
+    }
+    
     @Override
     public void actualizarTablaProductos() {
         try {

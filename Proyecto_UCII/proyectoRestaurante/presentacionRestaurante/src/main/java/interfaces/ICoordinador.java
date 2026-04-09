@@ -28,7 +28,7 @@ public interface ICoordinador {
     void actualizarTablaClientes();
 
     void mostrarEditarCliente();
-    
+
     void mostrarInicioSesionMesero();
 
     void editarCliente(ClienteFrecuenteDTO clienteDTO);
@@ -40,9 +40,9 @@ public interface ICoordinador {
     List<ClienteFrecuenteDTO> getListaClientesActual();
 
     void eliminarCliente();
-    
+
     MeseroDTO getMeseroActual();
-    
+
     MeseroDTO buscarMeseroPorUsuario(String usuario);
 
     // INGREDIENTES
@@ -63,11 +63,13 @@ public interface ICoordinador {
     // PRODUCTOS
     void mostrarProductos();
 
-//    void mostrarRegistrarProducto();
-//
-//    void registrarProducto(ProductoDTO productoDTO);
-    
+    void mostrarRegistrarProducto();
+
+    void registrarProducto(ProductoDTO productoDTO);
+
     void mostrarDetalleProducto();
+
+    void mostrarEditarProducto();
 
     void actualizarTablaProductos();
 
@@ -76,27 +78,27 @@ public interface ICoordinador {
     ProductoDTO getProductoSeleccionado();
 
     List<ProductoDTO> getListaProductosActual();
-    
+
     void setListaProductosAtual(List<ProductoDTO> productos);
-    
+
     void mostrarMesas();
-    
+
     List<MesaDTO> obtenerMesas();
-    
+
     List<MesaDTO> cargaMasivaMesas();
-    
+
     void precargarMeseros();
-    
+
     void mostrarSeleccionProductos();
-    
+
     List<ProductoDTO> obtenerProductos();
-    
+
     void setMesaSeleccionada(MesaDTO mesa);
-    
+
     List<DetallePedidoDTO> getCarrito();
-    
+
     void setCarrito(List<DetallePedidoDTO> carrito);
-    
+
     void mostrarResumenPedido();
     
     List<ClienteFrecuenteDTO> consultarClientes();
@@ -111,4 +113,5 @@ public interface ICoordinador {
     
     void limpiarSesionComanda();
     
+}
 }

@@ -47,7 +47,7 @@ public class FrmAcciones extends JFrame {
 
     private void initComponents() {
         setTitle("Restaurante");
-        setSize(1000, 700);
+        setSize(1000, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);

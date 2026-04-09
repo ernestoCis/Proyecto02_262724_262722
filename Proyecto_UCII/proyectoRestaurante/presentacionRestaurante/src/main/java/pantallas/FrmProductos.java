@@ -9,10 +9,11 @@ import java.awt.event.*;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.*;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * 
+ *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmProductos extends JFrame {
@@ -25,6 +26,7 @@ public class FrmProductos extends JFrame {
 
     private BotonRegresar btnRegresar;
     private BotonEstilizado btnRegistrar;
+    private BotonEstilizado btnEditar;
     private BotonEstilizado btnEliminar;
 
     private List<ProductoDTO> listaOriginal;
@@ -134,6 +136,10 @@ public class FrmProductos extends JFrame {
         tblProductos.setRowHeight(40);
         tblProductos.setFont(new Font("SansSerif", Font.PLAIN, 14));
 
+        ((DefaultTableCellRenderer) tblProductos.getTableHeader()
+                .getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
+
         tblProductos.getTableHeader().setFont(new Font("SansSerif", Font.BOLD, 14));
         tblProductos.getTableHeader().setBackground(colorTablaHeader);
         tblProductos.getTableHeader().setForeground(Color.BLACK);
@@ -159,10 +165,14 @@ public class FrmProductos extends JFrame {
         panelBotones.setOpaque(false);
 
         btnRegistrar = new BotonEstilizado("+ Registrar");
+        btnEditar = new BotonEstilizado("Editar");
+        //btnEditar.setEnabled(false);
         btnEliminar = new BotonEstilizado("Eliminar");
-        btnEliminar.setEnabled(false);
+        //btnEliminar.setEnabled(false);
 
         panelBotones.add(btnRegistrar);
+        panelBotones.add(Box.createHorizontalStrut(15));
+        panelBotones.add(btnEditar);
         panelBotones.add(Box.createHorizontalStrut(15));
         panelBotones.add(btnEliminar);
 
@@ -206,7 +216,22 @@ public class FrmProductos extends JFrame {
 
         btnRegistrar.addActionListener(e -> {
             dispose();
-           // coordinador.mostrarRegistrarProducto();
+            coordinador.mostrarRegistrarProducto();
+        });
+
+        btnEditar.addActionListener(e -> {
+
+            int fila = tblProductos.getSelectedRow();
+
+            if (fila == -1) {
+                JOptionPane.showMessageDialog(this, "Seleccione un producto");
+                return;
+            }
+
+            ProductoDTO producto = listaOriginal.get(fila);
+            coordinador.setProductoSeleccionado(producto);
+
+            coordinador.mostrarEditarProducto();
         });
 
         btnRegresar.addActionListener(e -> {
@@ -285,7 +310,10 @@ public class FrmProductos extends JFrame {
     private void eliminarProductoSeleccionado() {
         int fila = tblProductos.getSelectedRow();
 
-        if (fila == -1) return;
+        if (fila == -1) {
+            JOptionPane.showMessageDialog(null, "Seleccione un producto");
+            return;
+        }
 
         ProductoDTO producto = listaOriginal.get(fila);
 
