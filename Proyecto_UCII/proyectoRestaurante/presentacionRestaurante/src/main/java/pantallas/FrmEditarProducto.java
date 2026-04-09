@@ -1,10 +1,12 @@
 package pantallas;
 
+import componentes.BotonEditar;
 import componentes.BotonEstilizado;
 import componentes.BotonRegresar;
 import componentes.PanelRedondeado;
 import controlador.Coordinador;
 import dtos.ProductoDTO;
+import enums.DisponibilidadProductoDTO;
 
 import java.awt.*;
 import javax.swing.*;
@@ -12,7 +14,7 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * 
+ *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmEditarProducto extends JFrame {
@@ -21,6 +23,7 @@ public class FrmEditarProducto extends JFrame {
 
     private JTextField txtNombre;
     private JTextField txtPrecio;
+    private JTextField txtDescripcion;
     private JComboBox<String> comboTipo;
 
     private JTable tablaIngredientes;
@@ -34,6 +37,7 @@ public class FrmEditarProducto extends JFrame {
     private BotonEstilizado btnEliminarIngrediente;
     private BotonEstilizado btnSeleccionarImagen;
     private BotonRegresar btnRegresar;
+    private BotonEditar btnDisponibilidad;
 
     private ProductoDTO producto;
 
@@ -43,7 +47,7 @@ public class FrmEditarProducto extends JFrame {
 
         configurarVentana();
         inicializarComponentes();
-        cargarDatos(); 
+        cargarDatos();
     }
 
     private void configurarVentana() {
@@ -110,9 +114,19 @@ public class FrmEditarProducto extends JFrame {
         panelFormulario.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
         JLabel lblSubtitulo = new JLabel("Editar Producto");
-        lblSubtitulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
+        lblSubtitulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
         lblSubtitulo.setFont(new Font("SansSerif", Font.BOLD, 24));
         lblSubtitulo.setForeground(colorTexto);
+
+        btnDisponibilidad = new BotonEditar("");
+        btnDisponibilidad.setPreferredSize(new Dimension(160, 40));
+        actualizarTextoDisponibilidad();
+
+        JPanel panelHeaderFormulario = new JPanel(new BorderLayout());
+        panelHeaderFormulario.setOpaque(false);
+
+        panelHeaderFormulario.add(lblSubtitulo, BorderLayout.WEST);
+        panelHeaderFormulario.add(btnDisponibilidad, BorderLayout.EAST);
 
         // CONTENIDO
         JPanel panelContenido = new JPanel();
@@ -126,16 +140,19 @@ public class FrmEditarProducto extends JFrame {
 
         txtNombre = new JTextField();
         txtPrecio = new JTextField();
+        txtDescripcion = new JTextField();
         comboTipo = new JComboBox<>(new String[]{"PLATILLO", "BEBIDA", "POSTRE"});
 
         txtNombre.setEditable(false);
         comboTipo.setEnabled(false);
 
         panelCampos.add(crearCampo("Nombre", txtNombre));
-        panelCampos.add(Box.createVerticalStrut(15));
+        panelCampos.add(Box.createVerticalStrut(8));
         panelCampos.add(crearCampo("Precio", txtPrecio));
-        panelCampos.add(Box.createVerticalStrut(15));
+        panelCampos.add(Box.createVerticalStrut(8));
         panelCampos.add(crearCombo("Tipo", comboTipo));
+        panelCampos.add(Box.createVerticalStrut(8));
+        panelCampos.add(crearCampo("Descripcion", txtDescripcion));
 
         // IMAGEN
         JPanel panelImagen = new JPanel();
@@ -204,7 +221,7 @@ public class FrmEditarProducto extends JFrame {
         panelBoton.setBorder(BorderFactory.createEmptyBorder(30, 0, 0, 0));
         panelBoton.add(btnGuardar);
 
-        panelFormulario.add(lblSubtitulo, BorderLayout.NORTH);
+        panelFormulario.add(panelHeaderFormulario, BorderLayout.NORTH);
         panelFormulario.add(panelContenido, BorderLayout.CENTER);
         panelFormulario.add(panelBoton, BorderLayout.SOUTH);
 
@@ -219,6 +236,14 @@ public class FrmEditarProducto extends JFrame {
         eventos();
     }
 
+    private void actualizarTextoDisponibilidad() {
+        if (producto != null) {
+            btnDisponibilidad.setText(
+                    producto.getDisponibilidad().toString().replace("_", " ")
+            );
+        }
+    }
+
     // CARGAR DATOS
     private void cargarDatos() {
         if (producto == null) {
@@ -228,6 +253,7 @@ public class FrmEditarProducto extends JFrame {
         txtNombre.setText(producto.getNombre());
         txtPrecio.setText(String.valueOf(producto.getPrecio()));
         comboTipo.setSelectedItem(producto.getTipo().toString());
+        txtDescripcion.setText(producto.getDescripcion());
 
         // ingre
     }
@@ -236,8 +262,8 @@ public class FrmEditarProducto extends JFrame {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
 
-        campo.setMaximumSize(new Dimension(250, 30));
-        campo.setPreferredSize(new Dimension(250, 30));
+        campo.setMaximumSize(new Dimension(250, 20));
+        campo.setPreferredSize(new Dimension(250, 20));
         campo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JPanel contenedor = new JPanel();
@@ -255,7 +281,7 @@ public class FrmEditarProducto extends JFrame {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
 
-        Dimension size = new Dimension(250, 30);
+        Dimension size = new Dimension(250, 20);
 
         combo.setPreferredSize(size);
         combo.setMaximumSize(size);
@@ -299,6 +325,33 @@ public class FrmEditarProducto extends JFrame {
 
         btnGuardar.addActionListener(e -> {
             JOptionPane.showMessageDialog(this, "Cambios guardados (demo)");
+        });
+
+        btnDisponibilidad.addActionListener(e -> {
+            if (producto == null) {
+                return;
+            }
+
+            DisponibilidadProductoDTO estadoActual = producto.getDisponibilidad();
+
+            DisponibilidadProductoDTO nuevoEstado
+                    = (estadoActual == DisponibilidadProductoDTO.DISPONIBLE)
+                            ? DisponibilidadProductoDTO.NO_DISPONIBLE
+                            : DisponibilidadProductoDTO.DISPONIBLE;
+
+            String textoMostrar = nuevoEstado.toString().replace("_", " ");
+
+            int opcion = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Desea cambiar el estado del producto a " + textoMostrar + "?",
+                    "Confirmar cambio",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (opcion == JOptionPane.YES_OPTION) {
+                producto.setDisponibilidad(nuevoEstado);
+                actualizarTextoDisponibilidad();
+            }
         });
     }
 

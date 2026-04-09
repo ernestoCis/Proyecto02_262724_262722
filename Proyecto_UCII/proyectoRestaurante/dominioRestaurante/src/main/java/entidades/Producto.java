@@ -31,6 +31,9 @@ public class Producto implements Serializable {
 
     @Enumerated(EnumType.STRING)
     private TipoProducto tipo;
+    
+    @Column(nullable = true)
+    private String descripcion;
 
     @Enumerated(EnumType.STRING)
     private DisponibilidadProducto disponibilidad;
@@ -43,19 +46,21 @@ public class Producto implements Serializable {
     public Producto() {
     }
 
-    public Producto(Long idProducto, String nombre, Double precio, TipoProducto tipo, DisponibilidadProducto disponibilidad, String rutaImg) {
+    public Producto(Long idProducto, String nombre, Double precio, TipoProducto tipo, String descripcion, DisponibilidadProducto disponibilidad, String rutaImg) {
         this.idProducto = idProducto;
         this.nombre = nombre;
         this.precio = precio;
         this.tipo = tipo;
+        this.descripcion = descripcion;
         this.disponibilidad = disponibilidad;
         this.rutaImg = rutaImg;
     }
 
-    public Producto(String nombre, Double precio, TipoProducto tipo, DisponibilidadProducto disponibilidad, String rutaImg) {
+    public Producto(String nombre, Double precio, TipoProducto tipo, String descripcion, DisponibilidadProducto disponibilidad, String rutaImg) {
         this.nombre = nombre;
         this.precio = precio;
         this.tipo = tipo;
+        this.descripcion = descripcion;
         this.disponibilidad = disponibilidad;
         this.rutaImg = rutaImg;
     }
@@ -82,6 +87,14 @@ public class Producto implements Serializable {
 
     public void setPrecio(Double precio) {
         this.precio = precio;
+    }
+
+    public String getDescripcion() {
+        return descripcion;
+    }
+
+    public void setDescripcion(String descripcion) {
+        this.descripcion = descripcion;
     }
 
     public TipoProducto getTipo() {

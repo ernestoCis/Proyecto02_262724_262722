@@ -19,6 +19,7 @@ public class FrmRegistrarProducto extends JFrame {
 
     private JTextField txtNombre;
     private JTextField txtPrecio;
+    private JTextField txtDescripcion;
     private JComboBox<String> comboTipo;
 
     private JTable tablaIngredientes;
@@ -104,7 +105,7 @@ public class FrmRegistrarProducto extends JFrame {
         panelFormulario.setBorder(BorderFactory.createEmptyBorder(30, 40, 30, 40));
 
         JLabel lblSubtitulo = new JLabel("Registrar Producto");
-        lblSubtitulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 30, 0));
+        lblSubtitulo.setBorder(BorderFactory.createEmptyBorder(0, 0, 15, 0));
         lblSubtitulo.setFont(new Font("SansSerif", Font.BOLD, 24));
         lblSubtitulo.setForeground(colorTexto);
 
@@ -121,12 +122,15 @@ public class FrmRegistrarProducto extends JFrame {
         txtNombre = new JTextField();
         txtPrecio = new JTextField();
         comboTipo = new JComboBox<>(new String[]{"PLATILLO", "BEBIDA", "POSTRE"});
+        txtDescripcion = new JTextField();
 
         panelCampos.add(crearCampo("Nombre", txtNombre));
-        panelCampos.add(Box.createVerticalStrut(15));
+        panelCampos.add(Box.createVerticalStrut(8));
         panelCampos.add(crearCampo("Precio", txtPrecio));
-        panelCampos.add(Box.createVerticalStrut(15));
+        panelCampos.add(Box.createVerticalStrut(8));
         panelCampos.add(crearCombo("Tipo", comboTipo));
+        panelCampos.add(Box.createVerticalStrut(8));
+        panelCampos.add(crearCampo("Descripción", txtDescripcion));
 
         // IMAGEN
         JPanel panelImagen = new JPanel();
@@ -214,8 +218,8 @@ public class FrmRegistrarProducto extends JFrame {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
 
-        campo.setMaximumSize(new Dimension(250, 30));
-        campo.setPreferredSize(new Dimension(250, 30));
+        campo.setMaximumSize(new Dimension(250, 20));
+        campo.setPreferredSize(new Dimension(250, 20));
         campo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JPanel contenedor = new JPanel();
@@ -233,7 +237,7 @@ public class FrmRegistrarProducto extends JFrame {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
 
-        Dimension size = new Dimension(250, 30);
+        Dimension size = new Dimension(250, 20);
 
         combo.setPreferredSize(size);
         combo.setMaximumSize(size);
