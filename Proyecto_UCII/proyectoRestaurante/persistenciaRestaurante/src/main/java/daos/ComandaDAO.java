@@ -6,9 +6,11 @@ package daos;
 
 import conexion.ConexionBD;
 import entidades.Comanda;
+import enums.EstadoComanda;
 import excepciones.PersistenciaException;
 import interfaces.IComandaDAO;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.TypedQuery;
 
 /**
  *
@@ -130,6 +132,24 @@ public class ComandaDAO implements IComandaDAO {
             return (maxId == null) ? 0L : maxId;
         } catch (Exception e) {
             return 0L;
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public Comanda buscarComandaAbiertaPorMesa(Integer numeroMesa) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            String jpql = "SELECT c FROM Comanda c LEFT JOIN FETCH c.detalles WHERE c.mesa.numero = :numMesa AND c.estado = :estadoEnum";
+
+            TypedQuery<Comanda> query = em.createQuery(jpql, Comanda.class);
+            query.setParameter("numMesa", numeroMesa);
+            query.setParameter("estadoEnum", EstadoComanda.ABIERTA);
+
+            return query.getSingleResult();
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al buscar la comanda abierta para la mesa " + numeroMesa, e);
         } finally {
             em.close();
         }

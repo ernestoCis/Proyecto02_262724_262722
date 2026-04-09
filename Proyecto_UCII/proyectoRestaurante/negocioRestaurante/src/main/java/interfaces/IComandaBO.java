@@ -22,4 +22,6 @@ public interface IComandaBO {
     public ComandaDTO buscarComanda(ComandaDTO comanda) throws NegocioException;
     
     String generarFolio() throws NegocioException;
+    
+    public ComandaDTO obtenerComandaAbiertaPorMesa(Integer numeroMesa) throws NegocioException;
 }
