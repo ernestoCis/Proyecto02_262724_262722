@@ -1,6 +1,7 @@
 package pantallas;
 
 import controlador.Coordinador;
+import dtos.ComandaDTO;
 import dtos.DetallePedidoDTO;
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -19,6 +20,7 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
@@ -216,16 +218,18 @@ public class FrmConfirmacionComanda extends JFrame {
 
     private void eventos() {
         btnSalir.addActionListener(e -> {
+            coordinador.mostrarInicioSesionMesero();
             dispose();
         });
 
         btnAceptar.addActionListener(e -> {
+            coordinador.mostrarMesas();
             dispose();
         });
     }
 
     private void cargarDatosComanda() {
-        var comanda = coordinador.getComanda();
+        ComandaDTO comanda = coordinador.getComanda();
 
         if (comanda == null) {
             lblFolio.setText("Folio: -");

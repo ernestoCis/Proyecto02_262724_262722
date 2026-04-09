@@ -107,4 +107,6 @@ public interface ICoordinador {
     
     void mostrarConfirmacionComanda();
     
+    MesaDTO getMesaSeleccionada();
+    
 }

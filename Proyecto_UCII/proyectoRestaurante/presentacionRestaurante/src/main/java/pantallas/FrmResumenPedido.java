@@ -329,8 +329,7 @@ public class FrmResumenPedido extends JFrame {
             if (clienteSeleccionado != null) {
                 coordinador.setClienteSeleccionado(clienteSeleccionado);
             }
-            
-            ComandaDTO comanda = new ComandaDTO();
+            ComandaDTO comanda = coordinador.getComanda();
             comanda.setCliente(coordinador.getClienteSeleccionado());
             comanda.setTotal(total);
             coordinador.setComanda(comanda);

@@ -39,6 +39,7 @@ public class MeseroAdapter {
         }
         
         Mesero entidad = new Mesero();
+        entidad.setIdEmpleado(dto.getIdMesero());
         entidad.setUsuario(dto.getUsuario());
         entidad.setRfc(dto.getRfc());
         entidad.setNombres(dto.getNombre());

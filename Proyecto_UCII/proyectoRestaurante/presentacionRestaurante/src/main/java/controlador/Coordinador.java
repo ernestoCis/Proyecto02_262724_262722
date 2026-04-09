@@ -11,13 +11,16 @@ import dtos.MeseroDTO;
 import dtos.IngredienteDTO;
 import dtos.MesaDTO;
 import dtos.ProductoDTO;
+import enums.EstadoComandaDTO;
 import enums.EstadoMesaDTO;
 import excepciones.NegocioException;
 import interfaces.ICoordinador;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import objetosnegocio.ClienteFrecuenteBO;
+import objetosnegocio.ComandaBO;
 import objetosnegocio.MeseroBO;
 import objetosnegocio.IngredienteBO;
 import objetosnegocio.MesaBO;
@@ -87,6 +90,8 @@ public class Coordinador implements ICoordinador {
     private List<MesaDTO> mesas;
     
     //COMANDAS
+    private final ComandaBO comandaBO;
+    
     FrmConfirmacionComanda frmConfirmacionComanda;
     
     private ComandaDTO comanda;
@@ -97,6 +102,7 @@ public class Coordinador implements ICoordinador {
         this.ingredienteBO = IngredienteBO.getInstance();
         this.productoBO = ProductoBO.getInstance();
         this.mesaBO = MesaBO.getInstance();
+        this.comandaBO = ComandaBO.getInstance();
     }
 
     //----- MOSTRAR FRAMES -----
@@ -510,6 +516,8 @@ public class Coordinador implements ICoordinador {
         return this.listaProductosActual;
     }
 
+    //----- MESAS -----
+    
     @Override
     public void mostrarMesas() {
         if (frmMesas == null) {
@@ -558,6 +566,20 @@ public class Coordinador implements ICoordinador {
 
         return mesas;
     }
+    
+    @Override
+    public void setMesaSeleccionada(MesaDTO mesa) {
+        if (mesaSeleccionada != null) {
+            JOptionPane.showMessageDialog(null, "La mesa numero " + mesaSeleccionada.getNumero() + " ya esta seleccionada");
+        } else {
+            mesaSeleccionada = mesa;
+        }
+    }
+    
+    @Override
+    public MesaDTO getMesaSeleccionada(){
+        return mesaSeleccionada;
+    }
 
     @Override
     //DATOS PRECARGADOS
@@ -579,14 +601,6 @@ public class Coordinador implements ICoordinador {
         }
     }
 
-    @Override
-    public void setMesaSeleccionada(MesaDTO mesa) {
-        if (mesaSeleccionada != null) {
-            JOptionPane.showMessageDialog(null, "La mesa numero " + mesaSeleccionada.getNumero() + " ya esta seleccionada");
-        } else {
-            mesaSeleccionada = mesa;
-        }
-    }
 
     //----- PANTALLA DE PRODUCTOS -----
     @Override
@@ -635,6 +649,9 @@ public class Coordinador implements ICoordinador {
     //----- COMANDAS -----
     @Override
     public ComandaDTO getComanda(){
+        if(comanda == null){
+            comanda = new ComandaDTO();
+        }
         return this.comanda;
     }
     
@@ -645,7 +662,25 @@ public class Coordinador implements ICoordinador {
 
     @Override
     public void mostrarConfirmacionComanda() {
-        new FrmConfirmacionComanda(this).setVisible(true);
+        try{
+            
+            comanda.setFecha(LocalDateTime.now());
+            comanda.setEstado(EstadoComandaDTO.ABIERTA);
+            mesaSeleccionada.setDisponibilidad(EstadoMesaDTO.NO_DISPONIBLE);
+            
+
+            ComandaDTO registrado = comandaBO.registrarComanda(comanda);
+
+            //settear el folo al DTO para la pantalla
+            comanda.setFolio(registrado.getFolio());
+            
+            new FrmConfirmacionComanda(this).setVisible(true);
+            
+        }catch(NegocioException e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al registrar la comanda");
+        }
+        
     }
     
 }

@@ -1,6 +1,7 @@
 package pantallas;
 
 import controlador.Coordinador;
+import dtos.ComandaDTO;
 import dtos.DetallePedidoDTO;
 import dtos.ProductoDTO;
 import java.awt.BorderLayout;
@@ -265,6 +266,11 @@ public class FrmSeleccionProductos extends JFrame {
             } else {
                 coordinador.setCarrito(listaDetalles);
 //                listaDetalles.forEach(d -> System.out.println(d.getProductoDTO().getNombre() + " "+d.getCantidad()));
+                ComandaDTO comanda = coordinador.getComanda();
+                comanda.setDetalles(listaDetalles);
+                comanda.setMesero(coordinador.getMeseroActual());
+                coordinador.setComanda(comanda);
+                
                 coordinador.mostrarResumenPedido();
                 dispose();
                 

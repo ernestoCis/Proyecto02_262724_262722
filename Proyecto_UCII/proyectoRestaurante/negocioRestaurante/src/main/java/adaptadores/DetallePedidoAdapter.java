@@ -36,7 +36,7 @@ public class DetallePedidoAdapter {
         entidad.setSubtotal(dto.getSubtotal());
         entidad.setNota(dto.getNota());
         
-        entidad.setProducto(ProductoAdapter.dtoAEntidadNuevo(dto.getProductoDTO()));
+        entidad.setProducto(ProductoAdapter.dtoAEntidadExistente(dto.getProductoDTO()));
         
         Comanda comanda = new Comanda();
         comanda.setIdComanda(dto.getIdComanda());
