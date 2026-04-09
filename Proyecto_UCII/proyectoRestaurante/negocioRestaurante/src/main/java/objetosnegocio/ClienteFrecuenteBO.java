@@ -61,19 +61,25 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
      * @param c
      * @return 
      */
-    private ClienteFrecuenteDTO convertir_calcular_clientes(ClienteFrecuente c) {
+    private ClienteFrecuenteDTO convertir_calcular_clientes(ClienteFrecuente c)throws NegocioException {
+        
+        try{
+            ClienteFrecuenteDTO dto = ClienteFrecuenteAdapter.entidadADTO(c);
 
-        ClienteFrecuenteDTO dto = ClienteFrecuenteAdapter.entidadADTO(c);
+            int visitas = comandaDAO.contarVisitas(c.getIdCliente());
+            double total = comandaDAO.totalGastado(c.getIdCliente());
+            int puntos = (int) (total / 20);
 
-        int visitas = comandaDAO.contarVisitas(c.getIdCliente());
-        double total = comandaDAO.totalGastado(c.getIdCliente());
-        int puntos = (int) (total / 20);
+            dto.setNumeroVisitas(visitas);
+            dto.setTotalGastado(total);
+            dto.setPuntos(puntos);
 
-        dto.setNumeroVisitas(visitas);
-        dto.setTotalGastado(total);
-        dto.setPuntos(puntos);
-
-        return dto;
+            return dto;
+        }catch(PersistenciaException e){
+            throw new NegocioException("Error al convertir y calcular puntos", e);
+        }
+        
+        
     }
 
     @Override

@@ -5,6 +5,8 @@
 package daos;
 
 import conexion.ConexionBD;
+import entidades.Comanda;
+import excepciones.PersistenciaException;
 import interfaces.IComandaDAO;
 import jakarta.persistence.EntityManager;
 
@@ -27,7 +29,7 @@ public class ComandaDAO implements IComandaDAO {
     }
     
     @Override
-    public int contarVisitas(Long idCliente) {
+    public int contarVisitas(Long idCliente) throws PersistenciaException  {
         EntityManager em = ConexionBD.crearConexion();
 
         Long count = em.createQuery(
@@ -40,7 +42,7 @@ public class ComandaDAO implements IComandaDAO {
     }
 
     @Override
-    public double totalGastado(Long idCliente) {
+    public double totalGastado(Long idCliente)  throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
 
         Double total = em.createQuery(
@@ -50,5 +52,86 @@ public class ComandaDAO implements IComandaDAO {
                 .getSingleResult();
 
         return total;
+    }
+    
+    public Comanda registrarComanda(Comanda comanda) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            em.getTransaction().begin();
+            em.persist(comanda);
+            em.getTransaction().commit();
+            return comanda;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Error al registrar la comanda: " + e.getMessage());
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Comanda actualizarComanda(Comanda comanda) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            em.getTransaction().begin();
+            // merge es el que se encarga de insertar detalles nuevos o actualizar existentes
+            Comanda actualizada = em.merge(comanda);
+            em.getTransaction().commit();
+            return actualizada;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Error al actualizar la comanda");
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Comanda eliminarComanda(Comanda comanda) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            em.getTransaction().begin();
+            // Buscamos la comanda antes de eliminar para que esté en contexto
+            Comanda c = em.find(Comanda.class, comanda.getIdComanda());
+            if (c != null) {
+                em.remove(c);
+            }
+            em.getTransaction().commit();
+            return c;
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Error al eliminar la comanda");
+        } finally {
+            em.close();
+        }
+    }
+    
+    public Comanda buscarComandaPorId(Long id) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            return em.find(Comanda.class, id);
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al buscar comanda por ID");
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public Long obtenerUltimoId(){
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            Long maxId = em.createQuery("SELECT MAX(c.idComanda) FROM Comanda c", Long.class)
+                    .getSingleResult();
+            return (maxId == null) ? 0L : maxId;
+        } catch (Exception e) {
+            return 0L;
+        } finally {
+            em.close();
+        }
     }
 }

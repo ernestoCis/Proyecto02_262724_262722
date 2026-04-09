@@ -5,18 +5,22 @@
 package controlador;
 
 import dtos.ClienteFrecuenteDTO;
+import dtos.ComandaDTO;
 import dtos.DetallePedidoDTO;
 import dtos.MeseroDTO;
 import dtos.IngredienteDTO;
 import dtos.MesaDTO;
 import dtos.ProductoDTO;
+import enums.EstadoComandaDTO;
 import enums.EstadoMesaDTO;
 import excepciones.NegocioException;
 import interfaces.ICoordinador;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
 import objetosnegocio.ClienteFrecuenteBO;
+import objetosnegocio.ComandaBO;
 import objetosnegocio.MeseroBO;
 import objetosnegocio.IngredienteBO;
 import objetosnegocio.MesaBO;
@@ -59,6 +63,8 @@ public class Coordinador implements ICoordinador {
 
     // SELECCION DE PRODUCTOS
     private FrmSeleccionProductos frmSeleccionProductos;
+    private FrmResumenPedido frmResumenPedido;
+    
 
     private List<DetallePedidoDTO> carrito;
 
@@ -83,6 +89,13 @@ public class Coordinador implements ICoordinador {
     private List<ProductoDTO> listaProductosActual;
     private ProductoDTO productoSeleccionado;
     private List<MesaDTO> mesas;
+    
+    //COMANDAS
+    private final ComandaBO comandaBO;
+    
+    FrmConfirmacionComanda frmConfirmacionComanda;
+    
+    private ComandaDTO comanda;
 
     public Coordinador() {
         this.clienteFrecuenteBO = ClienteFrecuenteBO.getInstance();
@@ -90,6 +103,7 @@ public class Coordinador implements ICoordinador {
         this.ingredienteBO = IngredienteBO.getInstance();
         this.productoBO = ProductoBO.getInstance();
         this.mesaBO = MesaBO.getInstance();
+        this.comandaBO = ComandaBO.getInstance();
     }
 
     //----- MOSTRAR FRAMES -----
@@ -232,6 +246,18 @@ public class Coordinador implements ICoordinador {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
+    
+    @Override
+    public List<ClienteFrecuenteDTO> consultarClientes(){
+        try{
+            listaClientesActual = clienteFrecuenteBO.consultarTodos();
+            return listaClientesActual;
+        }catch(NegocioException e){
+            JOptionPane.showMessageDialog(null, "Error al consultar el cliente");
+            return null;
+        }
+    }
+    
 
     //----- MESEROS -----
     @Override
@@ -508,6 +534,8 @@ public class Coordinador implements ICoordinador {
         return this.listaProductosActual;
     }
 
+    //----- MESAS -----
+    
     @Override
     public void mostrarMesas() {
         if (frmMesas == null) {
@@ -556,6 +584,20 @@ public class Coordinador implements ICoordinador {
 
         return mesas;
     }
+    
+    @Override
+    public void setMesaSeleccionada(MesaDTO mesa) {
+        if (mesaSeleccionada != null) {
+            JOptionPane.showMessageDialog(null, "La mesa numero " + mesaSeleccionada.getNumero() + " ya esta seleccionada");
+        } else {
+            mesaSeleccionada = mesa;
+        }
+    }
+    
+    @Override
+    public MesaDTO getMesaSeleccionada(){
+        return mesaSeleccionada;
+    }
 
     @Override
     //DATOS PRECARGADOS
@@ -577,14 +619,6 @@ public class Coordinador implements ICoordinador {
         }
     }
 
-    @Override
-    public void setMesaSeleccionada(MesaDTO mesa) {
-        if (mesaSeleccionada != null) {
-            JOptionPane.showMessageDialog(null, "La mesa numero " + mesaSeleccionada.getNumero() + " ya esta seleccionada");
-        } else {
-            mesaSeleccionada = mesa;
-        }
-    }
 
     //----- PANTALLA DE PRODUCTOS -----
     @Override
@@ -620,4 +654,51 @@ public class Coordinador implements ICoordinador {
     public void setCarrito(List<DetallePedidoDTO> carrito) {
         this.carrito = carrito;
     }
+    
+    @Override
+    public void mostrarResumenPedido(){
+        if(frmResumenPedido != null){
+            frmResumenPedido.dispose();
+        }
+        frmResumenPedido = new FrmResumenPedido(this);
+        frmResumenPedido.setVisible(true);
+    }
+    
+    //----- COMANDAS -----
+    @Override
+    public ComandaDTO getComanda(){
+        if(comanda == null){
+            comanda = new ComandaDTO();
+        }
+        return this.comanda;
+    }
+    
+    @Override
+    public void setComanda(ComandaDTO comanda){
+        this.comanda = comanda;
+    }
+
+    @Override
+    public void mostrarConfirmacionComanda() {
+        try{
+            
+            comanda.setFecha(LocalDateTime.now());
+            comanda.setEstado(EstadoComandaDTO.ABIERTA);
+            mesaSeleccionada.setDisponibilidad(EstadoMesaDTO.NO_DISPONIBLE);
+            
+
+            ComandaDTO registrado = comandaBO.registrarComanda(comanda);
+
+            //settear el folo al DTO para la pantalla
+            comanda.setFolio(registrado.getFolio());
+            
+            new FrmConfirmacionComanda(this).setVisible(true);
+            
+        }catch(NegocioException e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al registrar la comanda");
+        }
+        
+    }
+    
 }

@@ -1,6 +1,7 @@
 package pantallas;
 
 import controlador.Coordinador;
+import dtos.ComandaDTO;
 import dtos.MesaDTO;
 import enums.EstadoMesaDTO;
 import java.awt.BorderLayout;
@@ -249,6 +250,13 @@ public class FrmMesas extends JFrame {
 
         btnMesa.addActionListener(e -> {
             if(mesa.getDisponibilidad() == EstadoMesaDTO.DISPONIBLE){
+                ComandaDTO comanda = coordinador.getComanda();
+                comanda.setMesero(coordinador.getMeseroActual());
+                coordinador.setMesaSeleccionada(mesa);
+                comanda.setMesa(mesa);
+                
+                coordinador.setComanda(comanda);
+                
                 coordinador.mostrarSeleccionProductos();
                 dispose();
             }else if(mesa.getDisponibilidad() == EstadoMesaDTO.NO_DISPONIBLE){
