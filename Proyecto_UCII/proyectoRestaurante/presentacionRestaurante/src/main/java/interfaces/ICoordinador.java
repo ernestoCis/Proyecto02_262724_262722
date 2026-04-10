@@ -44,6 +44,8 @@ public interface ICoordinador {
     MeseroDTO getMeseroActual();
 
     MeseroDTO buscarMeseroPorUsuario(String usuario);
+    
+    void setMeseroActual(MeseroDTO mesero);
 
     // INGREDIENTES
     void mostrarIngredientes();
@@ -125,9 +127,13 @@ public interface ICoordinador {
     
     ComandaDTO actualizarComanda(ComandaDTO comanda);
     
+    void mostrarEditarProductosComanda();
+    
     MesaDTO actualizarMesa(MesaDTO mesa);
     
     // REPORTES
     void mostrarOpcionesReporte();
+    
+    void mostrarResumenPedidoEditado();
     
 }

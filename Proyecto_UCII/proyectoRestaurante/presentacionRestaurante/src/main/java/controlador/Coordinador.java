@@ -109,6 +109,9 @@ public class Coordinador implements ICoordinador {
 
     FrmEstadosComanda frmEstadosComanda;
 
+    FrmEditarProductosComanda frmEditarProductosComanda;
+    FrmResumenPedidoEditado frmResumenPedidoEditado;
+    
     private ComandaDTO comanda;
 
     public Coordinador() {
@@ -288,6 +291,11 @@ public class Coordinador implements ICoordinador {
     public MeseroDTO getMeseroActual() {
         return meseroActual;
     }
+    
+    @Override
+    public void setMeseroActual(MeseroDTO mesero){
+        meseroActual = mesero;
+    }
 
     @Override
     public MeseroDTO buscarMeseroPorUsuario(String usuario) {
@@ -303,6 +311,33 @@ public class Coordinador implements ICoordinador {
             return null;
         }
 
+    }
+    
+        @Override
+    //DATOS PRECARGADOS
+    public void precargarMeseros() {
+        try {
+            if (meseroBO.consultarTodos().isEmpty()) {
+                MeseroDTO m = new MeseroDTO();
+                m.setRfc("CIVJ061128V25");
+                m.setApellidoPaterno("Cisneros");
+                m.setApellidoMaterno("Valenzuela");
+                m.setNombre("Ernesto");
+                m.setUsuario("m1");
+                meseroBO.registrarMesero(m);
+                
+                MeseroDTO m2 = new MeseroDTO();
+                m2.setRfc("GUCP060724H89");
+                m2.setApellidoPaterno("Guevara");
+                m2.setApellidoMaterno("Cervantes");
+                m2.setNombre("Paulina");
+                m2.setUsuario("m2");
+                meseroBO.registrarMesero(m2);
+            }
+        } catch (NegocioException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "error al precargar los datos");
+        }
     }
 
     // INGREDIENTES 
@@ -669,25 +704,6 @@ public class Coordinador implements ICoordinador {
         }
     }
 
-    @Override
-    //DATOS PRECARGADOS
-    public void precargarMeseros() {
-        try {
-            if (meseroBO.consultarTodos().isEmpty()) {
-                MeseroDTO m = new MeseroDTO();
-                m.setRfc("CIVJ061128V25");
-                m.setApellidoPaterno("Cisneros");
-                m.setApellidoMaterno("Valenzuela");
-                m.setNombre("Ernesto");
-                m.setUsuario("m1");
-                meseroBO.registrarMesero(m);
-            }
-        } catch (NegocioException e) {
-            e.printStackTrace();
-            JOptionPane.showMessageDialog(null, "error al precargar los datos");
-        }
-    }
-
     //----- PANTALLA DE PRODUCTOS -----
     @Override
     public void mostrarSeleccionProductos() {
@@ -818,4 +834,17 @@ public class Coordinador implements ICoordinador {
         frmSeleccionReporte.toFront();
     }
 
+    @Override
+    public void mostrarEditarProductosComanda() {
+        frmEditarProductosComanda = new FrmEditarProductosComanda(this);
+        
+        frmEditarProductosComanda.setVisible(true);
+    }
+
+    @Override
+    public void mostrarResumenPedidoEditado() {
+        frmResumenPedidoEditado = new FrmResumenPedidoEditado(this);
+        frmResumenPedidoEditado.setVisible(true);
+    }
+    
 }

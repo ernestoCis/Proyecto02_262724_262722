@@ -229,6 +229,15 @@ panelDerechoFranja.add(btnRegresar);
         panelContenido.add(panelCliente);
         panelContenido.add(Box.createVerticalStrut(18));
         panelContenido.add(panelTabla);
+        
+        JScrollPane scrollContenido = new JScrollPane(panelContenido);
+        scrollContenido.setBorder(BorderFactory.createEmptyBorder());
+        scrollContenido.setPreferredSize(new Dimension(980, 390));
+        scrollContenido.setMaximumSize(new Dimension(980, 390));
+        scrollContenido.getVerticalScrollBar().setUnitIncrement(16);
+        scrollContenido.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollContenido.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollContenido.setAlignmentX(CENTER_ALIGNMENT);
 
         JPanel panelInferior = new JPanel(new FlowLayout(FlowLayout.CENTER, 45, 18));
         panelInferior.setBackground(new Color(235, 235, 235));
@@ -270,7 +279,7 @@ panelDerechoFranja.add(btnRegresar);
         panelInferior.add(btnEntregada);
         panelInferior.add(btnCancelar);
 
-        panelCentro.add(panelContenido);
+        panelCentro.add(scrollContenido);
         panelCentro.add(Box.createVerticalStrut(32));
         panelCentro.add(panelInferior);
 
@@ -302,7 +311,8 @@ panelDerechoFranja.add(btnRegresar);
         });
 
         btnEditar.addActionListener(e -> {
-            System.out.println("Editar comanda");
+            coordinador.mostrarEditarProductosComanda();
+            dispose();
         });
 
         btnEntregada.addActionListener(e -> {
@@ -310,8 +320,8 @@ panelDerechoFranja.add(btnRegresar);
                     null,
                     "La comanda se marcará como entregada",
                     "Entregar comanda",
-                    JOptionPane.OK_CANCEL_OPTION, // Define que quieres botones Aceptar y Cancelar
-                    JOptionPane.QUESTION_MESSAGE // Define el icono de interrogación
+                    JOptionPane.OK_CANCEL_OPTION,
+                    JOptionPane.QUESTION_MESSAGE 
             );
             
             if (respuesta == JOptionPane.OK_OPTION) {
@@ -336,7 +346,32 @@ panelDerechoFranja.add(btnRegresar);
         });
 
         btnCancelar.addActionListener(e -> {
-            System.out.println("Cancelar comanda");
+            int respuesta = JOptionPane.showConfirmDialog(
+                    null,
+                    "La comanda se marcará como cancelada",
+                    "Cancelar comanda",
+                    JOptionPane.OK_CANCEL_OPTION, //bbotones Aceptar y Cancelar
+                    JOptionPane.QUESTION_MESSAGE //icono de interrogación
+            );
+            
+            if (respuesta == JOptionPane.OK_OPTION) {
+                ComandaDTO comanda = coordinador.getComanda();
+                comanda.setEstado(EstadoComandaDTO.CANCELADA);
+                coordinador.setComanda(comanda);
+                coordinador.actualizarComanda(comanda);
+                
+                MesaDTO mesa = coordinador.getMesaSeleccionada();
+                mesa.setDisponibilidad(EstadoMesaDTO.DISPONIBLE);
+                coordinador.setMesaSeleccionada(mesa);
+                coordinador.actualizarMesa(mesa);
+                
+                JOptionPane.showMessageDialog(null, "Comanda cancelada");
+                
+                coordinador.mostrarMesas();
+                
+                dispose();
+                
+            }
         });
     }
 
