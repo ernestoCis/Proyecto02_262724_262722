@@ -27,4 +27,8 @@ public interface IIngredienteDAO {
 
     public Ingrediente buscarPorNombreYUnidad(String nombre, UnidadMedida unidad) throws PersistenciaException;
     
+    public boolean estaEnUso(Long idIngrediente) throws PersistenciaException;
+    
+    public void eliminar(Long id) throws PersistenciaException;
+    
 }

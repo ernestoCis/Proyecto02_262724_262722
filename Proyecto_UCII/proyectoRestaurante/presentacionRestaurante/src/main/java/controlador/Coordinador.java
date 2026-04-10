@@ -88,7 +88,7 @@ public class Coordinador implements ICoordinador {
     private List<ProductoDTO> listaProductosActual;
     private ProductoDTO productoSeleccionado;
     private List<MesaDTO> mesas;
-    
+
     // REPORTES 
     private FrmSeleccionReporte frmSeleccionReporte;
 
@@ -438,6 +438,21 @@ public class Coordinador implements ICoordinador {
 
         if (frmIngredientes != null) {
             frmIngredientes.setVisible(true);
+        }
+    }
+
+    @Override
+    public void eliminarIngrediente() {
+        try {
+            ingredienteBO.eliminarIngrediente(ingredienteSeleccionado.getIdIngrediente());
+
+            JOptionPane.showMessageDialog(null, "Ingrediente eliminado correctamente");
+
+            ingredienteSeleccionado = null;
+            actualizarTablaIngredientes();
+
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
 

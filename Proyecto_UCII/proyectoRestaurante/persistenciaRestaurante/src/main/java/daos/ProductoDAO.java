@@ -157,4 +157,24 @@ public class ProductoDAO implements IProductoDAO {
             em.close();
         }
     }
+
+    @Override
+    public boolean estaEnUso(Long idProducto) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            Long count = em.createQuery(
+                    "SELECT COUNT(d) FROM DetallePedido d "
+                    + "WHERE d.producto.idProducto = :id",
+                    Long.class
+            ).setParameter("id", idProducto)
+                    .getSingleResult();
+
+            return count > 0;
+
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al verificar uso del producto", e);
+        } finally {
+            em.close();
+        }
+    }
 }

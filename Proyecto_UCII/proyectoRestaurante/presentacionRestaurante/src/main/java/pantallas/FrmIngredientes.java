@@ -128,7 +128,7 @@ public class FrmIngredientes extends JFrame {
         ));
 
         ponerPlaceholder();
-        
+
         JPanel panelCentroBusqueda = new JPanel();
         panelCentroBusqueda.setOpaque(false);
         panelCentroBusqueda.add(txtBuscar);
@@ -156,15 +156,9 @@ public class FrmIngredientes extends JFrame {
         tblIngredientes.setSelectionBackground(new Color(220, 230, 220));
         tblIngredientes.setSelectionForeground(Color.BLACK);
 
-        tblIngredientes.getSelectionModel().addListSelectionListener(e -> {
-            if (!e.getValueIsAdjusting()) {
-                btnEliminar.setEnabled(tblIngredientes.getSelectedRow() != -1);
-            }
-        });
-
         JScrollPane scrollPane = new JScrollPane(tblIngredientes);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
-        
+
         ((DefaultTableCellRenderer) tblIngredientes.getTableHeader()
                 .getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
@@ -302,6 +296,7 @@ public class FrmIngredientes extends JFrame {
     private void eliminarIngredienteSeleccionado() {
         int fila = tblIngredientes.getSelectedRow();
         if (fila == -1) {
+            JOptionPane.showMessageDialog(this, "Seleccione un ingrediente");
             return;
         }
 
@@ -316,7 +311,7 @@ public class FrmIngredientes extends JFrame {
 
         if (confirmacion == JOptionPane.YES_OPTION) {
             coordinador.setIngredienteSeleccionado(ingrediente);
-            //   coordinador.eliminarIngrediente();
+            coordinador.eliminarIngrediente();
         }
     }
 }

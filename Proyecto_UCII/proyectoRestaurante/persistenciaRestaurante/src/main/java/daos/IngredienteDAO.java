@@ -108,4 +108,45 @@ public class IngredienteDAO implements IIngredienteDAO {
             em.close();
         }
     }
+
+    @Override
+    public boolean estaEnUso(Long idIngrediente) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            Long count = em.createQuery(
+                    "SELECT COUNT(r) FROM Receta r "
+                    + "WHERE r.ingrediente.idIngrediente = :id",
+                    Long.class
+            ).setParameter("id", idIngrediente)
+                    .getSingleResult();
+
+            return count > 0;
+
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al verificar uso del ingrediente", e);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void eliminar(Long id) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            em.getTransaction().begin();
+
+            Ingrediente ingrediente = em.find(Ingrediente.class, id);
+            if (ingrediente != null) {
+                em.remove(ingrediente);
+            }
+
+            em.getTransaction().commit();
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw new PersistenciaException("Error al eliminar ingrediente", e);
+        } finally {
+            em.close();
+        }
+    }
+
 }

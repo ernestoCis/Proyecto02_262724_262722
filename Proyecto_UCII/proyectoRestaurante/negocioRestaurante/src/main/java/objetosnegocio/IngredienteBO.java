@@ -138,4 +138,28 @@ public class IngredienteBO implements IIngredienteBO {
             throw new NegocioException("Error al buscar ingrediente", e);
         }
     }
+
+    @Override
+    public void eliminarIngrediente(Long id) throws NegocioException {
+        if (id == null) {
+            throw new NegocioException("El ID del ingrediente es obligatorio");
+        }
+
+        try {
+            Ingrediente ingrediente = ingredienteDAO.buscarPorId(id);
+
+            if (ingrediente == null) {
+                throw new NegocioException("Ingrediente no encontrado");
+            }
+
+            if (ingredienteDAO.estaEnUso(id)) {
+                throw new NegocioException("No se puede eliminar el ingrediente porque está en uso en recetas");
+            }
+
+            ingredienteDAO.eliminar(id);
+
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al eliminar ingrediente", e);
+        }
+    }
 }

@@ -28,4 +28,6 @@ public interface IProductoDAO {
     public Producto buscarPorNombreExacto(String nombre) throws PersistenciaException;
 
     public void cambiarDisponibilidad(Long id, DisponibilidadProducto estado) throws PersistenciaException;
+    
+    public boolean estaEnUso(Long idProducto) throws PersistenciaException;
 }

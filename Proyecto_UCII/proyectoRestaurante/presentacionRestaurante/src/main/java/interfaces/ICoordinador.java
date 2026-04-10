@@ -61,6 +61,8 @@ public interface ICoordinador {
     void registrarIngrediente(IngredienteDTO ingredienteDTO);
 
     void actualizarTablaIngredientes();
+    
+    void eliminarIngrediente();
 
     // PRODUCTOS
     void mostrarProductos();
