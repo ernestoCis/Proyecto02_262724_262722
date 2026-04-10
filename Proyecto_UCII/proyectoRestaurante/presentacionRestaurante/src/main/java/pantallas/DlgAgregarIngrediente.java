@@ -98,6 +98,8 @@ public class DlgAgregarIngrediente extends JDialog {
                 .getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
 
+        tablaIngredientes.setSelectionBackground(Color.decode("#2A4E52")); 
+        
         JScrollPane scroll = new JScrollPane(tablaIngredientes);
 
         // DATOS DEMO
@@ -182,7 +184,7 @@ public class DlgAgregarIngrediente extends JDialog {
 
             int opcion = JOptionPane.showConfirmDialog(
                     this,
-                    "¿Deseas agregar:\n\n"
+                    "¿Deseas agregar: "
                     + nombre + " - " + cantidad + " " + unidad + "?",
                     "Confirmar ingrediente",
                     JOptionPane.YES_NO_OPTION
@@ -198,8 +200,8 @@ public class DlgAgregarIngrediente extends JDialog {
                     ((FrmEditarProducto) parent).agregarIngredienteATabla(ingrediente, Double.valueOf(cantidad));
                 }
 
-                JOptionPane.showMessageDialog(this, "Ingrediente agregado correctamente");
-                dispose();
+                //JOptionPane.showMessageDialog(this, "Ingrediente agregado correctamente");
+                //dispose();
 
             }
         });

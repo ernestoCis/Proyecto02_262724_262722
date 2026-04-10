@@ -11,9 +11,9 @@ import java.awt.event.MouseEvent;
  */
 public class BotonColor extends JButton {
 
-    private final Color colorBorde = Color.decode("#182533");
-    private final Color colorHover = Color.decode("#616E80");
-    private final Color colorNormal = Color.decode("#243547");
+    private final Color colorBorde = Color.decode("#EB9B5E");
+    private final Color colorHover = Color.decode("#FFDEC7");
+    private final Color colorNormal = Color.decode("#EB9B5E");
 
     private boolean hover = false;
 
@@ -58,10 +58,10 @@ public class BotonColor extends JButton {
 
         if (hover) {
             g2.setColor(colorHover);
-            setForeground(Color.WHITE);
+            setForeground(Color.BLACK);
         } else {
             g2.setColor(colorNormal);
-            setForeground(Color.WHITE);
+            setForeground(Color.BLACK);
         }
 
         g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);

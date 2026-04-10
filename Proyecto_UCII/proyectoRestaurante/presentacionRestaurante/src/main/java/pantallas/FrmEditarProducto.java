@@ -201,6 +201,8 @@ public class FrmEditarProducto extends JFrame {
         ((DefaultTableCellRenderer) tablaIngredientes.getTableHeader()
                 .getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
+        
+        tablaIngredientes.setSelectionBackground(Color.decode("#2A4E52")); 
 
         btnAgregarIngrediente = new BotonEstilizado("+");
         btnEliminarIngrediente = new BotonEstilizado("−");
@@ -437,6 +439,43 @@ public class FrmEditarProducto extends JFrame {
                 actualizarTextoDisponibilidad();
             }
         });
+
+        tablaIngredientes.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                if (evt.getClickCount() == 2) {
+
+                    int fila = tablaIngredientes.getSelectedRow();
+                    int columna = tablaIngredientes.getSelectedColumn();
+
+                    if (fila != -1 && columna == 2) {
+
+                        String valorActual = modeloTabla.getValueAt(fila, columna).toString();
+
+                        String nuevaCantidad = JOptionPane.showInputDialog(
+                                FrmEditarProducto.this,
+                                "Nueva cantidad:",
+                                valorActual
+                        );
+
+                        if (nuevaCantidad != null) {
+                            try {
+                                Double cantidad = Double.valueOf(nuevaCantidad);
+
+                                modeloTabla.setValueAt(cantidad, fila, columna);
+
+                                recetas.get(fila).setCantidad(cantidad);
+
+                            } catch (NumberFormatException e) {
+                                JOptionPane.showMessageDialog(
+                                        FrmEditarProducto.this,
+                                        "Cantidad inválida"
+                                );
+                            }
+                        }
+                    }
+                }
+            }
+        });
     }
 
     private void seleccionarImagen() {
@@ -462,6 +501,18 @@ public class FrmEditarProducto extends JFrame {
     }
 
     public void agregarIngredienteATabla(IngredienteDTO ingrediente, Double cantidad) {
+
+        // validar duplicados
+        for (RecetaDTO r : recetas) {
+            if (r.getIngrediente().getIdIngrediente()
+                    .equals(ingrediente.getIdIngrediente())) {
+
+                JOptionPane.showMessageDialog(this,
+                        "Este ingrediente ya fue agregado");
+                return;
+            }
+        }
+
         modeloTabla.addRow(new Object[]{
             ingrediente.getNombre(),
             ingrediente.getUnidadMedida(),
@@ -471,7 +522,6 @@ public class FrmEditarProducto extends JFrame {
         RecetaDTO receta = new RecetaDTO();
         receta.setIngrediente(ingrediente);
         receta.setCantidad(cantidad);
-
         recetas.add(receta);
     }
 }

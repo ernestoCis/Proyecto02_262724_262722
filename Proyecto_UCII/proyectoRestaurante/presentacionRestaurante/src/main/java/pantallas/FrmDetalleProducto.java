@@ -136,6 +136,8 @@ public class FrmDetalleProducto extends JFrame {
         ((DefaultTableCellRenderer) tablaIngredientes.getTableHeader()
                 .getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
+        
+        tablaIngredientes.setSelectionBackground(Color.decode("#2A4E52")); 
 
         JScrollPane scroll = new JScrollPane(tablaIngredientes);
         scroll.setPreferredSize(new Dimension(400, 200));
