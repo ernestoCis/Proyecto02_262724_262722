@@ -7,6 +7,8 @@ import dtos.IngredienteDTO;
 import dtos.MesaDTO;
 import dtos.MeseroDTO;
 import dtos.ProductoDTO;
+import dtos.ReporteComandaDTO;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -135,5 +137,9 @@ public interface ICoordinador {
     void mostrarOpcionesReporte();
     
     void mostrarResumenPedidoEditado();
+    
+    void mostrarReportesComandas();
+    
+    List<ReporteComandaDTO> obetnerComandasPorRangoFechas(LocalDate inicio, LocalDate fin);
     
 }

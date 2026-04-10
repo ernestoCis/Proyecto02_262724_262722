@@ -11,6 +11,10 @@ import excepciones.PersistenciaException;
 import interfaces.IComandaDAO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.util.List;
 
 /**
  *
@@ -150,6 +154,32 @@ public class ComandaDAO implements IComandaDAO {
             return query.getSingleResult();
         } catch (Exception e) {
             throw new PersistenciaException("Error al buscar la comanda abierta para la mesa " + numeroMesa, e);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public List<Comanda> consultarPorRangoFechas(LocalDate inicio, LocalDate fin) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            //convertimos LocalDate a LocalDateTime para cubrir el día completo
+            LocalDateTime fechaInicio = inicio.atStartOfDay();
+            LocalDateTime fechaFin = fin.atTime(LocalTime.MAX);
+
+            String jpql = """
+                        SELECT c FROM Comanda c
+                        WHERE c.fecha >= :inicio AND c.fecha <= :fin
+                        ORDER BY c.fecha DESC
+                        """;
+
+            TypedQuery<Comanda> query = em.createQuery(jpql, Comanda.class);
+            query.setParameter("inicio", fechaInicio);
+            query.setParameter("fin", fechaFin);
+
+            return query.getResultList();
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al consultar comandas por rango", e);
         } finally {
             em.close();
         }

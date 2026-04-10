@@ -11,10 +11,12 @@ import dtos.MeseroDTO;
 import dtos.IngredienteDTO;
 import dtos.MesaDTO;
 import dtos.ProductoDTO;
+import dtos.ReporteComandaDTO;
 import enums.EstadoComandaDTO;
 import enums.EstadoMesaDTO;
 import excepciones.NegocioException;
 import interfaces.ICoordinador;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -91,6 +93,7 @@ public class Coordinador implements ICoordinador {
 
     // REPORTES 
     private FrmSeleccionReporte frmSeleccionReporte;
+    private FrmReporteComandas frmReporteComandas;
 
     //Limpiar todo
     public void limpiarSesionComanda() {
@@ -845,6 +848,25 @@ public class Coordinador implements ICoordinador {
     public void mostrarResumenPedidoEditado() {
         frmResumenPedidoEditado = new FrmResumenPedidoEditado(this);
         frmResumenPedidoEditado.setVisible(true);
+    }
+
+    @Override
+    public void mostrarReportesComandas() {
+        if(frmReporteComandas == null){
+            frmReporteComandas = new FrmReporteComandas(this);
+        }
+        frmReporteComandas.setVisible(true);
+    }
+
+    @Override
+    public List<ReporteComandaDTO> obetnerComandasPorRangoFechas(LocalDate inicio, LocalDate fin) {
+        try{
+            return comandaBO.obtenerComandasPorRango(inicio, fin);
+        }catch(NegocioException e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al consultar las comandas");
+            return null;
+        }
     }
     
 }

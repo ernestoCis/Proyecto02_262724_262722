@@ -124,7 +124,8 @@ public class FrmSeleccionReporte extends JFrame {
         });
 
         btnReporteComandas.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Reporte de comandas");
+            coordinador.mostrarReportesComandas();
+            dispose();
         });
 
         btnReporteClientesF.addActionListener(e -> {

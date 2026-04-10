@@ -6,6 +6,8 @@ package interfaces;
 
 import entidades.Comanda;
 import excepciones.PersistenciaException;
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  *
@@ -28,4 +30,6 @@ public interface IComandaDAO {
     public Long obtenerUltimoId();
     
     public Comanda buscarComandaAbiertaPorMesa(Integer numeroMesa) throws PersistenciaException;
+    
+    public List<Comanda> consultarPorRangoFechas(LocalDate inicio, LocalDate fin) throws PersistenciaException;
 }
