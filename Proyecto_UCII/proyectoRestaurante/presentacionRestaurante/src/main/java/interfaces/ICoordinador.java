@@ -117,4 +117,12 @@ public interface ICoordinador {
 
     void limpiarSesionComanda();
 
+    void mostrarEstadosComanda();
+    
+    ComandaDTO buscarComandaAbiertaPorMesa(Integer numeroMesa);
+    
+    ComandaDTO actualizarComanda(ComandaDTO comanda);
+    
+    MesaDTO actualizarMesa(MesaDTO mesa);
+    
 }

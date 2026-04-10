@@ -26,4 +26,6 @@ public interface IComandaDAO {
     public Comanda buscarComandaPorId(Long id)  throws PersistenciaException;
     
     public Long obtenerUltimoId();
+    
+    public Comanda buscarComandaAbiertaPorMesa(Integer numeroMesa) throws PersistenciaException;
 }

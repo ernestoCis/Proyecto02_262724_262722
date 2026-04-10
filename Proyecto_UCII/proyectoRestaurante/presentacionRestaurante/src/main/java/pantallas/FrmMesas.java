@@ -258,10 +258,14 @@ public class FrmMesas extends JFrame {
                 
                 coordinador.setComanda(comanda);
                 
+                coordinador.setCarrito(null);
+                
                 coordinador.mostrarSeleccionProductos();
                 dispose();
             }else if(mesa.getDisponibilidad() == EstadoMesaDTO.NO_DISPONIBLE){
-                JOptionPane.showMessageDialog(null, "Pantalla para editar comanda");
+                coordinador.setMesaSeleccionada(mesa);
+                coordinador.mostrarEstadosComanda();
+                dispose();
             }
         });
 

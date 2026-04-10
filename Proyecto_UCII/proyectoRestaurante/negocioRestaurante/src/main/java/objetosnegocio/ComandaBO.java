@@ -41,6 +41,7 @@ public class ComandaBO implements IComandaBO{
         if (comanda.getDetalles() == null || comanda.getDetalles().isEmpty()) {
             throw new NegocioException("No se puede registrar una comanda sin productos.");
         }
+        comanda.setIdComanda(null);
         
         comanda.setFecha(LocalDateTime.now());
         
@@ -117,6 +118,26 @@ public class ComandaBO implements IComandaBO{
 
         // Retorna OB-20260408-XXX donde XXX es el ID global
         return String.format("OB-%s-%d", fechaParte, siguienteId);
+    }
+
+    @Override
+    public ComandaDTO obtenerComandaAbiertaPorMesa(Integer numeroMesa) throws NegocioException {
+        try {
+            if (numeroMesa == null) {
+                throw new NegocioException("El número de mesa es necesario.");
+            }
+
+            Comanda entidad = comandaDAO.buscarComandaAbiertaPorMesa(numeroMesa);
+
+            if (entidad == null) {
+                return null;
+            }
+
+            return ComandaAdapter.entidadADto(entidad);
+
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al recuperar la comanda de la mesa " + numeroMesa, e);
+        }
     }
     
 }
