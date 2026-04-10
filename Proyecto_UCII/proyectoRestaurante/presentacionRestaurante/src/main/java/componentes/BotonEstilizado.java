@@ -11,7 +11,7 @@ import java.awt.event.MouseEvent;
  */
 public class BotonEstilizado extends JButton {
 
-    private final Color colorBorde = Color.decode("#3B3B3B");
+    private final Color colorBorde = Color.decode("#993F3D");
     private final Color colorHover = Color.decode("#875D5B");
     private final Color colorNormal = Color.decode("#CC514E");
 

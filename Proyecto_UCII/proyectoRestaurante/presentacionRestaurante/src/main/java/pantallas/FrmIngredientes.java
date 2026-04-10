@@ -29,6 +29,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -162,6 +164,10 @@ public class FrmIngredientes extends JFrame {
 
         JScrollPane scrollPane = new JScrollPane(tblIngredientes);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
+        
+        ((DefaultTableCellRenderer) tblIngredientes.getTableHeader()
+                .getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
 
         JPanel panelInferior = new JPanel();
         panelInferior.setBackground(colorFondo);

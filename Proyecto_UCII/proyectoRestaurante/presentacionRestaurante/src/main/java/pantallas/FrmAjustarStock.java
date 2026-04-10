@@ -9,9 +9,10 @@ import java.awt.*;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import javax.swing.*;
+import utilerias.Validacion;
 
 /**
- * 
+ *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmAjustarStock extends JFrame {
@@ -221,11 +222,11 @@ public class FrmAjustarStock extends JFrame {
     private void cargarImagen() {
         try {
             if (ingrediente.getRutaImagen() != null) {
-                ImageIcon icono = new ImageIcon(ingrediente.getRutaImagen());
 
+                ImageIcon icono = new ImageIcon(ingrediente.getRutaImagen());
                 Image imgEscalada = icono.getImage().getScaledInstance(
-                        lblImagen.getWidth(),
-                        lblImagen.getHeight(),
+                        200,
+                        180,
                         Image.SCALE_SMOOTH
                 );
 
@@ -261,17 +262,18 @@ public class FrmAjustarStock extends JFrame {
         if (resultado == JFileChooser.APPROVE_OPTION) {
             try {
                 String ruta = fileChooser.getSelectedFile().getAbsolutePath();
-                ImageIcon icono = new ImageIcon(ruta);
 
+                ImageIcon icono = new ImageIcon(ruta);
                 Image imgEscalada = icono.getImage().getScaledInstance(
-                        lblImagen.getWidth(),
-                        lblImagen.getHeight(),
+                        200,
+                        180,
                         Image.SCALE_SMOOTH
                 );
 
                 lblImagen.setText("");
                 lblImagen.setIcon(new ImageIcon(imgEscalada));
 
+                // guardar la nueva imagen
                 ingrediente.setRutaImagen(ruta);
 
             } catch (Exception ex) {
@@ -281,8 +283,14 @@ public class FrmAjustarStock extends JFrame {
     }
 
     private void guardar() {
+        String cantidadTxt = txtCantidad.getText();
         try {
-            double cantidad = Double.parseDouble(txtCantidad.getText());
+            if (!Validacion.esCantidadValida(cantidadTxt, ingrediente.getUnidadMedida().toString())) {
+                JOptionPane.showMessageDialog(this,
+                        "Cantidad inválida para la unidad");
+                return;
+            }
+            Double cantidad = Double.valueOf(cantidadTxt);
             boolean agregar = rbAgregar.isSelected();
 
             String accion = agregar ? "agregar" : "descontar";
@@ -299,14 +307,14 @@ public class FrmAjustarStock extends JFrame {
             if (confirmacion != JOptionPane.YES_OPTION) {
                 return;
             }
-
+            
             coordinador.ajustarStock(
                     ingrediente.getIdIngrediente(),
                     cantidad,
                     agregar
             );
 
-            dispose();
+            // dispose();
 
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Cantidad inválida");

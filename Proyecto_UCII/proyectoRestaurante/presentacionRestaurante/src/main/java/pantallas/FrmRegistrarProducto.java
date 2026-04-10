@@ -4,14 +4,22 @@ import componentes.BotonEstilizado;
 import componentes.BotonRegresar;
 import componentes.PanelRedondeado;
 import controlador.Coordinador;
+import dtos.IngredienteDTO;
+import dtos.ProductoDTO;
+import dtos.RecetaDTO;
+import enums.DisponibilidadProductoDTO;
+import enums.TipoProductoDTO;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
+import utilerias.Validacion;
 
 /**
- * 
- * @author Paulina Guevara, Ernesto Cisneros 
+ *
+ * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmRegistrarProducto extends JFrame {
 
@@ -34,7 +42,8 @@ public class FrmRegistrarProducto extends JFrame {
     private BotonEstilizado btnSeleccionarImagen;
     private BotonRegresar btnRegresar;
 
-    
+    private List<RecetaDTO> recetas = new ArrayList<>();
+
     public FrmRegistrarProducto(Coordinador coordinador) {
         this.coordinador = coordinador;
         configurarVentana();
@@ -138,8 +147,9 @@ public class FrmRegistrarProducto extends JFrame {
         panelImagen.setOpaque(false);
 
         lblImagen = new JLabel("Sin imagen", SwingConstants.CENTER);
-        lblImagen.setPreferredSize(new Dimension(170, 195));
-        lblImagen.setMaximumSize(new Dimension(170, 195));
+        lblImagen.setPreferredSize(new Dimension(170, 165));
+        lblImagen.setMinimumSize(new Dimension(170, 165));
+        lblImagen.setMaximumSize(new Dimension(170, 165));
         lblImagen.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2, true));
 
         btnSeleccionarImagen = new BotonEstilizado("     + Imagen     ");
@@ -158,7 +168,12 @@ public class FrmRegistrarProducto extends JFrame {
 
         modeloTabla = new DefaultTableModel(
                 new String[]{"Nombre", "Unidad", "Cantidad"}, 0
-        );
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
 
         tablaIngredientes = new JTable(modeloTabla);
         JScrollPane scroll = new JScrollPane(tablaIngredientes);
@@ -241,9 +256,9 @@ public class FrmRegistrarProducto extends JFrame {
 
         combo.setPreferredSize(size);
         combo.setMaximumSize(size);
-        combo.setMinimumSize(size); 
+        combo.setMinimumSize(size);
 
-        combo.setAlignmentX(Component.LEFT_ALIGNMENT); 
+        combo.setAlignmentX(Component.LEFT_ALIGNMENT);
 
         JPanel contenedor = new JPanel();
         contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
@@ -274,19 +289,76 @@ public class FrmRegistrarProducto extends JFrame {
 
         btnEliminarIngrediente.addActionListener(e -> {
             int fila = tablaIngredientes.getSelectedRow();
-            if (fila != -1) {
+
+            if (fila == -1) {
+                JOptionPane.showMessageDialog(this,
+                        "Seleccione un ingrediente para eliminar");
+                return;
+            }
+
+            int opcion = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Desea eliminar el ingrediente seleccionado?",
+                    "Confirmar eliminación",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (opcion == JOptionPane.YES_OPTION) {
                 modeloTabla.removeRow(fila);
+                recetas.remove(fila);
             }
         });
 
-        btnRegistrar.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Producto registrado (demo)");
-        });
+        btnRegistrar.addActionListener(e -> registrarProducto());
+    }
+
+    private void registrarProducto() {
+
+        String nombre = txtNombre.getText().trim();
+        String descripcion = txtDescripcion.getText().trim();
+        String precioTxt = txtPrecio.getText().trim();
+        String tipoTxt = comboTipo.getSelectedItem().toString();
+
+        // VALIDACIONES
+        if (!Validacion.esNombreValido(nombre)) {
+            JOptionPane.showMessageDialog(this, "Nombre inválido");
+            return;
+        }
+
+//        if (descripcion.isEmpty()) {
+//            JOptionPane.showMessageDialog(this, "Descripción inválida");
+//            return;
+//        }
+        if (!Validacion.esPrecioValido(precioTxt)) {
+            JOptionPane.showMessageDialog(this, "Precio inválido (máx 3 decimales)");
+            return;
+        }
+
+        Double precio;
+        try {
+            precio = Double.valueOf(precioTxt);
+        } catch (NumberFormatException e) {
+            JOptionPane.showMessageDialog(this, "El precio no es un número válido");
+            return;
+        }
+
+        TipoProductoDTO tipo = TipoProductoDTO.valueOf(tipoTxt);
+
+        ProductoDTO producto = new ProductoDTO(
+                nombre,
+                precio,
+                tipo,
+                descripcion,
+                DisponibilidadProductoDTO.DISPONIBLE,
+                rutaImagen,
+                recetas
+        );
+
+        coordinador.registrarProducto(producto);
     }
 
     private void seleccionarImagen() {
         JFileChooser fileChooser = new JFileChooser();
-
         int resultado = fileChooser.showOpenDialog(this);
 
         if (resultado == JFileChooser.APPROVE_OPTION) {
@@ -294,6 +366,7 @@ public class FrmRegistrarProducto extends JFrame {
             rutaImagen = archivo.getAbsolutePath();
 
             ImageIcon icono = new ImageIcon(rutaImagen);
+
             Image img = icono.getImage().getScaledInstance(
                     lblImagen.getWidth(),
                     lblImagen.getHeight(),
@@ -304,4 +377,19 @@ public class FrmRegistrarProducto extends JFrame {
             lblImagen.setIcon(new ImageIcon(img));
         }
     }
+
+    public void agregarIngredienteATabla(IngredienteDTO ingrediente, Double cantidad) {
+        modeloTabla.addRow(new Object[]{
+            ingrediente.getNombre(),
+            ingrediente.getUnidadMedida(),
+            cantidad
+        });
+
+        RecetaDTO receta = new RecetaDTO();
+        receta.setIngrediente(ingrediente);
+        receta.setCantidad(cantidad);
+
+        recetas.add(receta);
+    }
+
 }

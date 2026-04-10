@@ -11,8 +11,8 @@ import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
- * 
- * @author Paulina Guevara, Ernesto Cisneros 
+ *
+ * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmDetalleProducto extends JFrame {
 
@@ -56,16 +56,38 @@ public class FrmDetalleProducto extends JFrame {
         lblTitulo.setForeground(Color.WHITE);
         lblTitulo.setFont(new Font("Segoe UI", Font.BOLD, 18));
 
-        JButton btnCerrar = new JButton("✕");
+        JButton btnCerrar = new JButton("X");
         btnCerrar.setForeground(Color.WHITE);
         btnCerrar.setBackground(primario);
         btnCerrar.setBorder(null);
         btnCerrar.setFocusPainted(false);
         btnCerrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnCerrar.setFont(new Font("Segoe UI", Font.BOLD, 18));
         btnCerrar.addActionListener(e -> dispose());
 
+        JButton btnEditar = new JButton();
+        ImageIcon iconoEditar = new ImageIcon("src/main/resources/imagenes/icono_editar.png");
+        Image img = iconoEditar.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
+
+        btnEditar.setIcon(new ImageIcon(img));
+        btnEditar.setBackground(primario);
+        btnEditar.setBorder(null);
+        btnEditar.setFocusPainted(false);
+        btnEditar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+
+        btnEditar.addActionListener(e -> {
+            dispose();
+            coordinador.mostrarEditarProducto();
+        });
+
+        JPanel panelDerecho = new JPanel(new FlowLayout(FlowLayout.RIGHT, 5, 0));
+        panelDerecho.setOpaque(false);
+        panelDerecho.add(btnEditar);
+        panelDerecho.add(Box.createHorizontalStrut(8));
+        panelDerecho.add(btnCerrar);
+
         header.add(lblTitulo, BorderLayout.WEST);
-        header.add(btnCerrar, BorderLayout.EAST);
+        header.add(panelDerecho, BorderLayout.EAST);
 
         JPanel contenido = new JPanel();
         contenido.setBackground(fondo);
@@ -97,7 +119,7 @@ public class FrmDetalleProducto extends JFrame {
         lblIngredientes.setFont(new Font("Segoe UI", Font.BOLD, 16));
         lblIngredientes.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblIngredientes.setHorizontalAlignment(SwingConstants.CENTER);
-        
+
         String[] columnas = {"Nombre", "Unidad", "Cantidad"};
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
@@ -109,12 +131,12 @@ public class FrmDetalleProducto extends JFrame {
         tablaIngredientes = new JTable(modeloTabla);
         tablaIngredientes.setRowHeight(28);
         tablaIngredientes.setFont(new Font("Segoe UI", Font.PLAIN, 13));
-        
+
         // centrar encabezados
         ((DefaultTableCellRenderer) tablaIngredientes.getTableHeader()
                 .getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
-        
+
         JScrollPane scroll = new JScrollPane(tablaIngredientes);
         scroll.setPreferredSize(new Dimension(400, 200));
 
@@ -135,10 +157,17 @@ public class FrmDetalleProducto extends JFrame {
             return;
         }
 
+        // Cargar imagen
         try {
             if (producto.getRutaImagen() != null && !producto.getRutaImagen().isEmpty()) {
                 ImageIcon icono = new ImageIcon(producto.getRutaImagen());
-                Image img = icono.getImage().getScaledInstance(200, 150, Image.SCALE_SMOOTH);
+
+                Image img = icono.getImage().getScaledInstance(
+                        lblImagen.getPreferredSize().width,
+                        lblImagen.getPreferredSize().height,
+                        Image.SCALE_SMOOTH
+                );
+
                 lblImagen.setText("");
                 lblImagen.setIcon(new ImageIcon(img));
             } else {
@@ -150,16 +179,14 @@ public class FrmDetalleProducto extends JFrame {
             lblImagen.setText("Sin imagen");
         }
 
-        /*
+        // Cargar ingredientes
         List<RecetaDTO> recetas = producto.getRecetas();
-
         for (RecetaDTO r : recetas) {
             modeloTabla.addRow(new Object[]{
-                    r.getIngrediente().getNombre(),
-                    r.getIngrediente().getUnidadMedida(),
-                    r.getCantidad()
+                r.getIngrediente().getNombre(),
+                r.getIngrediente().getUnidadMedida(),
+                r.getCantidad()
             });
         }
-         */
     }
 }

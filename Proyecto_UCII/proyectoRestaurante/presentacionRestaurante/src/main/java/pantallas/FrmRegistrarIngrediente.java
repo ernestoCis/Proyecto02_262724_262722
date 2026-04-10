@@ -51,27 +51,33 @@ public class FrmRegistrarIngrediente extends JFrame {
         JPanel panelPrincipal = new JPanel(new BorderLayout());
         panelPrincipal.setBackground(colorFondo);
 
+        JPanel panelSuperiorContenedor = new JPanel(new BorderLayout());
+        panelSuperiorContenedor.setPreferredSize(new Dimension(1000, 115));
+
         JPanel panelSuperior = new JPanel(new BorderLayout());
         panelSuperior.setBackground(colorMostaza);
         panelSuperior.setPreferredSize(new Dimension(1000, 110));
 
         JLabel lblLogo = new JLabel();
-        lblLogo.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 10));
+        lblLogo.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 10));
+        lblLogo.setPreferredSize(new Dimension(90, 90));
 
         ImageIcon iconoLogo = new ImageIcon("src\\main\\resources\\imagenes\\icono_restaurante.png");
         Image logoEscalado = iconoLogo.getImage().getScaledInstance(70, 70, Image.SCALE_SMOOTH);
         lblLogo.setIcon(new ImageIcon(logoEscalado));
 
+        JPanel panelTitulo = new JPanel(new GridBagLayout());
+        panelTitulo.setOpaque(false);
+        panelTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 70));
+
         JLabel lblTitulo = new JLabel("Ingredientes");
         lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 36));
         lblTitulo.setForeground(new Color(52, 58, 70));
-
-        JPanel panelTitulo = new JPanel(new GridBagLayout());
-        panelTitulo.setOpaque(false);
         panelTitulo.add(lblTitulo);
 
         panelSuperior.add(lblLogo, BorderLayout.WEST);
         panelSuperior.add(panelTitulo, BorderLayout.CENTER);
+        panelSuperiorContenedor.add(panelSuperior, BorderLayout.CENTER);
 
         JPanel panelCentro = new JPanel(new BorderLayout());
         panelCentro.setBackground(colorFondo);

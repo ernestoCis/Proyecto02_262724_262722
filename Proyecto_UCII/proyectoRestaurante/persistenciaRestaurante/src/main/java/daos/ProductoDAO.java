@@ -9,14 +9,15 @@ import jakarta.persistence.EntityManager;
 import java.util.List;
 
 /**
- * 
+ *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ProductoDAO implements IProductoDAO {
 
     private static ProductoDAO instance;
 
-    private ProductoDAO() {}
+    private ProductoDAO() {
+    }
 
     public static ProductoDAO getInstance() {
         if (instance == null) {
@@ -30,10 +31,10 @@ public class ProductoDAO implements IProductoDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             em.getTransaction().begin();
-            em.persist(producto); 
+            em.persist(producto);
             em.getTransaction().commit();
         } catch (Exception e) {
-            if(em.getTransaction().isActive()){
+            if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
             }
             throw new PersistenciaException("Error al guardar producto", e);
@@ -61,8 +62,16 @@ public class ProductoDAO implements IProductoDAO {
     public Producto buscarPorId(Long id) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
-            return em.find(Producto.class, id);
-        }catch(Exception e){
+            return em.createQuery(
+                    "SELECT p FROM Producto p "
+                    + "LEFT JOIN FETCH p.recetas r "
+                    + "LEFT JOIN FETCH r.ingrediente "
+                    + "WHERE p.idProducto = :id",
+                    Producto.class
+            ).setParameter("id", id)
+                    .getSingleResult();
+
+        } catch (Exception e) {
             throw new PersistenciaException("Error al buscar por id", e);
         } finally {
             em.close();
@@ -74,9 +83,12 @@ public class ProductoDAO implements IProductoDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             return em.createQuery(
-                "SELECT p FROM Producto p", Producto.class
+                    "SELECT DISTINCT p FROM Producto p "
+                    + "LEFT JOIN FETCH p.recetas r "
+                    + "LEFT JOIN FETCH r.ingrediente",
+                    Producto.class
             ).getResultList();
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new PersistenciaException("Error al obtener los productos", e);
         } finally {
             em.close();
@@ -88,12 +100,12 @@ public class ProductoDAO implements IProductoDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             String jpql = "SELECT p FROM Producto p "
-                        + "WHERE LOWER(p.nombre) LIKE LOWER(:nombre)";
-            
+                    + "WHERE LOWER(p.nombre) LIKE LOWER(:nombre)";
+
             return em.createQuery(jpql, Producto.class)
                     .setParameter("nombre", "%" + nombre + "%")
                     .getResultList();
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new PersistenciaException("Error al buscar pro nombre", e);
         } finally {
             em.close();
@@ -105,8 +117,8 @@ public class ProductoDAO implements IProductoDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             String jpql = "SELECT p FROM Producto p "
-                        + "WHERE p.nombre = :nombre "
-                        + "AND p.disponibilidad = :estado";
+                    + "WHERE p.nombre = :nombre "
+                    + "AND p.disponibilidad = :estado";
 
             List<Producto> lista = em.createQuery(jpql, Producto.class)
                     .setParameter("nombre", nombre)
@@ -118,7 +130,7 @@ public class ProductoDAO implements IProductoDAO {
             }
             return lista.get(0);
 
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new PersistenciaException("Error al consultar por nombre exacto", e);
         } finally {
             em.close();

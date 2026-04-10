@@ -65,4 +65,12 @@ public class Validacion {
 
         return texto.matches("^\\d+(\\.\\d+)?$");
     }
+
+    public static boolean esPrecioValido(String precio) {
+        if (precio == null || precio.trim().isEmpty()) {
+            return false;
+        }
+
+        return precio.matches("^\\d+(\\.\\d{1,3})?$");
+    }
 }

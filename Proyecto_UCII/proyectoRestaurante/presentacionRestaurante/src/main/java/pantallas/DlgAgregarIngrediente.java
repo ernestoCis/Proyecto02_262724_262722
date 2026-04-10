@@ -2,14 +2,16 @@ package pantallas;
 
 import componentes.BotonColor;
 import controlador.Coordinador;
+import dtos.IngredienteDTO;
+import java.util.List;
 import java.awt.*;
 import javax.swing.*;
 import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * 
- * @author Paulina Guevara, Ernesto Cisneros 
+ *
+ * @author Paulina Guevara, Ernesto Cisneros
  */
 public class DlgAgregarIngrediente extends JDialog {
 
@@ -23,12 +25,17 @@ public class DlgAgregarIngrediente extends JDialog {
     private BotonColor btnCancelar;
     private BotonColor btnAgregar;
 
+    private JFrame parent;
+    
+    private List<IngredienteDTO> ingredientes;
+
     public DlgAgregarIngrediente(JFrame parent, Coordinador coordinador) {
         super(parent, true);
+        this.parent = parent;
         this.coordinador = coordinador;
-
         configurarVentana();
         inicializarComponentes();
+        cargarIngredientes();
     }
 
     private void configurarVentana() {
@@ -77,11 +84,16 @@ public class DlgAgregarIngrediente extends JDialog {
         // TABLA
         modeloTabla = new DefaultTableModel(
                 new String[]{"Nombre", "Unidad", "Cantidad Actual"}, 0
-        );
-
+        ) {
+            @Override
+            public boolean isCellEditable(int row, int column) {
+                return false;
+            }
+        };
+        
         tablaIngredientes = new JTable(modeloTabla);
         tablaIngredientes.setRowHeight(30);
-        
+
         ((DefaultTableCellRenderer) tablaIngredientes.getTableHeader()
                 .getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
@@ -139,6 +151,7 @@ public class DlgAgregarIngrediente extends JDialog {
         btnCancelar.addActionListener(e -> dispose());
 
         btnAgregar.addActionListener(e -> {
+
             int fila = tablaIngredientes.getSelectedRow();
 
             if (fila == -1) {
@@ -148,12 +161,63 @@ public class DlgAgregarIngrediente extends JDialog {
 
             String nombre = modeloTabla.getValueAt(fila, 0).toString();
             String unidad = modeloTabla.getValueAt(fila, 1).toString();
-            String cantidad = txtCantidad.getText();
+            String cantidad = txtCantidad.getText().trim();
 
-            JOptionPane.showMessageDialog(this,
-                    "Agregado: " + nombre + " - " + cantidad + " " + unidad);
+            if (cantidad.isEmpty()) {
+                JOptionPane.showMessageDialog(this, "Ingresa una cantidad");
+                return;
+            }
 
-            dispose();
+            if (!utilerias.Validacion.esCantidadValida(cantidad, unidad)) {
+
+                if (unidad.equalsIgnoreCase("Piezas")) {
+                    JOptionPane.showMessageDialog(this,
+                            "Solo se permiten números enteros para piezas");
+                } else {
+                    JOptionPane.showMessageDialog(this,
+                            "Cantidad inválida");
+                }
+                return;
+            }
+
+            int opcion = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Deseas agregar:\n\n"
+                    + nombre + " - " + cantidad + " " + unidad + "?",
+                    "Confirmar ingrediente",
+                    JOptionPane.YES_NO_OPTION
+            );
+
+            if (opcion == JOptionPane.YES_OPTION) {
+
+                IngredienteDTO ingrediente = ingredientes.get(fila);
+                
+                if (parent instanceof FrmRegistrarProducto) {
+                    ((FrmRegistrarProducto) parent).agregarIngredienteATabla(ingrediente, Double.valueOf(cantidad));
+                } else if (parent instanceof FrmEditarProducto) {
+                    ((FrmEditarProducto) parent).agregarIngredienteATabla(ingrediente, Double.valueOf(cantidad));
+                }
+
+                JOptionPane.showMessageDialog(this, "Ingrediente agregado correctamente");
+                dispose();
+
+            }
         });
+    }
+
+    private void cargarIngredientes() {
+        modeloTabla.setRowCount(0);
+
+        ingredientes = coordinador.obtenerIngredientes();
+
+        if (ingredientes != null) {
+            for (IngredienteDTO ing : ingredientes) {
+                modeloTabla.addRow(new Object[]{
+                    ing.getNombre(),
+                    ing.getUnidadMedida(),
+                    ing.getCantidadActual()
+                });
+            }
+        }
     }
 }

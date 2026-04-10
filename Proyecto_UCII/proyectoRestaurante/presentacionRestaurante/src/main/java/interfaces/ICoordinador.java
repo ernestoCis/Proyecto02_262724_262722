@@ -48,6 +48,8 @@ public interface ICoordinador {
     // INGREDIENTES
     void mostrarIngredientes();
 
+    List<IngredienteDTO> obtenerIngredientes();
+
     void setIngredienteSeleccionado(IngredienteDTO cliente);
 
     IngredienteDTO getIngredienteSeleccionado();
@@ -71,6 +73,8 @@ public interface ICoordinador {
 
     void mostrarEditarProducto();
 
+    void actualizarProducto(ProductoDTO productoDTO);
+    
     void actualizarTablaProductos();
 
     void setProductoSeleccionado(ProductoDTO producto);
@@ -100,17 +104,17 @@ public interface ICoordinador {
     void setCarrito(List<DetallePedidoDTO> carrito);
 
     void mostrarResumenPedido();
-    
+
     List<ClienteFrecuenteDTO> consultarClientes();
-    
+
     ComandaDTO getComanda();
-    
+
     void setComanda(ComandaDTO comanda);
-    
+
     void mostrarConfirmacionComanda();
-    
+
     MesaDTO getMesaSeleccionada();
-    
+
     void limpiarSesionComanda();
-    
+
 }

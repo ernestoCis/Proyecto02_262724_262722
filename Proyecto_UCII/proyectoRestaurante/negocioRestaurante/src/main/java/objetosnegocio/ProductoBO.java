@@ -36,7 +36,7 @@ public class ProductoBO implements IProductoBO {
         validarDatos(dto);
 
         try {
-            // ❗ validar duplicado
+            // validar duplicado
             Producto existente = productoDAO.buscarPorNombreExacto(dto.getNombre());
             if (existente != null) {
                 throw new NegocioException("Ya existe un producto con ese nombre activo");
@@ -136,8 +136,8 @@ public class ProductoBO implements IProductoBO {
             throw new NegocioException("La disponibilidad es obligatoria");
         }
 
-        if (dto.getRecetas() == null || dto.getRecetas().isEmpty()) {
-            throw new NegocioException("El producto debe tener al menos un ingrediente");
-        }
+//        if (dto.getRecetas() == null || dto.getRecetas().isEmpty()) {
+//            throw new NegocioException("El producto debe tener al menos un ingrediente");
+//        }
     }
 }
