@@ -125,4 +125,7 @@ public interface ICoordinador {
     
     MesaDTO actualizarMesa(MesaDTO mesa);
     
+    // REPORTES
+    void mostrarOpcionesReporte();
+    
 }

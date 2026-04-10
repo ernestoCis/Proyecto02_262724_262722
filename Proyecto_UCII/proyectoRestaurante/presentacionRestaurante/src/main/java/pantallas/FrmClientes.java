@@ -27,6 +27,8 @@ import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
+import javax.swing.SwingConstants;
+import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
@@ -57,7 +59,7 @@ public class FrmClientes extends JFrame {
 
     private void configurarVentana() {
         setTitle("Restaurante");
-        setSize(1000, 700);
+        setSize(1000, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -155,6 +157,8 @@ public class FrmClientes extends JFrame {
                 return false;
             }
         };
+        
+        
 
         tblClientes = new JTable(modeloTabla);
         tblClientes.setRowHeight(40);
@@ -174,6 +178,10 @@ public class FrmClientes extends JFrame {
                 btnEliminar.setEnabled(tblClientes.getSelectedRow() != -1);
             }
         });
+        
+        ((DefaultTableCellRenderer) tblClientes.getTableHeader()
+                .getDefaultRenderer())
+                .setHorizontalAlignment(SwingConstants.CENTER);
 
         JScrollPane scrollPane = new JScrollPane(tblClientes);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());

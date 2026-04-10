@@ -88,6 +88,9 @@ public class Coordinador implements ICoordinador {
     private List<ProductoDTO> listaProductosActual;
     private ProductoDTO productoSeleccionado;
     private List<MesaDTO> mesas;
+    
+    // REPORTES 
+    private FrmSeleccionReporte frmSeleccionReporte;
 
     //Limpiar todo
     public void limpiarSesionComanda() {
@@ -105,7 +108,7 @@ public class Coordinador implements ICoordinador {
     FrmConfirmacionComanda frmConfirmacionComanda;
 
     FrmEstadosComanda frmEstadosComanda;
-    
+
     private ComandaDTO comanda;
 
     public Coordinador() {
@@ -582,8 +585,8 @@ public class Coordinador implements ICoordinador {
     public void mostrarMesas() {
 //        if (frmMesas == null) {
         frmMesas = new FrmMesas(this);
-            frmMesas = new FrmMesas(this);
-            frmSeleccionProductos = null;
+        frmMesas = new FrmMesas(this);
+        frmSeleccionProductos = null;
 //        }
         frmMesas.setVisible(true);
     }
@@ -596,7 +599,7 @@ public class Coordinador implements ICoordinador {
             }
 
             mesas = mesaBO.consultarTodas();
-            
+
             return mesas;
 
         } catch (NegocioException e) {
@@ -640,12 +643,12 @@ public class Coordinador implements ICoordinador {
     public MesaDTO getMesaSeleccionada() {
         return mesaSeleccionada;
     }
-    
+
     @Override
-    public MesaDTO actualizarMesa(MesaDTO mesa){
-        try{
+    public MesaDTO actualizarMesa(MesaDTO mesa) {
+        try {
             return mesaBO.actualizarMesa(mesa);
-        }catch(NegocioException e){
+        } catch (NegocioException e) {
             JOptionPane.showMessageDialog(null, "No se pudo actualizar la disponibilidad de la mesa");
             return null;
         }
@@ -756,38 +759,48 @@ public class Coordinador implements ICoordinador {
 
     @Override
     public ComandaDTO buscarComandaAbiertaPorMesa(Integer numeroMesa) {
-        try{
-            
+        try {
+
             this.comanda = comandaBO.obtenerComandaAbiertaPorMesa(numeroMesa);
-            
-            if(comanda == null){
+
+            if (comanda == null) {
                 JOptionPane.showMessageDialog(null, "No se encontró ninguna comanda para la mesa con numero: " + numeroMesa);
             }
-            
-        }catch(NegocioException e){
+
+        } catch (NegocioException e) {
             JOptionPane.showMessageDialog(null, "Error al buscar la comanda de la mesa: " + numeroMesa);
         }
-        
+
         return comanda;
-        
+
     }
 
     @Override
     public void mostrarEstadosComanda() {
 //        if(frmEstadosComanda == null){
-            frmEstadosComanda = new FrmEstadosComanda(this);
+        frmEstadosComanda = new FrmEstadosComanda(this);
 //        }
         frmEstadosComanda.setVisible(true);
     }
 
     @Override
     public ComandaDTO actualizarComanda(ComandaDTO comanda) {
-        try{
+        try {
             return comandaBO.actualizarComanda(comanda);
-        }catch(NegocioException e){
+        } catch (NegocioException e) {
             JOptionPane.showMessageDialog(null, "No se pudo actualizar la comanda");
             return null;
         }
     }
-    
+
+    // REPORTES
+    @Override
+    public void mostrarOpcionesReporte() {
+        if (frmSeleccionReporte == null) {
+            frmSeleccionReporte = new FrmSeleccionReporte(this);
+        }
+        frmSeleccionReporte.setVisible(true);
+        frmSeleccionReporte.toFront();
+    }
+
 }

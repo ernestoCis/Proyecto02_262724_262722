@@ -78,7 +78,7 @@ public class FrmAcciones extends JFrame {
 
         lblTitulo = new JLabel("Restaurante");
         lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 36));
-        lblTitulo.setForeground(new Color(45, 45, 45));
+        lblTitulo.setForeground(new Color(52, 58, 70));
 
         panelTitulo.add(lblTitulo);
 
@@ -146,7 +146,10 @@ public class FrmAcciones extends JFrame {
             coordinador.mostrarClientes();
             dispose();
         });
-        btnReportes.addActionListener(e -> System.out.println("Reportes"));
+        btnReportes.addActionListener(e -> {
+            coordinador.mostrarOpcionesReporte();
+            dispose();
+        });
     }
 
 }
