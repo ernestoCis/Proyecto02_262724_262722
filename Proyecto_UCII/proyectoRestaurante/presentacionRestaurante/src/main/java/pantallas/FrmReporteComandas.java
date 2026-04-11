@@ -247,6 +247,7 @@ public class FrmReporteComandas extends JFrame {
         });
 
         btnAceptarRango.addActionListener(e -> {
+            comandasFiltradas = new ArrayList<>();
             panelResultados.removeAll();
             panelResultados.repaint();
             lblTotalAcumulado.setVisible(false);
@@ -291,6 +292,10 @@ public class FrmReporteComandas extends JFrame {
     }
 
     private void cargarComandasPorRango() {
+        panelResultados.removeAll();
+        panelResultados.revalidate(); 
+        panelResultados.repaint();   
+
         LocalDate fechaInicio = dpFechaInicio.getDate();
         LocalDate fechaFin = dpFechaFin.getDate();
 
@@ -309,8 +314,6 @@ public class FrmReporteComandas extends JFrame {
             JOptionPane.showMessageDialog(null, "No existen comandas dentro de ese rango de fechas");
             return;
         }
-
-        panelResultados.removeAll();
 
         double totalAcumulado = 0;
 

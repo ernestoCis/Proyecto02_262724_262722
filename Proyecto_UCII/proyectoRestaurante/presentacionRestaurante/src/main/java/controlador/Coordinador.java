@@ -813,9 +813,7 @@ public class Coordinador implements ICoordinador {
 
     @Override
     public void mostrarEstadosComanda() {
-//        if(frmEstadosComanda == null){
         frmEstadosComanda = new FrmEstadosComanda(this);
-//        }
         frmEstadosComanda.setVisible(true);
     }
 
@@ -854,9 +852,7 @@ public class Coordinador implements ICoordinador {
 
     @Override
     public void mostrarReportesComandas() {
-        if(frmReporteComandas == null){
-            frmReporteComandas = new FrmReporteComandas(this);
-        }
+        frmReporteComandas = new FrmReporteComandas(this);
         frmReporteComandas.setVisible(true);
     }
 
