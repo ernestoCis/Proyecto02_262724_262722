@@ -5,8 +5,10 @@
 package interfaces;
 
 import dtos.ComandaDTO;
-import entidades.Comanda;
+import dtos.ReporteComandaDTO;
 import excepciones.NegocioException;
+import java.time.LocalDate;
+import java.util.List;
 
 /**
  *
@@ -24,4 +26,6 @@ public interface IComandaBO {
     String generarFolio() throws NegocioException;
     
     public ComandaDTO obtenerComandaAbiertaPorMesa(Integer numeroMesa) throws NegocioException;
+    
+    public List<ReporteComandaDTO> obtenerComandasPorRango(LocalDate inico, LocalDate fin) throws NegocioException;
 }

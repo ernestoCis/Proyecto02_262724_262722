@@ -7,6 +7,7 @@ package objetosnegocio;
 import adaptadores.ComandaAdapter;
 import daos.ComandaDAO;
 import dtos.ComandaDTO;
+import dtos.ReporteComandaDTO;
 import entidades.Comanda;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
@@ -14,6 +15,8 @@ import interfaces.IComandaBO;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  *
@@ -137,6 +140,29 @@ public class ComandaBO implements IComandaBO{
 
         } catch (PersistenciaException e) {
             throw new NegocioException("Error al recuperar la comanda de la mesa " + numeroMesa, e);
+        }
+    }
+
+    @Override
+    public List<ReporteComandaDTO> obtenerComandasPorRango(LocalDate inicio, LocalDate fin) throws NegocioException {
+        if (inicio == null || fin == null) {
+            throw new NegocioException("Las fechas de inicio y fin son obligatorias.");
+        }
+        if (inicio.isAfter(fin)) {
+            throw new NegocioException("La fecha de inicio no puede ser posterior a la fecha de fin.");
+        }
+
+        try {
+            List<Comanda> entidades = comandaDAO.consultarPorRangoFechas(inicio, fin);
+
+            List<ReporteComandaDTO> dtos = new ArrayList<>();
+            for (Comanda entidad : entidades) {
+                dtos.add(ComandaAdapter.entidadAReporteDto(entidad));
+            }
+
+            return dtos;
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al obtener el reporte de comandas", e);
         }
     }
     

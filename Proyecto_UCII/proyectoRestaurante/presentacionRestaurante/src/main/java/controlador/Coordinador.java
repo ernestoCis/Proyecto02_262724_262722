@@ -11,14 +11,17 @@ import dtos.MeseroDTO;
 import dtos.IngredienteDTO;
 import dtos.MesaDTO;
 import dtos.ProductoDTO;
+import dtos.ReporteComandaDTO;
 import enums.EstadoComandaDTO;
 import enums.EstadoMesaDTO;
 import excepciones.NegocioException;
 import interfaces.ICoordinador;
 import java.io.File;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import objetosnegocio.ClienteFrecuenteBO;
 import objetosnegocio.ComandaBO;
@@ -103,6 +106,8 @@ public class Coordinador implements ICoordinador {
     // REPORTES 
     private FrmSeleccionReporte frmSeleccionReporte;
     private FrmReporteClientesFrecuentes frmReporteClientesFrecuentes;
+    private FrmReporteComandas frmReporteComandas;
+    private FrmVisorPDF frmVisorPDF;
 
     //Limpiar todo
     public void limpiarSesionComanda() {
@@ -820,9 +825,7 @@ public class Coordinador implements ICoordinador {
 
     @Override
     public void mostrarEstadosComanda() {
-//        if(frmEstadosComanda == null){
         frmEstadosComanda = new FrmEstadosComanda(this);
-//        }
         frmEstadosComanda.setVisible(true);
     }
 
@@ -946,4 +949,29 @@ public class Coordinador implements ICoordinador {
         frmResumenPedidoEditado.setVisible(true);
     }
 
+    @Override
+    public void mostrarReportesComandas() {
+        frmReporteComandas = new FrmReporteComandas(this);
+        frmReporteComandas.setVisible(true);
+    }
+
+    @Override
+    public List<ReporteComandaDTO> obetnerComandasPorRangoFechas(LocalDate inicio, LocalDate fin) {
+        try{
+            return comandaBO.obtenerComandasPorRango(inicio, fin);
+        }catch(NegocioException e){
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al consultar las comandas");
+            return null;
+        }
+    }
+
+    @Override
+    public void mostrarPDF(String ruta) {
+        if(frmVisorPDF == null){
+            frmVisorPDF = new FrmVisorPDF(this, ruta);
+        }
+        frmVisorPDF.setVisible(true);
+    }
+    
 }
