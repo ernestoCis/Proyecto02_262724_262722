@@ -5,12 +5,15 @@
 package dtos;
 
 import java.io.Serializable;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 
 /**
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ClienteFrecuenteDTO implements Serializable {
+
     private Long idCliente;
     private String nombres;
     private String apellidoPaterno;
@@ -21,6 +24,8 @@ public class ClienteFrecuenteDTO implements Serializable {
     private Integer numeroVisitas;
     private Double totalGastado;
     private Integer puntos;
+
+    private LocalDateTime ultimaComanda;
 
     public ClienteFrecuenteDTO() {
     }
@@ -35,6 +40,31 @@ public class ClienteFrecuenteDTO implements Serializable {
         this.numeroVisitas = numeroVisitas;
         this.totalGastado = totalGastado;
         this.puntos = puntos;
+    }
+
+    public ClienteFrecuenteDTO(Long idCliente, String nombres, String apellidoPaterno, String apellidoMaterno, String telefono, String email, Integer numeroVisitas, Double totalGastado, Integer puntos, LocalDateTime ultimaComanda) {
+        this.idCliente = idCliente;
+        this.nombres = nombres;
+        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoMaterno = apellidoMaterno;
+        this.telefono = telefono;
+        this.email = email;
+        this.numeroVisitas = numeroVisitas;
+        this.totalGastado = totalGastado;
+        this.puntos = puntos;
+        this.ultimaComanda = ultimaComanda;
+    }
+
+    public ClienteFrecuenteDTO(String nombres, String apellidoPaterno, String apellidoMaterno, String telefono, String email, Integer numeroVisitas, Double totalGastado, Integer puntos, LocalDateTime ultimaComanda) {
+        this.nombres = nombres;
+        this.apellidoPaterno = apellidoPaterno;
+        this.apellidoMaterno = apellidoMaterno;
+        this.telefono = telefono;
+        this.email = email;
+        this.numeroVisitas = numeroVisitas;
+        this.totalGastado = totalGastado;
+        this.puntos = puntos;
+        this.ultimaComanda = ultimaComanda;
     }
 
     public Long getIdCliente() {
@@ -108,8 +138,16 @@ public class ClienteFrecuenteDTO implements Serializable {
     public void setPuntos(Integer puntos) {
         this.puntos = puntos;
     }
-    
-    public String getNombreCompleto(){
+
+    public String getNombreCompleto() {
         return nombres + " " + apellidoPaterno + " " + apellidoMaterno;
+    }
+
+    public LocalDateTime  getUltimaComanda() {
+        return ultimaComanda;
+    }
+
+    public void setUltimaComanda(LocalDateTime ultimaComanda) {
+        this.ultimaComanda = ultimaComanda;
     }
 }

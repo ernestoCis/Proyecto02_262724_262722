@@ -67,8 +67,8 @@ public class FrmInicio extends JFrame {
      * </p>
      */
     private void initComponents() {
-        setTitle("Sistema restaurante");
-        setSize(1000, 700);
+        setTitle("Restaurante");
+        setSize(1000, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);

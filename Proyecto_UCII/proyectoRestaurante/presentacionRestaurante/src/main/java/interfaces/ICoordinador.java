@@ -7,9 +7,11 @@ import dtos.IngredienteDTO;
 import dtos.MesaDTO;
 import dtos.MeseroDTO;
 import dtos.ProductoDTO;
+import java.io.File;
 import dtos.ReporteComandaDTO;
 import java.time.LocalDate;
 import java.util.List;
+import net.sf.jasperreports.engine.JasperPrint;
 
 /**
  *
@@ -138,6 +140,9 @@ public interface ICoordinador {
     
     void mostrarResumenPedidoEditado();
     
+    void mostrarReporteClientesFrecuentes();
+        
+    JasperPrint generarReporteClientes(String nombre, Integer visitas) throws Exception;
     void mostrarReportesComandas();
     
     List<ReporteComandaDTO> obetnerComandasPorRangoFechas(LocalDate inicio, LocalDate fin);

@@ -129,7 +129,7 @@ public class FrmSeleccionReporte extends JFrame {
         });
 
         btnReporteClientesF.addActionListener(e -> {
-            JOptionPane.showMessageDialog(this, "Reporte de clientes frecuentes");
+            coordinador.mostrarReporteClientesFrecuentes();
         });
     }
 }

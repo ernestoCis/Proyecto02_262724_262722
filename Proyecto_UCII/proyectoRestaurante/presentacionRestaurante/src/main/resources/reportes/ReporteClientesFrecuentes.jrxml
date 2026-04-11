@@ -1,0 +1,138 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE jasperReport PUBLIC "-//JasperReports//DTD Report Design//EN"
+"http://jasperreports.sourceforge.net/dtds/jasperreport.dtd">
+
+<jasperReport
+    xmlns="http://jasperreports.sourceforge.net/jasperreports"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="
+        http://jasperreports.sourceforge.net/jasperreports
+        http://jasperreports.sourceforge.net/xsd/jasperreport.xsd"
+        
+    name="ReporteClientesFrecuentes"
+    pageWidth="595"
+    pageHeight="842"
+    columnWidth="555"
+    leftMargin="20"
+    rightMargin="20"
+    topMargin="20"
+    bottomMargin="20">
+
+    <!-- CAMPOS -->
+    <field name="nombre" class="java.lang.String"/>
+    <field name="visitas" class="java.lang.Integer"/>
+    <field name="total" class="java.lang.Double"/>
+    <field name="ultima" class="java.lang.String"/>
+
+    <!-- HEADER -->
+    <pageHeader>
+        <band height="80">
+
+            <!-- LOGO -->
+            <image>
+                <reportElement x="0" y="0" width="50" height="50"/>
+                <imageExpression><![CDATA[
+                "src/main/resources/imagenes/icono_restaurante.png"
+            ]]></imageExpression>
+            </image>
+
+            <!-- PAGINA -->
+            <textField>
+                <reportElement x="455" y="0" width="100" height="20"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA[
+                "Página " + $V{PAGE_NUMBER}
+            ]]></textFieldExpression>
+            </textField>
+
+            <!-- TITULO -->
+            <staticText>
+                <reportElement x="0" y="40" width="555" height="20"/>
+                <textElement textAlignment="Center">
+                    <font size="16" isBold="true"/>
+                </textElement>
+                <text><![CDATA[REPORTE DE CLIENTES FRECUENTES]]></text>
+            </staticText>
+
+            <!-- FECHA -->
+            <textField>
+                <reportElement x="0" y="50" width="555" height="15"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[
+                "Fecha: " + new java.text.SimpleDateFormat("dd/MM/yyyy")
+                .format(new java.util.Date())
+            ]]></textFieldExpression>
+            </textField>
+
+        </band>
+    </pageHeader>
+
+    <!-- ENCABEZADO -->
+    <columnHeader>
+        <band height="20">
+
+            <staticText>
+                <reportElement x="0" y="0" width="215" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Nombre]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="200" y="0" width="80" height="20"/>
+                <textElement textAlignment="Center">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Visitas]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="250" y="0" width="120" height="20"/>
+                <textElement textAlignment="Right">
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Total Gastado]]></text>
+            </staticText>
+
+            <staticText>
+                <reportElement x="450" y="0" width="140" height="20"/>
+                <textElement>
+                    <font isBold="true"/>
+                </textElement>
+                <text><![CDATA[Última Comanda]]></text>
+            </staticText>
+
+        </band>
+    </columnHeader>
+
+    <!-- DETALLE -->
+    <detail>
+        <band height="20">
+
+            <textField>
+                <reportElement x="0" y="0" width="215" height="20"/>
+                <textFieldExpression><![CDATA[$F{nombre}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="200" y="0" width="80" height="20"/>
+                <textElement textAlignment="Center"/>
+                <textFieldExpression><![CDATA[$F{visitas}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="260" y="0" width="120" height="20"/>
+                <textElement textAlignment="Right"/>
+                <textFieldExpression><![CDATA["$" + $F{total}]]></textFieldExpression>
+            </textField>
+
+            <textField>
+                <reportElement x="450" y="0" width="140" height="20"/>
+                <textFieldExpression><![CDATA[$F{ultima}]]></textFieldExpression>
+            </textField>
+
+        </band>
+    </detail>
+
+</jasperReport>
