@@ -33,7 +33,9 @@ import java.awt.Insets;
 import java.io.File;
 import javax.swing.JFileChooser;
 import javax.swing.filechooser.FileNameExtensionFilter;
-import utilerias.GeneradorReportePDF;
+
+import net.sf.jasperreports.engine.JasperPrint;
+import net.sf.jasperreports.swing.JRViewer;
 
 public class FrmReporteComandas extends JFrame {
 
@@ -50,6 +52,8 @@ public class FrmReporteComandas extends JFrame {
     private JLabel lblTotalAcumulado;
 
     private List<ReporteComandaDTO> comandasFiltradas;
+
+    private JasperPrint jasperPrintActual;
 
     public FrmReporteComandas(Coordinador coordinador) {
         this.coordinador = coordinador;
@@ -217,7 +221,7 @@ public class FrmReporteComandas extends JFrame {
         panelInferior.setPreferredSize(new Dimension(900, 70));
         panelInferior.setMaximumSize(new Dimension(900, 70));
 
-        btnGenerarPdf = new JButton("Generar pdf");
+        btnGenerarPdf = new JButton("Descargar pdf");
         btnGenerarPdf.setFont(new Font("SansSerif", Font.PLAIN, 18));
         btnGenerarPdf.setFocusPainted(false);
         btnGenerarPdf.setCursor(new Cursor(Cursor.HAND_CURSOR));
@@ -255,37 +259,36 @@ public class FrmReporteComandas extends JFrame {
         });
 
         btnGenerarPdf.addActionListener(e -> {
-            if (comandasFiltradas == null || comandasFiltradas.isEmpty()) {
-                JOptionPane.showMessageDialog(this, "No hay comandas para generar el reporte.");
+            if (jasperPrintActual == null) {
+                JOptionPane.showMessageDialog(this, "Debes aceptar un rango de fechas para generar datos.");
                 return;
             }
 
             JFileChooser fileChooser = new JFileChooser();
-            fileChooser.setDialogTitle("Guardar reporte");
+            fileChooser.setDialogTitle("Guardar Reporte de Comandas");
+            fileChooser.setFileFilter(new FileNameExtensionFilter("Archivos PDF (*.pdf)", "pdf"));
 
-            String nombreSugerido = "Reporte_Comandas";
+            String nombreSugerido = "Reporte_Comandas" + ".pdf";
             fileChooser.setSelectedFile(new File(nombreSugerido));
 
-            fileChooser.setFileFilter(new FileNameExtensionFilter("Archivos PDF", "pdf"));
-
             int seleccion = fileChooser.showSaveDialog(this);
-            if (seleccion == JFileChooser.APPROVE_OPTION) {
-                File archivo = fileChooser.getSelectedFile();
-                String destino = archivo.getAbsolutePath();
 
-                if (!destino.toLowerCase().endsWith(".pdf")) {
-                    destino += ".pdf";
+            if (seleccion == JFileChooser.APPROVE_OPTION) {
+                File archivoDestino = fileChooser.getSelectedFile();
+                String ruta = archivoDestino.getAbsolutePath();
+
+                if (!ruta.toLowerCase().endsWith(".pdf")) {
+                    ruta += ".pdf";
                 }
 
                 try {
-                    GeneradorReportePDF generador = new GeneradorReportePDF();
-                    generador.crearPdfComandas(comandasFiltradas, destino, dpFechaInicio.getDate(), dpFechaFin.getDate());
+                    net.sf.jasperreports.engine.JasperExportManager.exportReportToPdfFile(jasperPrintActual, ruta);
 
-                    coordinador.mostrarPDF(destino);
-                    dispose();
+                    JOptionPane.showMessageDialog(this, "¡Reporte descargado con éxito!");
 
                 } catch (Exception ex) {
-                    JOptionPane.showMessageDialog(null, "Error al generar el pdf");
+                    ex.printStackTrace();
+                    JOptionPane.showMessageDialog(this, "Error al guardar el PDF: " + ex.getMessage());
                 }
             }
         });
@@ -293,8 +296,8 @@ public class FrmReporteComandas extends JFrame {
 
     private void cargarComandasPorRango() {
         panelResultados.removeAll();
-        panelResultados.revalidate(); 
-        panelResultados.repaint();   
+        panelResultados.revalidate();
+        panelResultados.repaint();
 
         LocalDate fechaInicio = dpFechaInicio.getDate();
         LocalDate fechaFin = dpFechaFin.getDate();
@@ -315,75 +318,27 @@ public class FrmReporteComandas extends JFrame {
             return;
         }
 
-        double totalAcumulado = 0;
+        try {
+            jasperPrintActual = coordinador.generarJasperComandas(comandasFiltradas, fechaInicio, fechaFin);
 
-        if (comandasFiltradas != null) {
-            for (ReporteComandaDTO comanda : comandasFiltradas) {
-                panelResultados.add(crearPanelComanda(comanda));
-                panelResultados.add(Box.createVerticalStrut(12));
+            JRViewer visor = new JRViewer(jasperPrintActual);
 
-                if (comanda.getTotal() != null) {
-                    totalAcumulado += comanda.getTotal();
-                }
-            }
+            panelResultados.removeAll();
+            panelResultados.add(visor, BorderLayout.CENTER);
+
+            panelResultados.revalidate();
+            panelResultados.repaint();
+
+            double total = comandasFiltradas.stream().mapToDouble(ReporteComandaDTO::getTotal).sum();
+            lblTotalAcumulado.setText("Total acumulado: $" + String.format("%,.2f", total));
+            lblTotalAcumulado.setVisible(true);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(this, "Error al generar visor: " + e.getMessage());
         }
-
-        lblTotalAcumulado.setText("Total acumulado: $" + String.format("%,.2f", totalAcumulado));
-        lblTotalAcumulado.setVisible(true);
 
         panelResultados.revalidate();
         panelResultados.repaint();
-    }
-
-    private JPanel crearPanelComanda(ReporteComandaDTO comanda) {
-        JPanel panel = new JPanel();
-        panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
-        panel.setBackground(new Color(220, 220, 220));
-        panel.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(200, 200, 200), 1),
-                BorderFactory.createEmptyBorder(10, 14, 10, 14)
-        ));
-        panel.setAlignmentX(LEFT_ALIGNMENT);
-
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-
-        String fechaTexto = comanda.getFecha() != null
-                ? comanda.getFecha().format(formatter)
-                : "-";
-
-        String mesaTexto = (comanda.getNumeroMesa() != null)
-                ? String.valueOf(comanda.getNumeroMesa())
-                : "-";
-
-        String estadoTexto = (comanda.getEstado() != null)
-                ? comanda.getEstado().name()
-                : "-";
-
-        String totalTexto = (comanda.getTotal() != null)
-                ? "$" + comanda.getTotal()
-                : "$0";
-
-        String clienteTexto = (comanda.getNombreCliente() != null)
-                ? comanda.getNombreCliente()
-                : "Cliente general";
-
-        JLabel lblLinea1 = new JLabel(
-                "Fecha: " + fechaTexto
-                + "    Mesa: " + mesaTexto
-                + "    Estado: " + estadoTexto
-                + "    Total: " + totalTexto
-        );
-        lblLinea1.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        lblLinea1.setForeground(new Color(80, 80, 80));
-
-        JLabel lblLinea2 = new JLabel("Cliente asociado: " + clienteTexto);
-        lblLinea2.setFont(new Font("SansSerif", Font.PLAIN, 14));
-        lblLinea2.setForeground(new Color(80, 80, 80));
-
-        panel.add(lblLinea1);
-        panel.add(Box.createVerticalStrut(4));
-        panel.add(lblLinea2);
-
-        return panel;
     }
 }

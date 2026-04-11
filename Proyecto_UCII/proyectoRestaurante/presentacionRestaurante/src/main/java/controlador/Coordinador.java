@@ -109,7 +109,6 @@ public class Coordinador implements ICoordinador {
     private FrmSeleccionReporte frmSeleccionReporte;
     private FrmReporteClientesFrecuentes frmReporteClientesFrecuentes;
     private FrmReporteComandas frmReporteComandas;
-    private FrmVisorPDF frmVisorPDF;
 
     //Limpiar todo
     public void limpiarSesionComanda() {
@@ -981,12 +980,30 @@ public class Coordinador implements ICoordinador {
         }
     }
 
-    @Override
-    public void mostrarPDF(String ruta) {
-        if(frmVisorPDF == null){
-            frmVisorPDF = new FrmVisorPDF(this, ruta);
+    public JasperPrint generarJasperComandas(List<ReporteComandaDTO> lista, LocalDate inicio, LocalDate fin) throws Exception {
+        List<Map<String, Object>> data = new ArrayList<>();
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+
+        for (ReporteComandaDTO c : lista) {
+            Map<String, Object> fila = new HashMap<>();
+            fila.put("folio", c.getFolio() != null ? c.getFolio() : "-");
+            fila.put("fecha", c.getFecha() != null ? c.getFecha().format(formato) : "-");
+            fila.put("mesa", c.getNumeroMesa());
+            fila.put("estado", String.valueOf(c.getEstado()));
+            fila.put("total", c.getTotal());
+            fila.put("cliente", (c.getNombreCliente() != null && !c.getNombreCliente().isEmpty()) ? c.getNombreCliente() : "Mostrador");
+            data.add(fila);
         }
-        frmVisorPDF.setVisible(true);
+
+        Map<String, Object> parametros = new HashMap<>();
+        parametros.put("fechaInicio", inicio.format(formato));
+        parametros.put("fechaFin", fin.format(formato));
+
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
+        JasperReport report = JasperCompileManager.compileReport(
+                getClass().getResourceAsStream("/reportes/ReporteComandas.jrxml"));
+
+        return JasperFillManager.fillReport(report, parametros, dataSource);
     }
     
 }
