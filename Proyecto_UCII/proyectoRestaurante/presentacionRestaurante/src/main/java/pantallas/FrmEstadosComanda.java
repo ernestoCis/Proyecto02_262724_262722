@@ -137,23 +137,23 @@ public class FrmEstadosComanda extends JFrame {
 
         panelIzquierdoFranja.add(lblIconoMesero);
         panelIzquierdoFranja.add(lblNombreMesero);
-        
+
         JPanel panelDerechoFranja = new JPanel(new FlowLayout(FlowLayout.RIGHT, 18, 18));
-panelDerechoFranja.setOpaque(false);
+        panelDerechoFranja.setOpaque(false);
 
-btnRegresar = new JButton("←");
-btnRegresar.setFont(new Font("SansSerif", Font.BOLD, 24));
-btnRegresar.setForeground(Color.WHITE);
-btnRegresar.setBackground(colorMostaza);
-btnRegresar.setFocusPainted(false);
-btnRegresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-btnRegresar.setPreferredSize(new Dimension(38, 38));
-btnRegresar.setMargin(new Insets(0, 0, 0, 0));
-btnRegresar.setOpaque(true);
-btnRegresar.setContentAreaFilled(true);
-btnRegresar.setBorderPainted(false);
+        btnRegresar = new JButton("←");
+        btnRegresar.setFont(new Font("SansSerif", Font.BOLD, 24));
+        btnRegresar.setForeground(Color.WHITE);
+        btnRegresar.setBackground(colorMostaza);
+        btnRegresar.setFocusPainted(false);
+        btnRegresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        btnRegresar.setPreferredSize(new Dimension(38, 38));
+        btnRegresar.setMargin(new Insets(0, 0, 0, 0));
+        btnRegresar.setOpaque(true);
+        btnRegresar.setContentAreaFilled(true);
+        btnRegresar.setBorderPainted(false);
 
-panelDerechoFranja.add(btnRegresar);
+        panelDerechoFranja.add(btnRegresar);
 
         panelFranjaRoja.add(panelIzquierdoFranja, BorderLayout.WEST);
         panelFranjaRoja.add(panelDerechoFranja, BorderLayout.EAST);
@@ -229,7 +229,7 @@ panelDerechoFranja.add(btnRegresar);
         panelContenido.add(panelCliente);
         panelContenido.add(Box.createVerticalStrut(18));
         panelContenido.add(panelTabla);
-        
+
         JScrollPane scrollContenido = new JScrollPane(panelContenido);
         scrollContenido.setBorder(BorderFactory.createEmptyBorder());
         scrollContenido.setPreferredSize(new Dimension(980, 390));
@@ -304,7 +304,7 @@ panelDerechoFranja.add(btnRegresar);
             coordinador.mostrarInicioSesionMesero();
             dispose();
         });
-        
+
         btnRegresar.addActionListener(e -> {
             coordinador.mostrarMesas();
             dispose();
@@ -321,28 +321,28 @@ panelDerechoFranja.add(btnRegresar);
                     "La comanda se marcará como entregada",
                     "Entregar comanda",
                     JOptionPane.OK_CANCEL_OPTION,
-                    JOptionPane.QUESTION_MESSAGE 
+                    JOptionPane.QUESTION_MESSAGE
             );
-            
+
             if (respuesta == JOptionPane.OK_OPTION) {
                 ComandaDTO comanda = coordinador.getComanda();
                 comanda.setEstado(EstadoComandaDTO.ENTREGADA);
                 coordinador.setComanda(comanda);
                 coordinador.actualizarComanda(comanda);
-                
+
                 MesaDTO mesa = coordinador.getMesaSeleccionada();
                 mesa.setDisponibilidad(EstadoMesaDTO.DISPONIBLE);
                 coordinador.setMesaSeleccionada(mesa);
                 coordinador.actualizarMesa(mesa);
-                
+
                 JOptionPane.showMessageDialog(null, "Comanda entregada");
-                
+
                 coordinador.mostrarMesas();
-                
+
                 dispose();
-                
+
             }
-            
+
         });
 
         btnCancelar.addActionListener(e -> {
@@ -353,24 +353,24 @@ panelDerechoFranja.add(btnRegresar);
                     JOptionPane.OK_CANCEL_OPTION, //bbotones Aceptar y Cancelar
                     JOptionPane.QUESTION_MESSAGE //icono de interrogación
             );
-            
+
             if (respuesta == JOptionPane.OK_OPTION) {
                 ComandaDTO comanda = coordinador.getComanda();
                 comanda.setEstado(EstadoComandaDTO.CANCELADA);
                 coordinador.setComanda(comanda);
                 coordinador.actualizarComanda(comanda);
-                
+
                 MesaDTO mesa = coordinador.getMesaSeleccionada();
                 mesa.setDisponibilidad(EstadoMesaDTO.DISPONIBLE);
                 coordinador.setMesaSeleccionada(mesa);
                 coordinador.actualizarMesa(mesa);
-                
+
                 JOptionPane.showMessageDialog(null, "Comanda cancelada");
-                
+
                 coordinador.mostrarMesas();
-                
+
                 dispose();
-                
+
             }
         });
     }

@@ -301,6 +301,17 @@ public class Coordinador implements ICoordinador {
             return null;
         }
     }
+    
+    @Override
+    public ClienteFrecuenteDTO getClienteGeneral(){
+        try{
+            return clienteFrecuenteBO.buscarClienteFrecuenteGeneral();
+        }catch(NegocioException e){
+            JOptionPane.showMessageDialog(null, "Error al asignar el cliente general");
+            e.printStackTrace();
+            return null;
+        }
+    }
 
     //----- MESEROS -----
     @Override

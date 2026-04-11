@@ -344,7 +344,7 @@ public class FrmResumenPedidoEditado extends JFrame {
         });
 
         btnQuitarCliente.addActionListener(e -> {
-            clienteSeleccionado = null;
+            clienteSeleccionado = coordinador.getClienteGeneral();
             actualizarClienteSeleccionado();
             txtBuscarCliente.setText("Buscar por nombre, teléfono o correo");
             txtBuscarCliente.setForeground(Color.GRAY);
