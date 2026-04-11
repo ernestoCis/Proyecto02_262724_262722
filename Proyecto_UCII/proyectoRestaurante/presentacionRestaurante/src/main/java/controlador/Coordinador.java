@@ -4,6 +4,7 @@
  */
 package controlador;
 
+import dtos.ClienteDTO;
 import dtos.ClienteFrecuenteDTO;
 import dtos.ComandaDTO;
 import dtos.DetallePedidoDTO;
@@ -22,6 +23,7 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
+import objetosnegocio.ClienteBO;
 import objetosnegocio.ClienteFrecuenteBO;
 import objetosnegocio.ComandaBO;
 import objetosnegocio.MeseroBO;
@@ -131,6 +133,15 @@ public class Coordinador implements ICoordinador {
     //----- MOSTRAR FRAMES -----
     @Override
     public void iniciarSistema() {
+        try{
+            if(clienteFrecuenteBO.buscarClienteFrecuenteGeneral() == null){
+                ClienteFrecuenteDTO clienteGeneral = new ClienteFrecuenteDTO(null, "Cliente general", "", "","0","",0,0.0,0);
+                clienteFrecuenteBO.registrarCliente(clienteGeneral);
+            }
+        }catch(NegocioException e){
+            System.out.println(e.getMessage());
+        }
+        
         if (frmInicio == null) {
             frmInicio = new FrmInicio(this);
         }
@@ -773,6 +784,10 @@ public class Coordinador implements ICoordinador {
 
             comanda.setFecha(LocalDateTime.now());
             comanda.setEstado(EstadoComandaDTO.ABIERTA);
+            if(comanda.getCliente() == null){
+                comanda.setCliente(clienteFrecuenteBO.buscarClienteFrecuenteGeneral());
+            }
+            
             mesaSeleccionada.setDisponibilidad(EstadoMesaDTO.NO_DISPONIBLE);
 
             mesaSeleccionada = mesaBO.actualizarMesa(mesaSeleccionada);

@@ -171,4 +171,13 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
             throw new NegocioException("Error al eliminar el cliente.", e);
         }
     }
+
+    @Override
+    public ClienteFrecuenteDTO buscarClienteFrecuenteGeneral() throws NegocioException {
+        try{
+            return ClienteFrecuenteAdapter.entidadADTO(clienteFrecuenteDAO.buscarClienteFrecuenteGeneral());
+        }catch(PersistenciaException e){
+            throw new NegocioException("Error al consultar al cliente general", e);
+        }
+    }
 }

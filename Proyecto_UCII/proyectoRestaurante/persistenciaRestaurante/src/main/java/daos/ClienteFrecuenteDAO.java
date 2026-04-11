@@ -149,4 +149,27 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
             em.close();
         }
     }
+
+    @Override
+    public ClienteFrecuente buscarClienteFrecuenteGeneral() throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try{
+            String comandoJPQL = "SELECT c FROM ClienteFrecuente c WHERE nombres = :nom";
+            TypedQuery<ClienteFrecuente> query = em.createQuery(comandoJPQL, ClienteFrecuente.class);
+            query.setParameter("nom", "Cliente general");
+            
+            List<ClienteFrecuente> clientes = query.getResultList();
+            
+            if (clientes != null && !clientes.isEmpty()) {
+                return clientes.get(0);
+            }
+
+            return null;
+            
+        }catch(Exception e){
+            throw new PersistenciaException("Error al consultar al cliente general", e);
+        }finally{
+            em.close();
+        }
+    }
 }
