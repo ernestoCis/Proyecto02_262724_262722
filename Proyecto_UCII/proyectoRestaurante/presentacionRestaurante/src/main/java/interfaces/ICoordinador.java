@@ -148,5 +148,5 @@ public interface ICoordinador {
     
     List<ReporteComandaDTO> obetnerComandasPorRangoFechas(LocalDate inicio, LocalDate fin);
     
-    
+    JasperPrint generarJasperComandas(List<ReporteComandaDTO> lista, LocalDate inicio, LocalDate fin) throws Exception;
 }

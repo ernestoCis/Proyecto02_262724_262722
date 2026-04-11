@@ -831,6 +831,7 @@ public class Coordinador implements ICoordinador {
 
         } catch (NegocioException e) {
             JOptionPane.showMessageDialog(null, "Error al buscar la comanda de la mesa: " + numeroMesa);
+            e.printStackTrace();
         }
 
         return comanda;
@@ -980,6 +981,7 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    @Override
     public JasperPrint generarJasperComandas(List<ReporteComandaDTO> lista, LocalDate inicio, LocalDate fin) throws Exception {
         List<Map<String, Object>> data = new ArrayList<>();
         DateTimeFormatter formatoConHora = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");

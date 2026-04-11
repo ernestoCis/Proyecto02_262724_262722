@@ -6,6 +6,7 @@ package daos;
 
 import conexion.ConexionBD;
 import entidades.Comanda;
+import entidades.Producto;
 import enums.EstadoComanda;
 import excepciones.PersistenciaException;
 import interfaces.IComandaDAO;
@@ -146,13 +147,28 @@ public class ComandaDAO implements IComandaDAO {
     public Comanda buscarComandaAbiertaPorMesa(Integer numeroMesa) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
-            String jpql = "SELECT c FROM Comanda c LEFT JOIN FETCH c.detalles WHERE c.mesa.numero = :numMesa AND c.estado = :estadoEnum";
-
+            String jpql = """
+                          SELECT c FROM Comanda c
+                          LEFT JOIN FETCH c.detalles d
+                          LEFT JOIN FETCH d.producto p
+                          WHERE c.mesa.numero = :numMesa AND c.estado = :estadoEnum
+                          """;
+            
             TypedQuery<Comanda> query = em.createQuery(jpql, Comanda.class);
             query.setParameter("numMesa", numeroMesa);
             query.setParameter("estadoEnum", EstadoComanda.ABIERTA);
 
-            return query.getSingleResult();
+            Comanda comanda =  query.getSingleResult();
+            
+            //se cargan los detalles pedidos para que se queden en la memoria
+            if(comanda != null && comanda.getDetalles() != null){
+                em.createQuery("SELECT p FROM Producto p LEFT JOIN FETCH p.recetas WHERE p IN (SELECT d.producto FROM Comanda c JOIN c.detalles d WHERE c = :comanda)", Producto.class)
+                        .setParameter("comanda", comanda)
+                        .getResultList();
+            }
+            
+            return comanda;
+            
         } catch (Exception e) {
             throw new PersistenciaException("Error al buscar la comanda abierta para la mesa " + numeroMesa, e);
         } finally {
