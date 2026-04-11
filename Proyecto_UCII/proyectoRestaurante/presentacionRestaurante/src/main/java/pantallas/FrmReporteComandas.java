@@ -30,6 +30,10 @@ import javax.swing.JOptionPane;
 import com.github.lgooddatepicker.components.DatePicker;
 import dtos.ReporteComandaDTO;
 import java.awt.Insets;
+import java.io.File;
+import javax.swing.JFileChooser;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import utilerias.GeneradorReportePDF;
 
 public class FrmReporteComandas extends JFrame {
 
@@ -255,7 +259,34 @@ public class FrmReporteComandas extends JFrame {
                 return;
             }
 
-            JOptionPane.showMessageDialog(this, "Aquí iría la generación del PDF.");
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setDialogTitle("Guardar reporte");
+
+            String nombreSugerido = "Reporte_Comandas";
+            fileChooser.setSelectedFile(new File(nombreSugerido));
+
+            fileChooser.setFileFilter(new FileNameExtensionFilter("Archivos PDF", "pdf"));
+
+            int seleccion = fileChooser.showSaveDialog(this);
+            if (seleccion == JFileChooser.APPROVE_OPTION) {
+                File archivo = fileChooser.getSelectedFile();
+                String destino = archivo.getAbsolutePath();
+
+                if (!destino.toLowerCase().endsWith(".pdf")) {
+                    destino += ".pdf";
+                }
+
+                try {
+                    GeneradorReportePDF generador = new GeneradorReportePDF();
+                    generador.crearPdfComandas(comandasFiltradas, destino, dpFechaInicio.getDate(), dpFechaFin.getDate());
+
+                    coordinador.mostrarPDF(destino);
+                    dispose();
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(null, "Error al generar el pdf");
+                }
+            }
         });
     }
 
@@ -274,11 +305,11 @@ public class FrmReporteComandas extends JFrame {
         }
 
         comandasFiltradas = coordinador.obetnerComandasPorRangoFechas(fechaInicio, fechaFin);
-        if(comandasFiltradas == null || comandasFiltradas.isEmpty()){
+        if (comandasFiltradas == null || comandasFiltradas.isEmpty()) {
             JOptionPane.showMessageDialog(null, "No existen comandas dentro de ese rango de fechas");
             return;
         }
-        
+
         panelResultados.removeAll();
 
         double totalAcumulado = 0;
@@ -296,7 +327,7 @@ public class FrmReporteComandas extends JFrame {
 
         lblTotalAcumulado.setText("Total acumulado: $" + String.format("%,.2f", totalAcumulado));
         lblTotalAcumulado.setVisible(true);
-        
+
         panelResultados.revalidate();
         panelResultados.repaint();
     }
@@ -317,7 +348,7 @@ public class FrmReporteComandas extends JFrame {
                 ? comanda.getFecha().format(formatter)
                 : "-";
 
-        String mesaTexto = (comanda.getNumeroMesa()!= null)
+        String mesaTexto = (comanda.getNumeroMesa() != null)
                 ? String.valueOf(comanda.getNumeroMesa())
                 : "-";
 

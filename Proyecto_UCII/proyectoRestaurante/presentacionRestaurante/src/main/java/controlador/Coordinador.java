@@ -20,6 +20,7 @@ import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import objetosnegocio.ClienteFrecuenteBO;
 import objetosnegocio.ComandaBO;
@@ -94,6 +95,7 @@ public class Coordinador implements ICoordinador {
     // REPORTES 
     private FrmSeleccionReporte frmSeleccionReporte;
     private FrmReporteComandas frmReporteComandas;
+    private FrmVisorPDF frmVisorPDF;
 
     //Limpiar todo
     public void limpiarSesionComanda() {
@@ -867,6 +869,14 @@ public class Coordinador implements ICoordinador {
             JOptionPane.showMessageDialog(null, "Error al consultar las comandas");
             return null;
         }
+    }
+
+    @Override
+    public void mostrarPDF(String ruta) {
+        if(frmVisorPDF == null){
+            frmVisorPDF = new FrmVisorPDF(this, ruta);
+        }
+        frmVisorPDF.setVisible(true);
     }
     
 }

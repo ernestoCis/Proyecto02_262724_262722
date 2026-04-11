@@ -142,4 +142,6 @@ public interface ICoordinador {
     
     List<ReporteComandaDTO> obetnerComandasPorRangoFechas(LocalDate inicio, LocalDate fin);
     
+    void mostrarPDF(String ruta);
+    
 }
