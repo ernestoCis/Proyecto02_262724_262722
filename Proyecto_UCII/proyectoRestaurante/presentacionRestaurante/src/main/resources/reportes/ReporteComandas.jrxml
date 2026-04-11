@@ -22,8 +22,7 @@
     <parameter name="fechaFin" class="java.lang.String"/>
 
     <field name="folio" class="java.lang.String"/>
-    <field name="fecha" class="java.lang.String"/>
-    <field name="mesa" class="java.lang.Integer"/>
+    <field name="fecha" class="java.lang.String"/> <field name="mesa" class="java.lang.Integer"/>
     <field name="estado" class="java.lang.String"/>
     <field name="total" class="java.lang.Double"/>
     <field name="cliente" class="java.lang.String"/>
@@ -78,17 +77,17 @@
             </rectangle>
             
             <staticText>
-                <reportElement x="5" y="0" width="110" height="20" forecolor="#FFFFFF"/>
+                <reportElement x="5" y="0" width="90" height="20" forecolor="#FFFFFF"/>
                 <textElement verticalAlignment="Middle"><font isBold="true"/></textElement>
                 <text><![CDATA[Folio]]></text>
             </staticText>
             <staticText>
-                <reportElement x="120" y="0" width="80" height="20" forecolor="#FFFFFF"/>
+                <reportElement x="100" y="0" width="110" height="20" forecolor="#FFFFFF"/>
                 <textElement verticalAlignment="Middle"><font isBold="true"/></textElement>
-                <text><![CDATA[Fecha]]></text>
+                <text><![CDATA[Fecha y Hora]]></text>
             </staticText>
             <staticText>
-                <reportElement x="205" y="0" width="110" height="20" forecolor="#FFFFFF"/>
+                <reportElement x="215" y="0" width="105" height="20" forecolor="#FFFFFF"/>
                 <textElement verticalAlignment="Middle"><font isBold="true"/></textElement>
                 <text><![CDATA[Cliente]]></text>
             </staticText>
@@ -113,17 +112,19 @@
     <detail>
         <band height="20">
             <textField>
-                <reportElement x="5" y="0" width="110" height="20"/>
+                <reportElement x="5" y="0" width="90" height="20"/>
                 <textElement verticalAlignment="Middle"/>
                 <textFieldExpression><![CDATA[$F{folio}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="120" y="0" width="80" height="20"/>
-                <textElement verticalAlignment="Middle"/>
+                <reportElement x="100" y="0" width="110" height="20"/>
+                <textElement verticalAlignment="Middle">
+                    <font size="9"/>
+                </textElement>
                 <textFieldExpression><![CDATA[$F{fecha}]]></textFieldExpression>
             </textField>
             <textField>
-                <reportElement x="205" y="0" width="110" height="20"/>
+                <reportElement x="215" y="0" width="105" height="20"/>
                 <textElement verticalAlignment="Middle"/>
                 <textFieldExpression><![CDATA[$F{cliente}]]></textFieldExpression>
             </textField>

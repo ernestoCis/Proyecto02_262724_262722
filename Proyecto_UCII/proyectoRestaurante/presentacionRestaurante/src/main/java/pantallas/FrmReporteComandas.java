@@ -284,7 +284,6 @@ public class FrmReporteComandas extends JFrame {
                 try {
                     net.sf.jasperreports.engine.JasperExportManager.exportReportToPdfFile(jasperPrintActual, ruta);
 
-                    JOptionPane.showMessageDialog(this, "¡Reporte descargado con éxito!");
 
                 } catch (Exception ex) {
                     ex.printStackTrace();

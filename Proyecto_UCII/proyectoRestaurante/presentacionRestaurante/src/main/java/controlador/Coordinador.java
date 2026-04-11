@@ -982,12 +982,13 @@ public class Coordinador implements ICoordinador {
 
     public JasperPrint generarJasperComandas(List<ReporteComandaDTO> lista, LocalDate inicio, LocalDate fin) throws Exception {
         List<Map<String, Object>> data = new ArrayList<>();
-        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy");
+        DateTimeFormatter formatoConHora = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+        DateTimeFormatter formatoSimple = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
         for (ReporteComandaDTO c : lista) {
             Map<String, Object> fila = new HashMap<>();
             fila.put("folio", c.getFolio() != null ? c.getFolio() : "-");
-            fila.put("fecha", c.getFecha() != null ? c.getFecha().format(formato) : "-");
+            fila.put("fecha", c.getFecha() != null ? c.getFecha().format(formatoConHora) : "-");
             fila.put("mesa", c.getNumeroMesa());
             fila.put("estado", String.valueOf(c.getEstado()));
             fila.put("total", c.getTotal());
@@ -996,8 +997,8 @@ public class Coordinador implements ICoordinador {
         }
 
         Map<String, Object> parametros = new HashMap<>();
-        parametros.put("fechaInicio", inicio.format(formato));
-        parametros.put("fechaFin", fin.format(formato));
+        parametros.put("fechaInicio", inicio.format(formatoSimple));
+        parametros.put("fechaFin", fin.format(formatoSimple));
 
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
         JasperReport report = JasperCompileManager.compileReport(
