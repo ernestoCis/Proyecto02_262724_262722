@@ -12,6 +12,8 @@ import entidades.ClienteFrecuente;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
 import interfaces.IClienteFrecuenteBO;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JOptionPane;
@@ -57,29 +59,32 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
     }
 
     /**
-     * Convierte una entidad ClienteFrecuente a su dtoy calcula los valores faltantes del cliente frecuente
+     * Convierte una entidad ClienteFrecuente a su dtoy calcula los valores
+     * faltantes del cliente frecuente
+     *
      * @param c
-     * @return 
+     * @return
      */
-    private ClienteFrecuenteDTO convertir_calcular_clientes(ClienteFrecuente c)throws NegocioException {
-        
-        try{
+    private ClienteFrecuenteDTO convertir_calcular_clientes(ClienteFrecuente c) throws NegocioException {
+
+        try {
             ClienteFrecuenteDTO dto = ClienteFrecuenteAdapter.entidadADTO(c);
 
             int visitas = comandaDAO.contarVisitas(c.getIdCliente());
             double total = comandaDAO.totalGastado(c.getIdCliente());
             int puntos = (int) (total / 20);
+            LocalDateTime ultima = comandaDAO.obtenerUltimaComanda(c.getIdCliente());
 
             dto.setNumeroVisitas(visitas);
             dto.setTotalGastado(total);
             dto.setPuntos(puntos);
+            dto.setUltimaComanda(ultima);
 
             return dto;
-        }catch(PersistenciaException e){
+
+        } catch (PersistenciaException e) {
             throw new NegocioException("Error al convertir y calcular puntos", e);
         }
-        
-        
     }
 
     @Override
@@ -110,10 +115,10 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         try {
             //validar que el cliente no este registrado
             ClienteFrecuente existente = clienteFrecuenteDAO.buscarPorTelefono(dto.getTelefono());
-            if(existente != null){
+            if (existente != null) {
                 throw new NegocioException("Ya existe un cliente registrado con el telefono: " + dto.getTelefono());
             }
-            
+
             ClienteFrecuente entidad = ClienteFrecuenteAdapter.dtoAEntidadNuevo(dto);
             clienteFrecuenteDAO.guardar(entidad);
 
@@ -134,15 +139,15 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
 
     @Override
     public void actualizarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
-        try{
-            
+        try {
+
             if (dto.getIdCliente() == null) {
                 throw new NegocioException("No se puede actualizar un cliente sin ID.");
             }
-            
+
             //validar que el cliente no este registrado
             ClienteFrecuente existente = clienteFrecuenteDAO.buscarPorTelefono(dto.getTelefono());
-            
+
             if (existente != null && !existente.getIdCliente().equals(dto.getIdCliente())) {
                 throw new NegocioException("Ya existe un cliente registrado con el telefono: " + dto.getTelefono());
             }
@@ -170,5 +175,32 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         } catch (PersistenciaException e) {
             throw new NegocioException("Error al eliminar el cliente.", e);
         }
+    }
+
+    public List<ClienteFrecuenteDTO> consultarReporte(String nombre, Integer minimoVisitas) throws NegocioException {
+
+        List<ClienteFrecuenteDTO> lista = consultarTodos();
+        List<ClienteFrecuenteDTO> filtrada = new ArrayList<>();
+
+        for (ClienteFrecuenteDTO c : lista) {
+
+            boolean cumpleNombre = true;
+            boolean cumpleVisitas = true;
+
+            if (nombre != null && !nombre.isBlank()) { cumpleNombre = c.getNombres()
+                        .toLowerCase()
+                        .contains(nombre.toLowerCase());
+            }
+
+            if (minimoVisitas != null) {
+                cumpleVisitas = c.getNumeroVisitas() >= minimoVisitas;
+            }
+
+            if (cumpleNombre && cumpleVisitas) {
+                filtrada.add(c);
+            }
+        }
+
+        return filtrada;
     }
 }

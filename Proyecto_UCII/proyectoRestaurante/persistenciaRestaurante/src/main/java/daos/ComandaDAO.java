@@ -11,6 +11,7 @@ import excepciones.PersistenciaException;
 import interfaces.IComandaDAO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import java.time.LocalDateTime;
 
 /**
  *
@@ -150,6 +151,26 @@ public class ComandaDAO implements IComandaDAO {
             return query.getSingleResult();
         } catch (Exception e) {
             throw new PersistenciaException("Error al buscar la comanda abierta para la mesa " + numeroMesa, e);
+        } finally {
+            em.close();
+        }
+    }
+    
+    public LocalDateTime obtenerUltimaComanda(Long idCliente) throws PersistenciaException {
+
+        EntityManager em = ConexionBD.crearConexion();
+
+        try {
+
+            return em.createQuery(
+                    "SELECT MAX(c.fecha) FROM Comanda c WHERE c.cliente.idCliente = :id",
+                    LocalDateTime.class
+            )
+                    .setParameter("id", idCliente)
+                    .getSingleResult();
+
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al obtener ultima comanda", e);
         } finally {
             em.close();
         }

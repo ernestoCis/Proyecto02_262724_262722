@@ -10,6 +10,7 @@ import excepciones.PersistenciaException;
 import interfaces.IClienteFrecuenteDAO;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.TypedQuery;
+import java.time.LocalDate;
 import java.util.List;
 
 /**
@@ -75,7 +76,7 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             return em.find(ClienteFrecuente.class, id);
-        }catch(Exception e){
+        } catch (Exception e) {
             throw new PersistenciaException(e.getMessage());
         } finally {
             em.close();

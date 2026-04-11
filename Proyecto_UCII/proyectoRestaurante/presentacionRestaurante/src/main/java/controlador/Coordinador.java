@@ -15,6 +15,7 @@ import enums.EstadoComandaDTO;
 import enums.EstadoMesaDTO;
 import excepciones.NegocioException;
 import interfaces.ICoordinador;
+import java.io.File;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,6 +27,16 @@ import objetosnegocio.IngredienteBO;
 import objetosnegocio.MesaBO;
 import objetosnegocio.ProductoBO;
 import pantallas.*;
+
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.view.JasperViewer;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.HashMap;
+import java.util.Map;
+import javax.swing.JFileChooser;
 
 /**
  *
@@ -91,6 +102,7 @@ public class Coordinador implements ICoordinador {
 
     // REPORTES 
     private FrmSeleccionReporte frmSeleccionReporte;
+    private FrmReporteClientesFrecuentes frmReporteClientesFrecuentes;
 
     //Limpiar todo
     public void limpiarSesionComanda() {
@@ -111,7 +123,7 @@ public class Coordinador implements ICoordinador {
 
     FrmEditarProductosComanda frmEditarProductosComanda;
     FrmResumenPedidoEditado frmResumenPedidoEditado;
-    
+
     private ComandaDTO comanda;
 
     public Coordinador() {
@@ -291,9 +303,9 @@ public class Coordinador implements ICoordinador {
     public MeseroDTO getMeseroActual() {
         return meseroActual;
     }
-    
+
     @Override
-    public void setMeseroActual(MeseroDTO mesero){
+    public void setMeseroActual(MeseroDTO mesero) {
         meseroActual = mesero;
     }
 
@@ -312,8 +324,8 @@ public class Coordinador implements ICoordinador {
         }
 
     }
-    
-        @Override
+
+    @Override
     //DATOS PRECARGADOS
     public void precargarMeseros() {
         try {
@@ -325,7 +337,7 @@ public class Coordinador implements ICoordinador {
                 m.setNombre("Ernesto");
                 m.setUsuario("m1");
                 meseroBO.registrarMesero(m);
-                
+
                 MeseroDTO m2 = new MeseroDTO();
                 m2.setRfc("GUCP060724H89");
                 m2.setApellidoPaterno("Guevara");
@@ -835,9 +847,96 @@ public class Coordinador implements ICoordinador {
     }
 
     @Override
+    public void mostrarReporteClientesFrecuentes() {
+
+        if (frmSeleccionReporte != null) {
+            frmSeleccionReporte.dispose();
+        }
+
+        frmReporteClientesFrecuentes = new FrmReporteClientesFrecuentes(this);
+        frmReporteClientesFrecuentes.setVisible(true);
+        frmReporteClientesFrecuentes.toFront();
+    }
+
+    public List<ClienteFrecuenteDTO> consultarReporteClientesFrecuentes(String nombre, Integer minimoVisitas) {
+
+        try {
+            return clienteFrecuenteBO.consultarReporte(nombre, minimoVisitas);
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
+    public JasperPrint generarReporteClientes(String nombre, Integer visitas) throws Exception {
+
+        List<ClienteFrecuenteDTO> lista = consultarReporteClientesFrecuentes(nombre, visitas);
+
+        List<Map<String, Object>> data = new ArrayList<>();
+
+        DateTimeFormatter formato = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
+
+        for (ClienteFrecuenteDTO c : lista) {
+            Map<String, Object> fila = new HashMap<>();
+
+            fila.put("nombre",
+                    c.getNombres() + " "
+                    + c.getApellidoPaterno() + " "
+                    + c.getApellidoMaterno());
+
+            fila.put("visitas", c.getNumeroVisitas());
+            fila.put("total", c.getTotalGastado());
+
+            String fecha = "Sin comandas";
+            if (c.getUltimaComanda() != null) {
+                fecha = c.getUltimaComanda().format(formato);
+            }
+
+            fila.put("ultima", fecha);
+
+            data.add(fila);
+        }
+
+        JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(data);
+
+        JasperReport report = JasperCompileManager.compileReport(
+                getClass().getResourceAsStream(
+                        "/reportes/ReporteClientesFrecuentes.jrxml"));
+
+        return JasperFillManager.fillReport(
+                report,
+                new HashMap<>(),
+                dataSource);
+    }
+    
+    public void descargarPDFClientesFrecuentes(String nombre, Integer visitas) {
+        try {
+            JasperPrint jasperPrint = generarReporteClientes(nombre, visitas);
+
+            JFileChooser fileChooser = new JFileChooser();
+            fileChooser.setSelectedFile(new File("ReporteClientesFrecuentes.pdf"));
+
+            int opcion = fileChooser.showSaveDialog(null);
+
+            if (opcion == JFileChooser.APPROVE_OPTION) {
+                File archivo = fileChooser.getSelectedFile();
+
+                JasperExportManager.exportReportToPdfFile(
+                        jasperPrint,
+                        archivo.getAbsolutePath()
+                );
+            }
+
+        } catch (Exception e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+    }
+
+    @Override
     public void mostrarEditarProductosComanda() {
         frmEditarProductosComanda = new FrmEditarProductosComanda(this);
-        
+
         frmEditarProductosComanda.setVisible(true);
     }
 
@@ -846,5 +945,5 @@ public class Coordinador implements ICoordinador {
         frmResumenPedidoEditado = new FrmResumenPedidoEditado(this);
         frmResumenPedidoEditado.setVisible(true);
     }
-    
+
 }
