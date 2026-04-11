@@ -184,6 +184,8 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         }catch(PersistenciaException e){
             throw new NegocioException("Error al consultar al cliente general", e);
         }
+    }
+    
     public List<ClienteFrecuenteDTO> consultarReporte(String nombre, Integer minimoVisitas) throws NegocioException {
 
         List<ClienteFrecuenteDTO> lista = consultarTodos();

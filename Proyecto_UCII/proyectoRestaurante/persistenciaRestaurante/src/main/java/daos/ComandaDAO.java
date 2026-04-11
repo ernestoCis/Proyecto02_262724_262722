@@ -175,6 +175,8 @@ public class ComandaDAO implements IComandaDAO {
 
         } catch (Exception e) {
             throw new PersistenciaException("Error al obtener ultima comanda", e);
+        }
+    }
 
     @Override
     public List<Comanda> consultarPorRangoFechas(LocalDate inicio, LocalDate fin) throws PersistenciaException {
@@ -202,3 +204,5 @@ public class ComandaDAO implements IComandaDAO {
         }
     }
 }
+
+    
