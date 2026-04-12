@@ -1,5 +1,6 @@
 package pantallas;
 
+import componentes.BotonColor;
 import componentes.BotonRegresar;
 import controlador.Coordinador;
 import java.awt.*;
@@ -95,8 +96,7 @@ public class FrmReporteClientesFrecuentes extends JFrame {
 
         JPanel panelCentro = new JPanel(new BorderLayout());
         panelCentro.setBackground(colorFondo);
-        panelCentro.setBorder(
-                BorderFactory.createEmptyBorder(10, 30, 20, 30));
+        panelCentro.setBorder(BorderFactory.createEmptyBorder(10, 30, 20, 30));
 
         JPanel card = new JPanel(new BorderLayout());
         card.setBackground(new Color(245, 245, 245));
@@ -108,30 +108,37 @@ public class FrmReporteClientesFrecuentes extends JFrame {
         JPanel panelFiltros = new JPanel();
         panelFiltros.setPreferredSize(new Dimension(250, 400));
         panelFiltros.setOpaque(false);
-        panelFiltros.setLayout(
-                new BoxLayout(panelFiltros, BoxLayout.Y_AXIS));
+        panelFiltros.setLayout(new BoxLayout(panelFiltros, BoxLayout.Y_AXIS));
 
         JLabel lblTipo = new JLabel("Tipo de reporte:");
         JLabel lblTipoValor = new JLabel("Reporte de clientes frecuentes");
         lblTipoValor.setForeground(Color.GRAY);
+        lblTipo.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        lblTipoValor.setFont(new Font("Segoe UI", Font.PLAIN, 16));
 
         chkNombre = new JCheckBox("Nombre:");
+        chkNombre.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         chkNombre.setOpaque(false);
 
         txtNombre = new JTextField();
-        txtNombre.setMaximumSize(new Dimension(200, 25));
+        txtNombre.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        txtNombre.setMaximumSize(new Dimension(430, 25));
 
         chkVisitas = new JCheckBox("Mínimo de visitas:");
+        chkVisitas.setFont(new Font("Segoe UI", Font.PLAIN, 16));
         chkVisitas.setOpaque(false);
 
         txtVisitas = new JTextField();
-        txtVisitas.setMaximumSize(new Dimension(200, 25));
+        txtVisitas.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        txtVisitas.setMaximumSize(new Dimension(430, 25));
 
         panelFiltros.add(lblTipo);
         panelFiltros.add(Box.createVerticalStrut(5));
         panelFiltros.add(lblTipoValor);
         panelFiltros.add(Box.createVerticalStrut(20));
-        panelFiltros.add(new JLabel("Filtrar por:"));
+        JLabel lblFiltrar = new JLabel("Filtrar por:");
+        lblFiltrar.setFont(new Font("Segoe UI", Font.PLAIN, 16));
+        panelFiltros.add(lblFiltrar);
         panelFiltros.add(Box.createVerticalStrut(10));
         panelFiltros.add(chkNombre);
         panelFiltros.add(txtNombre);
@@ -144,11 +151,11 @@ public class FrmReporteClientesFrecuentes extends JFrame {
         contenido.add(panelFiltros, BorderLayout.WEST);
         contenido.add(panelVista, BorderLayout.CENTER);
 
-        JButton btnVistaPrevia = new JButton("Vista previa");
-        JButton btnDescargar = new JButton("Descargar PDF");
+        BotonColor btnVistaPrevia = new BotonColor("Vista previa");
+        BotonColor btnDescargar = new BotonColor("Descargar PDF");
 
-        btnVistaPrevia.setPreferredSize(new Dimension(200, 35));
-        btnDescargar.setPreferredSize(new Dimension(200, 35));
+        btnVistaPrevia.setPreferredSize(new Dimension(160, 35));
+        btnDescargar.setPreferredSize(new Dimension(160, 35));
 
         btnVistaPrevia.addActionListener(e -> vistaPreviaPDF());
         btnDescargar.addActionListener(e -> descargarPDF());
@@ -178,13 +185,11 @@ public class FrmReporteClientesFrecuentes extends JFrame {
                 nombre = txtNombre.getText();
             }
 
-            if (chkVisitas.isSelected()
-                    && !txtVisitas.getText().isBlank()) {
+            if (chkVisitas.isSelected() && !txtVisitas.getText().isBlank()) {
                 visitas = Integer.valueOf(txtVisitas.getText());
             }
 
-            JasperPrint print =
-                    coordinador.generarReporteClientes(nombre, visitas);
+            JasperPrint print = coordinador.generarReporteClientes(nombre, visitas);
 
             JRViewer viewer = new JRViewer(print);
 
@@ -207,8 +212,7 @@ public class FrmReporteClientesFrecuentes extends JFrame {
             nombre = txtNombre.getText();
         }
 
-        if (chkVisitas.isSelected()
-                && !txtVisitas.getText().isBlank()) {
+        if (chkVisitas.isSelected() && !txtVisitas.getText().isBlank()) {
             visitas = Integer.valueOf(txtVisitas.getText());
         }
 
