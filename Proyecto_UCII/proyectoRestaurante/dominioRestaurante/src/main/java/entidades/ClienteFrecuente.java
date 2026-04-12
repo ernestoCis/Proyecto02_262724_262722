@@ -6,6 +6,7 @@ import jakarta.persistence.Transient;
 import java.io.Serializable;
 import java.time.LocalDate;
 import java.util.List;
+import org.hibernate.annotations.Formula;
 
 /**
  * 
@@ -16,12 +17,15 @@ import java.util.List;
 public class ClienteFrecuente extends Cliente implements Serializable {
 
     @Transient
+    @Formula("(SELECT COUNT(c) FROM comandas c WHERE c.idCliente = idCliente)")
     private Integer numeroVisitas;
     
     @Transient
+    @Formula("(SELECT SUM(c.total) FROM comandas c WHERE c.idCliente = idCliente)")
     private Double totalGastado;
     
     @Transient
+    @Formula("(SELECT FLOOR(SUM(c.total) / 20) FROM comandas c WHERE c.idCliente = idCliente)")
     private Integer puntos;
 
     public ClienteFrecuente() {

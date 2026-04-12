@@ -173,9 +173,7 @@ public class Coordinador implements ICoordinador {
     public void mostrarClientes() {
         try {
             this.listaClientesActual = clienteFrecuenteBO.consultarTodos();
-            if (frmClientes == null) {
-                frmClientes = new FrmClientes(this);
-            }
+            frmClientes = new FrmClientes(this);
             frmClientes.setVisible(true);
             frmClientes.toFront();
         } catch (NegocioException ex) {
