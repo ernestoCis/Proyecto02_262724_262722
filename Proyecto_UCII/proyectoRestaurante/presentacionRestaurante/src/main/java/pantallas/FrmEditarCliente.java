@@ -1,5 +1,8 @@
 package pantallas;
 
+import componentes.BotonEstilizado;
+import componentes.BotonRegresar;
+import componentes.PanelRedondeado;
 import controlador.Coordinador;
 import dtos.ClienteFrecuenteDTO;
 import java.awt.BorderLayout;
@@ -45,8 +48,8 @@ public class FrmEditarCliente extends JFrame {
     }
 
     private void configurarVentana() {
-        setTitle("FrmEditarCliente");
-        setSize(1000, 700);
+        setTitle("Restaurante");
+        setSize(1000, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -99,20 +102,7 @@ public class FrmEditarCliente extends JFrame {
         JPanel panelArriba = new JPanel(new BorderLayout());
         panelArriba.setOpaque(false);
 
-        btnRegresar = new JButton("←");
-        btnRegresar.setFont(new Font("SansSerif", Font.BOLD, 18));
-        btnRegresar.setForeground(Color.WHITE);
-        btnRegresar.setBackground(colorMostaza);
-        btnRegresar.setFocusPainted(false);
-        btnRegresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnRegresar.setPreferredSize(new Dimension(40, 40));
-        btnRegresar.setOpaque(true);
-        btnRegresar.setContentAreaFilled(true);
-        btnRegresar.setBorderPainted(false);
-        btnRegresar.setBorder(BorderFactory.createEmptyBorder());
-        btnRegresar.setMargin(new Insets(0, 0, 0, 0));
-        btnRegresar.setHorizontalAlignment(SwingConstants.CENTER);
-        btnRegresar.setVerticalAlignment(SwingConstants.CENTER);
+        btnRegresar = new BotonRegresar();
 
         JPanel panelBotonRegresar = new JPanel();
         panelBotonRegresar.setOpaque(false);
@@ -120,7 +110,8 @@ public class FrmEditarCliente extends JFrame {
 
         panelArriba.add(panelBotonRegresar, BorderLayout.WEST);
 
-        JPanel panelFormulario = new JPanel(new BorderLayout());
+        PanelRedondeado panelFormulario = new PanelRedondeado(30);
+        panelFormulario.setLayout(new BorderLayout());
         panelFormulario.setBackground(colorPanel);
         panelFormulario.setBorder(BorderFactory.createEmptyBorder(25, 35, 25, 35));
 
@@ -133,7 +124,7 @@ public class FrmEditarCliente extends JFrame {
         panelCampos.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15);
+        gbc.insets = new Insets(8, 10, 8, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
@@ -153,13 +144,7 @@ public class FrmEditarCliente extends JFrame {
         panelBotonInferior.setOpaque(false);
         panelBotonInferior.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
         
-        btnEditar = new JButton("Editar");
-        btnEditar.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        btnEditar.setFocusPainted(false);
-        btnEditar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnEditar.setBackground(new Color(229, 171, 75));
-        btnEditar.setForeground(new Color(80, 80, 80));
-        btnEditar.setPreferredSize(new Dimension(140, 38));
+        btnEditar = new BotonEstilizado("Editar");
 
         JPanel panelBtnDerecha = new JPanel();
         panelBtnDerecha.setOpaque(false);

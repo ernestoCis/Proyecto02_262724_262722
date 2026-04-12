@@ -1,5 +1,7 @@
 package pantallas;
 
+import componentes.BotonEstilizado;
+import componentes.BotonRegresar;
 import controlador.Coordinador;
 import dtos.ClienteFrecuenteDTO;
 import java.awt.BorderLayout;
@@ -113,30 +115,22 @@ public class FrmClientes extends JFrame {
         panelBusqueda.setOpaque(false);
         panelBusqueda.setBorder(BorderFactory.createEmptyBorder(0, 0, 18, 0));
 
-        btnRegresar = new JButton("←");
-        btnRegresar.setFont(new Font("SansSerif", Font.BOLD, 18));
-        btnRegresar.setFocusPainted(false);
-        btnRegresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnRegresar.setPreferredSize(new Dimension(40, 40));
-        btnRegresar.setBackground(colorMostaza);
-        btnRegresar.setForeground(Color.WHITE);
-        btnRegresar.setOpaque(true);
-        btnRegresar.setContentAreaFilled(true);
-        btnRegresar.setBorderPainted(false);
-        btnRegresar.setBorder(BorderFactory.createEmptyBorder());
+        btnRegresar = new BotonRegresar();
 
         JPanel panelIzquierdoBusqueda = new JPanel();
         panelIzquierdoBusqueda.setOpaque(false);
         panelIzquierdoBusqueda.add(btnRegresar);
+        
+        txtBuscar = new JTextField();
+        txtBuscar.setPreferredSize(new Dimension(420, 40));
+        txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtBuscar.setForeground(Color.GRAY);
+        txtBuscar.setBackground(Color.WHITE);
 
-        txtBuscar = new JTextField(30);
-        txtBuscar.setPreferredSize(new Dimension(420, 35));
-        txtBuscar.setFont(new Font("SansSerif", Font.PLAIN, 16));
         txtBuscar.setBorder(BorderFactory.createCompoundBorder(
-                BorderFactory.createLineBorder(new Color(210, 210, 210), 1),
-                BorderFactory.createEmptyBorder(5, 12, 5, 12)
+                BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
+                BorderFactory.createEmptyBorder(8, 15, 8, 15)
         ));
-        txtBuscar.setToolTipText("Buscar clientes por nombre, teléfono o correo");
         
         ponerPlaceholder();
 
@@ -158,8 +152,6 @@ public class FrmClientes extends JFrame {
             }
         };
         
-        
-
         tblClientes = new JTable(modeloTabla);
         tblClientes.setRowHeight(40);
         tblClientes.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -194,22 +186,8 @@ public class FrmClientes extends JFrame {
         JPanel panelBotones = new JPanel();
         panelBotones.setOpaque(false);
 
-        btnRegistrar = new JButton("+ Registrar");
-        btnRegistrar.setFont(new Font("SansSerif", Font.PLAIN, 18));
-        btnRegistrar.setFocusPainted(false);
-        btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnRegistrar.setBackground(Color.WHITE);
-        btnRegistrar.setForeground(new Color(80, 80, 80));
-        btnRegistrar.setPreferredSize(new Dimension(190, 38));
-
-        btnEliminar = new JButton("Eliminar");
-        btnEliminar.setFont(new Font("SansSerif", Font.PLAIN, 18));
-        btnEliminar.setFocusPainted(false);
-        btnEliminar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnEliminar.setBackground(Color.WHITE);
-        btnEliminar.setForeground(new Color(80, 80, 80));
-        btnEliminar.setPreferredSize(new Dimension(190, 38));
-        btnEliminar.setEnabled(false);
+        btnRegistrar = new BotonEstilizado("+ Registrar");
+        btnEliminar = new BotonEstilizado("Eliminar");
 
         panelBotones.add(btnRegistrar);
         panelBotones.add(Box.createHorizontalStrut(15));

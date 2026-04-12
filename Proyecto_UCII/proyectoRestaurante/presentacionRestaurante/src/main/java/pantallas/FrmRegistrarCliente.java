@@ -1,5 +1,8 @@
 package pantallas;
 
+import componentes.BotonEstilizado;
+import componentes.BotonRegresar;
+import componentes.PanelRedondeado;
 import controlador.Coordinador;
 import dtos.ClienteFrecuenteDTO;
 import java.awt.BorderLayout;
@@ -24,11 +27,11 @@ import javax.swing.SwingConstants;
 import utilerias.Validacion;
 
 /**
- * 
+ *
  * @author Paulina Guevera, Ernesto Cisneros
  */
 public class FrmRegistrarCliente extends JFrame {
-    
+
     private final Coordinador coordinador;
 
     private FrmClientes frmClientes;
@@ -52,8 +55,8 @@ public class FrmRegistrarCliente extends JFrame {
     }
 
     private void configurarVentana() {
-        setTitle("FrmRegistrarCliente");
-        setSize(1000, 700);
+        setTitle("Restaurante");
+        setSize(1000, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -106,20 +109,7 @@ public class FrmRegistrarCliente extends JFrame {
         JPanel panelArriba = new JPanel(new BorderLayout());
         panelArriba.setOpaque(false);
 
-        btnRegresar = new JButton("←");
-        btnRegresar.setFont(new Font("SansSerif", Font.BOLD, 18));
-        btnRegresar.setForeground(Color.WHITE);
-        btnRegresar.setBackground(colorMostaza);
-        btnRegresar.setFocusPainted(false);
-        btnRegresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnRegresar.setPreferredSize(new Dimension(40, 40));
-        btnRegresar.setOpaque(true);
-        btnRegresar.setContentAreaFilled(true);
-        btnRegresar.setBorderPainted(false);
-        btnRegresar.setBorder(BorderFactory.createEmptyBorder());
-        btnRegresar.setMargin(new Insets(0, 0, 0, 0));
-        btnRegresar.setHorizontalAlignment(SwingConstants.CENTER);
-        btnRegresar.setVerticalAlignment(SwingConstants.CENTER);
+        btnRegresar = new BotonRegresar();
 
         JPanel panelBotonRegresar = new JPanel();
         panelBotonRegresar.setOpaque(false);
@@ -127,7 +117,8 @@ public class FrmRegistrarCliente extends JFrame {
 
         panelArriba.add(panelBotonRegresar, BorderLayout.WEST);
 
-        JPanel panelFormulario = new JPanel(new BorderLayout());
+        PanelRedondeado panelFormulario = new PanelRedondeado(30);
+        panelFormulario.setLayout(new BorderLayout());
         panelFormulario.setBackground(colorPanel);
         panelFormulario.setBorder(BorderFactory.createEmptyBorder(25, 35, 25, 35));
 
@@ -140,7 +131,7 @@ public class FrmRegistrarCliente extends JFrame {
         panelCampos.setOpaque(false);
 
         GridBagConstraints gbc = new GridBagConstraints();
-        gbc.insets = new Insets(15, 15, 15, 15);
+        gbc.insets = new Insets(8, 10, 8, 10);
         gbc.fill = GridBagConstraints.HORIZONTAL;
         gbc.weightx = 1.0;
 
@@ -160,13 +151,7 @@ public class FrmRegistrarCliente extends JFrame {
         panelBotonInferior.setOpaque(false);
         panelBotonInferior.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
 
-        btnRegistrar = new JButton("Registrar");
-        btnRegistrar.setFont(new Font("SansSerif", Font.PLAIN, 16));
-        btnRegistrar.setFocusPainted(false);
-        btnRegistrar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnRegistrar.setBackground(new Color(229, 171, 75));
-        btnRegistrar.setForeground(new Color(80, 80, 80));
-        btnRegistrar.setPreferredSize(new Dimension(140, 38));
+        btnRegistrar = new BotonEstilizado("Registrar");
 
         JPanel panelBtnDerecha = new JPanel();
         panelBtnDerecha.setOpaque(false);
@@ -227,27 +212,27 @@ public class FrmRegistrarCliente extends JFrame {
         String telefono = Validacion.limpiarCadena(txtTelefono.getText());
         String correo = Validacion.limpiarCadena(txtCorreo.getText());
 
-        if(!Validacion.esNombreValido(nombre)){
+        if (!Validacion.esNombreValido(nombre)) {
             JOptionPane.showMessageDialog(null, "Nombre inválido");
             return;
         }
-        
-        if(!Validacion.esApellidoPaternoValido(apellidoPaterno)){
+
+        if (!Validacion.esApellidoPaternoValido(apellidoPaterno)) {
             JOptionPane.showMessageDialog(null, "Apellido paterno inválido");
             return;
         }
-        
-        if(!Validacion.esApellidoMaternoValido(apellidoMaterno)){
+
+        if (!Validacion.esApellidoMaternoValido(apellidoMaterno)) {
             JOptionPane.showMessageDialog(null, "Apellido materno inválido");
             return;
         }
-        
-        if(!Validacion.esTelefonoValido(telefono)){
+
+        if (!Validacion.esTelefonoValido(telefono)) {
             JOptionPane.showMessageDialog(null, "Telefono inválido");
             return;
         }
-        
-        if(!Validacion.esEmailValido(correo)){
+
+        if (!Validacion.esEmailValido(correo)) {
             JOptionPane.showMessageDialog(null, "Email inválido");
             return;
         }
@@ -265,7 +250,7 @@ public class FrmRegistrarCliente extends JFrame {
         );
 
         listaClientes.add(nuevoCliente);
-        
+
         coordinador.registrarCliente(nuevoCliente);
 
         dispose();
