@@ -375,10 +375,22 @@ public class FrmSeleccionProductos extends JFrame {
 
         btnMas.addActionListener(e -> {
             int cantidadActual = cantidades.get(producto.getIdProducto());
-            cantidadActual++;
-            cantidades.put(producto.getIdProducto(), cantidadActual);
-            lblCantidad.setText(String.valueOf(cantidadActual));
-            btnNota.setVisible(cantidadActual >= 1);
+            int proximaCantidad = cantidadActual + 1;
+
+            if (coordinador.verificarStock(producto, proximaCantidad)) {
+                cantidades.put(producto.getIdProducto(), proximaCantidad);
+                lblCantidad.setText(String.valueOf(proximaCantidad));
+                btnNota.setVisible(proximaCantidad >= 1);
+
+                if (!coordinador.verificarStock(producto, proximaCantidad + 1)) {
+                    btnMas.setEnabled(false);
+                }
+            } else {
+                btnMas.setEnabled(false);
+                JOptionPane.showMessageDialog(this,
+                        "No hay ingredientes suficientes para añadir más " + producto.getNombre(),
+                        "Sin Stock", JOptionPane.WARNING_MESSAGE);
+            }
         });
 
         btnMenos.addActionListener(e -> {
@@ -389,6 +401,9 @@ public class FrmSeleccionProductos extends JFrame {
                 cantidades.put(producto.getIdProducto(), cantidadActual);
                 lblCantidad.setText(String.valueOf(cantidadActual));
                 btnNota.setVisible(cantidadActual >= 1);
+                
+                btnMas.setEnabled(true);
+                
             }
         });
 

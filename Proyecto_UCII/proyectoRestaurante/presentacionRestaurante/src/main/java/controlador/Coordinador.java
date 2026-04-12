@@ -1022,5 +1022,10 @@ public class Coordinador implements ICoordinador {
 
         return JasperFillManager.fillReport(report, parametros, dataSource);
     }
+
+    @Override
+    public boolean verificarStock(ProductoDTO producto, int proximaCantidad) {
+        return productoBO.hayStockSuficiente(producto, proximaCantidad);
+    }
     
 }

@@ -151,4 +151,6 @@ public interface ICoordinador {
     JasperPrint generarJasperComandas(List<ReporteComandaDTO> lista, LocalDate inicio, LocalDate fin) throws Exception;
     
     ClienteFrecuenteDTO getClienteGeneral();
+    
+    boolean verificarStock(ProductoDTO producto, int proximaCantidad);
 }
