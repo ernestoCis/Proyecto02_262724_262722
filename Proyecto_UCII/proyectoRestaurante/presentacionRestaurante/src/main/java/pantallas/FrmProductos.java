@@ -232,6 +232,7 @@ public class FrmProductos extends JFrame {
             coordinador.setProductoSeleccionado(producto);
 
             coordinador.mostrarEditarProducto();
+            dispose();
         });
 
         btnRegresar.addActionListener(e -> {

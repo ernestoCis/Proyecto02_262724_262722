@@ -61,15 +61,6 @@ public class FrmEditarProductosComanda extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
-
-//        this.addWindowListener(new java.awt.event.WindowAdapter() {
-//            @Override
-//            public void windowActivated(java.awt.event.WindowEvent e) {
-//                // Pedimos al coordinador que traiga la lista actualizada de la DB
-//                listaOriginalProductos = coordinador.obtenerProductos();
-//                cargarProductos(listaOriginalProductos);
-//            }
-//        });
     }
 
     private void inicializarComponentes() {
@@ -347,9 +338,32 @@ public class FrmEditarProductosComanda extends JFrame {
         panelImagen.setMinimumSize(new Dimension(90, 70));
         panelImagen.setAlignmentX(CENTER_ALIGNMENT);
 
-        JLabel lblSinImagen = new JLabel("Sin imagen");
-        lblSinImagen.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        panelImagen.add(lblSinImagen);
+        // Lógica para cargar imagen o texto
+        if (producto.getRutaImagen() != null && !producto.getRutaImagen().isBlank()) {
+            try {
+                ImageIcon iconOriginal = new ImageIcon(producto.getRutaImagen());
+
+                // Verificamos si la imagen cargó correctamente
+                if (iconOriginal.getImageLoadStatus() == java.awt.MediaTracker.COMPLETE) {
+                    // Escalar imagen al tamaño del panel (90x70)
+                    Image imgEscalada = iconOriginal.getImage().getScaledInstance(90, 70, Image.SCALE_SMOOTH);
+                    JLabel lblImagen = new JLabel(new ImageIcon(imgEscalada));
+                    panelImagen.add(lblImagen);
+                } else {
+                    // Si la ruta existe pero el archivo no se pudo cargar
+                    JLabel lblError = new JLabel("Error imagen");
+                    lblError.setFont(new Font("SansSerif", Font.PLAIN, 10));
+                    panelImagen.add(lblError);
+                }
+            } catch (Exception ex) {
+                panelImagen.add(new JLabel("Sin imagen"));
+            }
+        } else {
+            // Si la ruta es nula o vacía
+            JLabel lblSinImagen = new JLabel("Sin imagen");
+            lblSinImagen.setFont(new Font("SansSerif", Font.PLAIN, 11));
+            panelImagen.add(lblSinImagen);
+        }
 
         JLabel lblNombre = new JLabel(producto.getNombre());
         lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
