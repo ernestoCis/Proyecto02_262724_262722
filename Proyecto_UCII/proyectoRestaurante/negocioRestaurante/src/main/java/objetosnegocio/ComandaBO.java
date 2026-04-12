@@ -6,9 +6,15 @@ package objetosnegocio;
 
 import adaptadores.ComandaAdapter;
 import daos.ComandaDAO;
+import daos.IngredienteDAO;
 import dtos.ComandaDTO;
+import dtos.DetallePedidoDTO;
+import dtos.IngredienteDTO;
+import dtos.ProductoDTO;
+import dtos.RecetaDTO;
 import dtos.ReporteComandaDTO;
 import entidades.Comanda;
+import entidades.Ingrediente;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
 import interfaces.IComandaBO;
@@ -27,9 +33,11 @@ public class ComandaBO implements IComandaBO{
     private static ComandaBO instance;
     
     private ComandaDAO comandaDAO;
+    private IngredienteDAO ingredienteDAO;
     
     private ComandaBO(){
         comandaDAO = ComandaDAO.getInstance();
+        ingredienteDAO = IngredienteDAO.getInstance();
     }
     
     public static ComandaBO getInstance() {
@@ -54,8 +62,30 @@ public class ComandaBO implements IComandaBO{
         try {
             comanda = ComandaAdapter.entidadADto(comandaDAO.registrarComanda(ComandaAdapter.dtoAEntidad(comanda)));
             
+            //restar ingredientes
+            for(DetallePedidoDTO detalle : comanda.getDetalles()){
+                ProductoDTO producto = detalle.getProductoDTO();
+                int cantidadComanda = detalle.getCantidad();
+                
+                if(producto.getRecetas() != null && !producto.getRecetas().isEmpty()){
+                    for(RecetaDTO receta : producto.getRecetas()){
+                        IngredienteDTO ingrediente = receta.getIngrediente();
+                        
+                        //cant a restar
+                        double cantidadARestar = receta.getCantidad() * cantidadComanda;
+                        
+                        //restar
+                        Ingrediente ingredienteActualizado = ingredienteDAO.buscarPorId(ingrediente.getIdIngrediente());
+                        ingredienteActualizado.setCantidadActual(ingredienteActualizado.getCantidadActual() - cantidadARestar);
+                        ingredienteDAO.actualizar(ingredienteActualizado);
+                    }
+                }
+                
+            }
+            
             return comanda;
         } catch (PersistenciaException e) {
+            e.printStackTrace();
             throw new NegocioException("Error al registrar la comanda", e);
         }
     }

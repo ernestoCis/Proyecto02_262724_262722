@@ -815,6 +815,9 @@ public class Coordinador implements ICoordinador {
             mesaSeleccionada = mesaBO.actualizarMesa(mesaSeleccionada);
 
             mesas = mesaBO.consultarTodas();
+            
+            //restar los ingredientes
+            
 
             ComandaDTO registrado = comandaBO.registrarComanda(comanda);
 
