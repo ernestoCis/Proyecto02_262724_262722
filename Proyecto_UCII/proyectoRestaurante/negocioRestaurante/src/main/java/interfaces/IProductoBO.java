@@ -20,4 +20,6 @@ public interface IProductoBO {
     List<ProductoDTO> buscarPorNombre(String nombre) throws NegocioException;
 
     void cambiarDisponibilidad(Long id, DisponibilidadProductoDTO estado) throws NegocioException;
+    
+    boolean hayStockSuficiente(ProductoDTO dto, int cantidadSolicitada);
 }

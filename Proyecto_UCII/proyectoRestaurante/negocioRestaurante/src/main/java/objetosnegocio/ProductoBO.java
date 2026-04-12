@@ -3,6 +3,7 @@ package objetosnegocio;
 import adaptadores.ProductoAdapter;
 import daos.ProductoDAO;
 import dtos.ProductoDTO;
+import dtos.RecetaDTO;
 import entidades.Producto;
 import enums.DisponibilidadProductoDTO;
 import excepciones.NegocioException;
@@ -139,5 +140,21 @@ public class ProductoBO implements IProductoBO {
 //        if (dto.getRecetas() == null || dto.getRecetas().isEmpty()) {
 //            throw new NegocioException("El producto debe tener al menos un ingrediente");
 //        }
+    }
+
+    @Override
+    public boolean hayStockSuficiente(ProductoDTO dto, int cantidadSolicitada) {
+        if (dto.getRecetas() == null || dto.getRecetas().isEmpty()) {
+            return true;
+        }
+
+        for (RecetaDTO receta : dto.getRecetas()) {
+            double necesario = receta.getCantidad() * cantidadSolicitada;
+            
+            if (receta.getIngrediente().getCantidadActual() < necesario) {
+                return false;
+            }
+        }
+        return true;
     }
 }
