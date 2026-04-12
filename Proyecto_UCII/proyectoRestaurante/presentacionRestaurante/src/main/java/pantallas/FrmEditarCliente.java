@@ -23,6 +23,7 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.SwingConstants;
+import utilerias.Validacion;
 
 public class FrmEditarCliente extends JFrame {
 
@@ -210,11 +211,36 @@ public class FrmEditarCliente extends JFrame {
     }
 
     private void editarCliente() {
-        String nombre = txtNombre.getText().trim();
-        String apellidoPaterno = txtApellidoPaterno.getText().trim();
-        String apellidoMaterno = txtApellidoMaterno.getText().trim();
-        String telefono = txtTelefono.getText().trim();
-        String correo = txtCorreo.getText().trim();
+        String nombre = Validacion.limpiarCadena(txtNombre.getText());
+        String apellidoPaterno = Validacion.limpiarCadena(txtApellidoPaterno.getText());
+        String apellidoMaterno = Validacion.limpiarCadena(txtApellidoMaterno.getText());
+        String telefono = Validacion.limpiarCadena(txtTelefono.getText());
+        String correo = Validacion.limpiarCadena(txtCorreo.getText());
+        
+        if (!Validacion.esNombreValido(nombre)) {
+            JOptionPane.showMessageDialog(null, "Nombre inválido");
+            return;
+        }
+
+        if (!Validacion.esApellidoPaternoValido(apellidoPaterno)) {
+            JOptionPane.showMessageDialog(null, "Apellido paterno inválido");
+            return;
+        }
+
+        if (!Validacion.esApellidoMaternoValido(apellidoMaterno)) {
+            JOptionPane.showMessageDialog(null, "Apellido materno inválido");
+            return;
+        }
+
+        if (!Validacion.esTelefonoValido(telefono)) {
+            JOptionPane.showMessageDialog(null, "Telefono inválido");
+            return;
+        }
+
+        if (!Validacion.esEmailValido(correo)) {
+            JOptionPane.showMessageDialog(null, "Email inválido");
+            return;
+        }
 
         if (nombre.isEmpty() || apellidoPaterno.isEmpty() || telefono.isEmpty()) {
             JOptionPane.showMessageDialog(this, "Completa al menos nombre, apellido paterno y teléfono.");
