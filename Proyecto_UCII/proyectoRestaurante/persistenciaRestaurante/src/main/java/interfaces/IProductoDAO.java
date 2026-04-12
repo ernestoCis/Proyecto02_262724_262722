@@ -30,4 +30,6 @@ public interface IProductoDAO {
     public void cambiarDisponibilidad(Long id, DisponibilidadProducto estado) throws PersistenciaException;
     
     public boolean estaEnUso(Long idProducto) throws PersistenciaException;
+    
+    public List<Producto> obtenerProductosDisponibles() throws PersistenciaException;
 }

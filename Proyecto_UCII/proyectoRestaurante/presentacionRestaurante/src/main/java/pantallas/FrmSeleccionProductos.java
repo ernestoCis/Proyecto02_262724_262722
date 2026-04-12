@@ -228,7 +228,7 @@ public class FrmSeleccionProductos extends JFrame {
 
         eventos();
 
-        listaOriginalProductos = coordinador.obtenerProductos();
+        listaOriginalProductos = coordinador.obtenerProductosDisponibles();
         cargarProductos(listaOriginalProductos);
     }
 

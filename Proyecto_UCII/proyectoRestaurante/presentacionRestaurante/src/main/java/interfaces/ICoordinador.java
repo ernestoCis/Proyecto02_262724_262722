@@ -153,4 +153,6 @@ public interface ICoordinador {
     ClienteFrecuenteDTO getClienteGeneral();
     
     boolean verificarStock(ProductoDTO producto, int proximaCantidad);
+    
+    List<ProductoDTO> obtenerProductosDisponibles();
 }

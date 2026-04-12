@@ -22,4 +22,6 @@ public interface IProductoBO {
     void cambiarDisponibilidad(Long id, DisponibilidadProductoDTO estado) throws NegocioException;
     
     boolean hayStockSuficiente(ProductoDTO dto, int cantidadSolicitada);
+    
+    List<ProductoDTO> consultarProductosDisponibles() throws NegocioException;
 }

@@ -177,4 +177,22 @@ public class ProductoDAO implements IProductoDAO {
             em.close();
         }
     }
+
+    @Override
+    public List<Producto> obtenerProductosDisponibles() throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            return em.createQuery(
+                    "SELECT DISTINCT p FROM Producto p "
+                    + "LEFT JOIN FETCH p.recetas r "
+                    + "LEFT JOIN FETCH r.ingrediente "
+                    + "WHERE p.disponibilidad = :disp",
+                    Producto.class
+            ).setParameter("disp", DisponibilidadProducto.DISPONIBLE).getResultList();
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al obtener los productos", e);
+        } finally {
+            em.close();
+        }
+    }
 }

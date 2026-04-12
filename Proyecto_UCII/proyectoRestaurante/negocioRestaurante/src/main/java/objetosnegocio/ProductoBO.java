@@ -157,4 +157,21 @@ public class ProductoBO implements IProductoBO {
         }
         return true;
     }
+
+    @Override
+    public List<ProductoDTO> consultarProductosDisponibles() throws NegocioException {
+        try {
+            List<Producto> entidades = productoDAO.obtenerProductosDisponibles();
+            List<ProductoDTO> dtos = new ArrayList<>();
+
+            for (Producto p : entidades) {
+                dtos.add(ProductoAdapter.entidadADTO(p));
+            }
+
+            return dtos;
+
+        } catch (PersistenciaException e) {
+            throw new NegocioException("No se pudieron cargar los productos disponibles", e);
+        }
+    }
 }

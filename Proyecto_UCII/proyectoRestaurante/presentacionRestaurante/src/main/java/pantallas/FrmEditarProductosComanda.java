@@ -31,7 +31,7 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextField;
 
 /**
- * 
+ *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmEditarProductosComanda extends JFrame {
@@ -61,6 +61,15 @@ public class FrmEditarProductosComanda extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
+
+//        this.addWindowListener(new java.awt.event.WindowAdapter() {
+//            @Override
+//            public void windowActivated(java.awt.event.WindowEvent e) {
+//                // Pedimos al coordinador que traiga la lista actualizada de la DB
+//                listaOriginalProductos = coordinador.obtenerProductos();
+//                cargarProductos(listaOriginalProductos);
+//            }
+//        });
     }
 
     private void inicializarComponentes() {
@@ -228,7 +237,7 @@ public class FrmEditarProductosComanda extends JFrame {
 
         eventos();
 
-        listaOriginalProductos = coordinador.obtenerProductos();
+        listaOriginalProductos = coordinador.obtenerProductosDisponibles();
         precargarDetallesDeComanda();
         cargarProductos(listaOriginalProductos);
     }
@@ -237,7 +246,7 @@ public class FrmEditarProductosComanda extends JFrame {
         btnSalir.addActionListener(e -> {
             coordinador.limpiarSesionComanda();
             coordinador.setMeseroActual(null);
-            
+
             coordinador.mostrarInicioSesionMesero();
             dispose();
         });
@@ -274,10 +283,9 @@ public class FrmEditarProductosComanda extends JFrame {
                 coordinador.setComanda(comanda);
 
 //                coordinador.getComanda().getDetalles().forEach(d -> System.out.println(d.getProductoDTO().getNombre() + " " +  d.getCantidad()));
-                
                 coordinador.mostrarResumenPedidoEditado();
                 dispose();
-                
+
             }
         });
 
@@ -390,10 +398,43 @@ public class FrmEditarProductosComanda extends JFrame {
 
         btnMas.addActionListener(e -> {
             int cantidadActual = cantidades.get(producto.getIdProducto());
-            cantidadActual++;
-            cantidades.put(producto.getIdProducto(), cantidadActual);
-            lblCantidad.setText(String.valueOf(cantidadActual));
-            btnNota.setVisible(cantidadActual >= 1);
+
+            // Obtenemos cuántas unidades de este producto tenía la comanda originalmente
+            int cantidadOriginal = 0;
+            ComandaDTO comandaActual = coordinador.getComanda();
+            if (comandaActual != null && comandaActual.getDetalles() != null) {
+                for (DetallePedidoDTO d : comandaActual.getDetalles()) {
+                    if (d.getProductoDTO().getIdProducto().equals(producto.getIdProducto())) {
+                        cantidadOriginal = d.getCantidad();
+                        break;
+                    }
+                }
+            }
+
+            int proximaCantidad = cantidadActual + 1;
+
+            // LÓGICA DELTA:
+            // Si la proximaCantidad es menor o igual a la original, permitimos sin checar stock 
+            // (porque esos ingredientes ya se "pagaron" antes).
+            // Si es mayor, checamos stock solo por la diferencia.
+            boolean tieneStock;
+            if (proximaCantidad <= cantidadOriginal) {
+                tieneStock = true;
+            } else {
+                // Solo validamos las unidades "nuevas" (proximaCantidad - cantidadOriginal)
+                tieneStock = coordinador.verificarStock(producto, proximaCantidad - cantidadOriginal);
+            }
+
+            if (tieneStock) {
+                cantidades.put(producto.getIdProducto(), proximaCantidad);
+                lblCantidad.setText(String.valueOf(proximaCantidad));
+                btnNota.setVisible(proximaCantidad >= 1);
+                btnMas.setEnabled(true);
+            } else {
+                btnMas.setEnabled(false);
+                JOptionPane.showMessageDialog(this,
+                        "No hay ingredientes en almacén para unidades extra de " + producto.getNombre());
+            }
         });
 
         btnMenos.addActionListener(e -> {
@@ -404,6 +445,9 @@ public class FrmEditarProductosComanda extends JFrame {
                 cantidades.put(producto.getIdProducto(), cantidadActual);
                 lblCantidad.setText(String.valueOf(cantidadActual));
                 btnNota.setVisible(cantidadActual >= 1);
+
+                btnMas.setEnabled(true);
+                btnMas.setToolTipText(null);
             }
         });
 

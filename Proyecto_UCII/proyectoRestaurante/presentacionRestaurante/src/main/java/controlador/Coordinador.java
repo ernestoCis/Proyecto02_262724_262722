@@ -761,7 +761,19 @@ public class Coordinador implements ICoordinador {
             return null;
         }
     }
-
+    
+    @Override
+    public List<ProductoDTO> obtenerProductosDisponibles() {
+        try {
+            listaProductosActual = productoBO.consultarProductosDisponibles();
+            return listaProductosActual;
+        } catch (NegocioException e) {
+            e.printStackTrace();
+            JOptionPane.showMessageDialog(null, "Error al consultar los productos");
+            return null;
+        }
+    }
+    
     @Override
     public void setListaProductosAtual(List<ProductoDTO> productos) {
         listaProductosActual = productos;
