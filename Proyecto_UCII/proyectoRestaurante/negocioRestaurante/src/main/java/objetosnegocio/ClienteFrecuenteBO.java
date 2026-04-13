@@ -108,7 +108,7 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
     }
 
     @Override
-    public void registrarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
+    public ClienteFrecuenteDTO registrarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
 
         validarDatos(dto);
 
@@ -120,7 +120,9 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
             }
 
             ClienteFrecuente entidad = ClienteFrecuenteAdapter.dtoAEntidadNuevo(dto);
-            clienteFrecuenteDAO.guardar(entidad);
+            entidad = clienteFrecuenteDAO.guardar(entidad);
+            
+            return ClienteFrecuenteAdapter.entidadADTO(entidad);
 
         } catch (PersistenciaException e) {
             throw new NegocioException("Error al registrar cliente", e);

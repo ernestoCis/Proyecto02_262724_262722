@@ -155,4 +155,6 @@ public interface ICoordinador {
     boolean verificarStock(ProductoDTO producto, int proximaCantidad);
     
     List<ProductoDTO> obtenerProductosDisponibles();
+    
+    ClienteFrecuenteDTO registrarClienteGeneral();
 }

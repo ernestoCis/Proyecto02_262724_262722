@@ -18,7 +18,7 @@ public interface IClienteFrecuenteDAO {
 
     public List<ClienteFrecuente> buscarPorFiltro(String filtro) throws PersistenciaException;
 
-    public void guardar(ClienteFrecuente cliente) throws PersistenciaException;
+    public ClienteFrecuente guardar(ClienteFrecuente cliente) throws PersistenciaException;
     
     public ClienteFrecuente buscarPorId(Long id) throws PersistenciaException;
     

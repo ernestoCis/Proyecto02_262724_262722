@@ -48,6 +48,7 @@ public class FrmClientes extends JFrame {
     private JButton btnRegresar;
     private JButton btnRegistrar;
     private JButton btnEliminar;
+    private JButton btnRegistrarClienteGeneral;
 
     private List<ClienteFrecuenteDTO> listaOriginal;
 
@@ -188,10 +189,16 @@ public class FrmClientes extends JFrame {
 
         btnRegistrar = new BotonEstilizado("+ Registrar");
         btnEliminar = new BotonEstilizado("Eliminar");
+        btnRegistrarClienteGeneral = new BotonEstilizado("Registrar Cliente general");
+        btnRegistrarClienteGeneral.setPreferredSize(new Dimension(270, 40));
+        btnRegistrarClienteGeneral.setMaximumSize(new Dimension(270, 40));
+        btnRegistrarClienteGeneral.setMaximumSize(new Dimension(270, 40));
 
         panelBotones.add(btnRegistrar);
         panelBotones.add(Box.createHorizontalStrut(15));
         panelBotones.add(btnEliminar);
+        panelBotones.add(Box.createHorizontalStrut(15));
+        panelBotones.add(btnRegistrarClienteGeneral);
 
         panelInferior.add(Box.createVerticalStrut(8));
         panelInferior.add(panelBotones);
@@ -242,6 +249,12 @@ public class FrmClientes extends JFrame {
         });
         
         btnEliminar.addActionListener(e -> eliminarClienteSeleccionado());
+        
+        btnRegistrarClienteGeneral.addActionListener(e -> {
+            coordinador.registrarClienteGeneral();
+            listaOriginal = coordinador.consultarClientes();
+            cargarDatosTabla(listaOriginal);
+        });
     }
 
     private void cargarDatosTabla(List<ClienteFrecuenteDTO> lista) {

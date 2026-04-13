@@ -60,12 +60,14 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
     }
 
     @Override
-    public void guardar(ClienteFrecuente cliente) throws PersistenciaException {
+    public ClienteFrecuente guardar(ClienteFrecuente cliente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
             em.getTransaction().begin();
             em.persist(cliente);
             em.getTransaction().commit();
+            return cliente;
+            
         } finally {
             em.close();
         }

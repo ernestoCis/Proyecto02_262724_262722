@@ -144,14 +144,7 @@ public class Coordinador implements ICoordinador {
     //----- MOSTRAR FRAMES -----
     @Override
     public void iniciarSistema() {
-        try{
-            if(clienteFrecuenteBO.buscarClienteFrecuenteGeneral() == null){
-                ClienteFrecuenteDTO clienteGeneral = new ClienteFrecuenteDTO(null, "Cliente general", "", "","0","",0,0.0,0);
-                clienteFrecuenteBO.registrarCliente(clienteGeneral);
-            }
-        }catch(NegocioException e){
-            System.out.println(e.getMessage());
-        }
+        
         
         if (frmInicio == null) {
             frmInicio = new FrmInicio(this);
@@ -817,7 +810,14 @@ public class Coordinador implements ICoordinador {
             comanda.setFecha(LocalDateTime.now());
             comanda.setEstado(EstadoComandaDTO.ABIERTA);
             if(comanda.getCliente() == null){
-                comanda.setCliente(clienteFrecuenteBO.buscarClienteFrecuenteGeneral());
+                if(clienteFrecuenteBO.buscarClienteFrecuenteGeneral() == null){
+                    JOptionPane.showMessageDialog(null, "No hay un cliente general para guardar la comanda");
+                    mostrarMesas();
+                    return;
+                }else{
+                    comanda.setCliente(clienteFrecuenteBO.buscarClienteFrecuenteGeneral());
+                }
+                
             }
             
             mesaSeleccionada.setDisponibilidad(EstadoMesaDTO.NO_DISPONIBLE);
@@ -1036,6 +1036,22 @@ public class Coordinador implements ICoordinador {
     @Override
     public boolean verificarStock(ProductoDTO producto, int proximaCantidad) {
         return productoBO.hayStockSuficiente(producto, proximaCantidad);
+    }
+
+    @Override
+    public ClienteFrecuenteDTO registrarClienteGeneral() {
+        try{
+            if(clienteFrecuenteBO.buscarClienteFrecuenteGeneral() == null){
+                ClienteFrecuenteDTO clienteGeneral = new ClienteFrecuenteDTO(null, "Cliente general", "", "","0","",0,0.0,0);
+                return clienteFrecuenteBO.registrarCliente(clienteGeneral);
+            }else{
+                JOptionPane.showMessageDialog(null, "El cliente general ya esta registrado");
+                return null;
+            }
+        }catch(NegocioException e){
+            JOptionPane.showMessageDialog(null, "Error al registrar al cliente general");
+            return null;
+        }
     }
     
 }
