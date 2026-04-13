@@ -3,6 +3,7 @@ package pantallas;
 import componentes.BotonEditar;
 import componentes.BotonEstilizado;
 import componentes.BotonRegresar;
+import componentes.BotonX;
 import componentes.PanelRedondeado;
 import controlador.Coordinador;
 import dtos.IngredienteDTO;
@@ -43,6 +44,7 @@ public class FrmEditarProducto extends JFrame {
     private BotonEstilizado btnSeleccionarImagen;
     private BotonRegresar btnRegresar;
     private BotonEditar btnDisponibilidad;
+    private JButton btnQuitarImagen;
 
     private ProductoDTO producto;
 
@@ -58,7 +60,7 @@ public class FrmEditarProducto extends JFrame {
     }
 
     private void configurarVentana() {
-        setTitle("Editar Producto");
+        setTitle("Restaurante");
         setSize(1000, 650);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -166,17 +168,40 @@ public class FrmEditarProducto extends JFrame {
         panelImagen.setLayout(new BoxLayout(panelImagen, BoxLayout.Y_AXIS));
         panelImagen.setOpaque(false);
 
-        lblImagen = new JLabel("Sin imagen", SwingConstants.CENTER);
+        lblImagen = new JLabel();
         lblImagen.setPreferredSize(new Dimension(170, 165));
         lblImagen.setMinimumSize(new Dimension(170, 165));
         lblImagen.setMaximumSize(new Dimension(170, 165));
         lblImagen.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2, true));
+        lblImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        btnSeleccionarImagen = new BotonEstilizado("     + Imagen     ");
+        ponerImagenDefault();
+
+        // botones
+        btnSeleccionarImagen = new BotonEstilizado("Imagen");
+        btnSeleccionarImagen.setPreferredSize(new Dimension(120, 30));
+
+        btnQuitarImagen = new BotonX("X");
+        btnQuitarImagen.setPreferredSize(new Dimension(50, 30));
+        btnQuitarImagen.setForeground(Color.WHITE);
+
+        btnQuitarImagen.setVisible(false);
+
+        // panel botones en horizontal
+        JPanel panelBotonesImagen = new JPanel(new FlowLayout(FlowLayout.CENTER, 5, 0));
+        panelBotonesImagen.setOpaque(false);
+        panelBotonesImagen.add(btnSeleccionarImagen);
+        panelBotonesImagen.add(btnQuitarImagen);
 
         panelImagen.add(lblImagen);
         panelImagen.add(Box.createVerticalStrut(10));
-        panelImagen.add(btnSeleccionarImagen);
+        panelImagen.add(panelBotonesImagen);
+
+        btnQuitarImagen.addActionListener(e -> {
+            rutaImagen = null;
+            ponerImagenDefault();
+            btnQuitarImagen.setVisible(false);
+        });
 
         // INGREDIENTES 
         JPanel panelIngredientes = new JPanel(new BorderLayout());
@@ -201,8 +226,8 @@ public class FrmEditarProducto extends JFrame {
         ((DefaultTableCellRenderer) tablaIngredientes.getTableHeader()
                 .getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
-        
-        tablaIngredientes.setSelectionBackground(Color.decode("#2A4E52")); 
+
+        tablaIngredientes.setSelectionBackground(Color.decode("#2A4E52"));
 
         btnAgregarIngrediente = new BotonEstilizado("+");
         btnEliminarIngrediente = new BotonEstilizado("−");
@@ -284,6 +309,9 @@ public class FrmEditarProducto extends JFrame {
             lblImagen.setText("");
             lblImagen.setIcon(new ImageIcon(img));
             rutaImagen = producto.getRutaImagen();
+            btnQuitarImagen.setVisible(true);
+        } else {
+            ponerImagenDefault();
         }
 
         // ingre
@@ -301,6 +329,25 @@ public class FrmEditarProducto extends JFrame {
                 });
             }
         }
+    }
+
+    private void ponerImagenDefault() {
+        ImageIcon icono = new ImageIcon("src\\main\\resources\\imagenes\\icono_sin_imagen.png");
+        Dimension size = lblImagen.getSize();
+
+        if (size.width == 0 || size.height == 0) {
+            size = new Dimension(170, 165);
+        }
+
+        Image img = icono.getImage().getScaledInstance(
+                size.width,
+                size.height,
+                Image.SCALE_SMOOTH
+        );
+
+        lblImagen.setIcon(new ImageIcon(img));
+        lblImagen.setText("");
+        rutaImagen = null;
     }
 
     private JPanel crearCampo(String texto, JTextField campo) {
@@ -399,18 +446,24 @@ public class FrmEditarProducto extends JFrame {
                 JOptionPane.showMessageDialog(this, "El precio no es un número válido");
                 return;
             }
+            int confirmacion = JOptionPane.showConfirmDialog(
+                    this,
+                    "¿Deseas confirmar la actualización del producto?",
+                    "Confirmación",
+                    JOptionPane.YES_NO_OPTION
+            );
 
-            producto.setPrecio(precio);
-            producto.setDescripcion(txtDescripcion.getText());
-            producto.setRecetas(recetas);
-            producto.setRutaImagen(rutaImagen);
-            producto.setDisponibilidad(producto.getDisponibilidad());
+            if (confirmacion == JOptionPane.YES_OPTION) {
+                producto.setPrecio(precio);
+                producto.setDescripcion(txtDescripcion.getText());
+                producto.setRecetas(recetas);
+                producto.setRutaImagen(rutaImagen);
+                producto.setDisponibilidad(producto.getDisponibilidad());
 
-            coordinador.actualizarProducto(producto);
+                coordinador.actualizarProducto(producto);
 
-            JOptionPane.showMessageDialog(this, "Producto actualizado correctamente");
-            dispose();
-            coordinador.mostrarProductos();
+                // coordinador.mostrarProductos();
+            }
         });
 
         btnDisponibilidad.addActionListener(e -> {
@@ -443,12 +496,10 @@ public class FrmEditarProducto extends JFrame {
         tablaIngredientes.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
-
                     int fila = tablaIngredientes.getSelectedRow();
                     int columna = tablaIngredientes.getSelectedColumn();
 
                     if (fila != -1 && columna == 2) {
-
                         String valorActual = modeloTabla.getValueAt(fila, columna).toString();
 
                         String nuevaCantidad = JOptionPane.showInputDialog(
@@ -458,11 +509,21 @@ public class FrmEditarProducto extends JFrame {
                         );
 
                         if (nuevaCantidad != null) {
+
+                            // Obtener unidad del ingrediente 
+                            String unidad = modeloTabla.getValueAt(fila, 1).toString();
+
+                            if (!Validacion.esCantidadValida(nuevaCantidad, unidad)) {
+                                JOptionPane.showMessageDialog(
+                                        FrmEditarProducto.this,
+                                        "Cantidad inválida para la unidad " + unidad
+                                );
+                                return;
+                            }
+
                             try {
                                 Double cantidad = Double.valueOf(nuevaCantidad);
-
                                 modeloTabla.setValueAt(cantidad, fila, columna);
-
                                 recetas.get(fila).setCantidad(cantidad);
 
                             } catch (NumberFormatException e) {
@@ -497,6 +558,10 @@ public class FrmEditarProducto extends JFrame {
 
             lblImagen.setText("");
             lblImagen.setIcon(new ImageIcon(img));
+
+            btnQuitarImagen.setVisible(true);
+            btnQuitarImagen.repaint();
+            btnQuitarImagen.revalidate();
         }
     }
 
