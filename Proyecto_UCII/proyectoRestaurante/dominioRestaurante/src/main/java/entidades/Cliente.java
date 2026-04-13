@@ -8,6 +8,7 @@ import java.time.LocalDate;
 import java.util.List;
 import jakarta.persistence.*;
 import java.io.Serializable;
+import utilerias.EncriptadorTelefono;
 
 /**
  *
@@ -28,6 +29,7 @@ public class Cliente implements Serializable {
     private String apellidoMaterno;
     
     @Column(nullable = false)
+    @Convert(converter = EncriptadorTelefono.class)
     private String telefono;
     
     private String email;
