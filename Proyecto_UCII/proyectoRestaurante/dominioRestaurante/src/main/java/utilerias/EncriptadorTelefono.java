@@ -14,8 +14,6 @@ import java.util.Base64;
 public class EncriptadorTelefono implements AttributeConverter<String, String> {
 
     private static final String ALGORITMO = "AES";
-    // IMPORTANTE: Esta llave debe tener 16 caracteres para AES-128. 
-    // En producción, cárgala desde una variable de entorno o archivo externo.
     private static final String LLAVE_SECRETA = "ProyectoBases123"; 
 
     @Override
