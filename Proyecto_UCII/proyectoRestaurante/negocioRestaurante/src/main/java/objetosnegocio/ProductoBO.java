@@ -137,9 +137,9 @@ public class ProductoBO implements IProductoBO {
             throw new NegocioException("La disponibilidad es obligatoria");
         }
 
-//        if (dto.getRecetas() == null || dto.getRecetas().isEmpty()) {
-//            throw new NegocioException("El producto debe tener al menos un ingrediente");
-//        }
+        if (dto.getRecetas() == null || dto.getRecetas().isEmpty()) {
+            throw new NegocioException("El producto debe tener al menos un ingrediente");
+        }
     }
 
     @Override

@@ -99,7 +99,8 @@ public class FrmDetalleProducto extends JFrame {
         panelCentro.setOpaque(false);
         panelCentro.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        lblImagen = new JLabel("Sin imagen", SwingConstants.CENTER);
+        lblImagen = new JLabel();
+        lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
         lblImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
         lblImagen.setPreferredSize(new Dimension(200, 150));
         lblImagen.setMaximumSize(new Dimension(200, 150));
@@ -136,8 +137,8 @@ public class FrmDetalleProducto extends JFrame {
         ((DefaultTableCellRenderer) tablaIngredientes.getTableHeader()
                 .getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
-        
-        tablaIngredientes.setSelectionBackground(Color.decode("#2A4E52")); 
+
+        tablaIngredientes.setSelectionBackground(Color.decode("#2A4E52"));
 
         JScrollPane scroll = new JScrollPane(tablaIngredientes);
         scroll.setPreferredSize(new Dimension(400, 200));
@@ -152,6 +153,21 @@ public class FrmDetalleProducto extends JFrame {
         panelPrincipal.add(contenido, BorderLayout.CENTER);
 
         add(panelPrincipal);
+    }
+
+    private void ponerImagenDefault() {
+        ImageIcon icono = new ImageIcon("src\\main\\resources\\imagenes\\icono_sin_imagen.png");
+
+        Dimension size = lblImagen.getPreferredSize();
+
+        Image img = icono.getImage().getScaledInstance(
+                size.width,
+                size.height,
+                Image.SCALE_SMOOTH
+        );
+
+        lblImagen.setIcon(new ImageIcon(img));
+        lblImagen.setText("");
     }
 
     private void cargarDatos() {
@@ -172,13 +188,12 @@ public class FrmDetalleProducto extends JFrame {
 
                 lblImagen.setText("");
                 lblImagen.setIcon(new ImageIcon(img));
+
             } else {
-                lblImagen.setIcon(null);
-                lblImagen.setText("Sin imagen");
+                ponerImagenDefault();
             }
         } catch (Exception e) {
-            lblImagen.setIcon(null);
-            lblImagen.setText("Sin imagen");
+            ponerImagenDefault(); 
         }
 
         // Cargar ingredientes
@@ -191,4 +206,5 @@ public class FrmDetalleProducto extends JFrame {
             });
         }
     }
+
 }

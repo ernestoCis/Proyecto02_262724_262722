@@ -146,6 +146,15 @@ public class Coordinador implements ICoordinador {
     public void iniciarSistema() {
         
         
+        try {
+            if (clienteFrecuenteBO.buscarClienteFrecuenteGeneral() == null) {
+                ClienteFrecuenteDTO clienteGeneral = new ClienteFrecuenteDTO(null, "Cliente general", "", "", "0", "", 0, 0.0, 0);
+                clienteFrecuenteBO.registrarCliente(clienteGeneral);
+            }
+        } catch (NegocioException e) {
+            System.out.println(e.getMessage());
+        }
+
         if (frmInicio == null) {
             frmInicio = new FrmInicio(this);
         }
@@ -292,12 +301,12 @@ public class Coordinador implements ICoordinador {
             return null;
         }
     }
-    
+
     @Override
-    public ClienteFrecuenteDTO getClienteGeneral(){
-        try{
+    public ClienteFrecuenteDTO getClienteGeneral() {
+        try {
             return clienteFrecuenteBO.buscarClienteFrecuenteGeneral();
-        }catch(NegocioException e){
+        } catch (NegocioException e) {
             JOptionPane.showMessageDialog(null, "Error al asignar el cliente general");
             e.printStackTrace();
             return null;
@@ -616,17 +625,15 @@ public class Coordinador implements ICoordinador {
 
             actualizarTablaProductos();
 
+            if (frmEditarProducto != null) {
+                frmEditarProducto.dispose();
+                frmEditarProducto = null;
+            }
+
+            frmProductos.setVisible(true);
+
         } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
-        }
-
-        if (frmEditarProducto != null) {
-            frmEditarProducto.dispose();
-            frmEditarProducto = null;
-        }
-
-        if (frmProductos != null) {
-            frmProductos.setVisible(true);
         }
     }
 
@@ -752,7 +759,7 @@ public class Coordinador implements ICoordinador {
             return null;
         }
     }
-    
+
     @Override
     public List<ProductoDTO> obtenerProductosDisponibles() {
         try {
@@ -764,7 +771,7 @@ public class Coordinador implements ICoordinador {
             return null;
         }
     }
-    
+
     @Override
     public void setListaProductosAtual(List<ProductoDTO> productos) {
         listaProductosActual = productos;
@@ -819,16 +826,14 @@ public class Coordinador implements ICoordinador {
                 }
                 
             }
-            
+
             mesaSeleccionada.setDisponibilidad(EstadoMesaDTO.NO_DISPONIBLE);
 
             mesaSeleccionada = mesaBO.actualizarMesa(mesaSeleccionada);
 
             mesas = mesaBO.consultarTodas();
-            
-            //restar los ingredientes
-            
 
+            //restar los ingredientes
             ComandaDTO registrado = comandaBO.registrarComanda(comanda);
 
             //settear el folo al DTO para la pantalla
@@ -951,7 +956,7 @@ public class Coordinador implements ICoordinador {
                 new HashMap<>(),
                 dataSource);
     }
-    
+
     public void descargarPDFClientesFrecuentes(String nombre, Integer visitas) {
         try {
             JasperPrint jasperPrint = generarReporteClientes(nombre, visitas);
@@ -996,9 +1001,9 @@ public class Coordinador implements ICoordinador {
 
     @Override
     public List<ReporteComandaDTO> obetnerComandasPorRangoFechas(LocalDate inicio, LocalDate fin) {
-        try{
+        try {
             return comandaBO.obtenerComandasPorRango(inicio, fin);
-        }catch(NegocioException e){
+        } catch (NegocioException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "Error al consultar las comandas");
             return null;

@@ -2,6 +2,7 @@ package pantallas;
 
 import componentes.BotonEstilizado;
 import componentes.BotonRegresar;
+import componentes.BotonX;
 import componentes.PanelRedondeado;
 import controlador.Coordinador;
 import dtos.IngredienteDTO;
@@ -28,6 +29,7 @@ public class FrmAjustarStock extends JFrame {
     private JRadioButton rbDescontar;
     private BotonEstilizado btnGuardar;
     private BotonRegresar btnRegresar;
+    private BotonX btnQuitarImagen;
 
     public FrmAjustarStock(Coordinador coordinador) {
         this.coordinador = coordinador;
@@ -39,7 +41,7 @@ public class FrmAjustarStock extends JFrame {
     }
 
     private void configurarVentana() {
-        setTitle("Ajustar Stock");
+        setTitle("Restaurante");
         setSize(1000, 650);
         setLocationRelativeTo(null);
         setResizable(false);
@@ -114,7 +116,8 @@ public class FrmAjustarStock extends JFrame {
         panelImagen.setLayout(new BoxLayout(panelImagen, BoxLayout.Y_AXIS));
         panelImagen.setOpaque(false);
 
-        lblImagen = new JLabel("Click para agregar imagen");
+        lblImagen = new JLabel();
+        lblImagen.setHorizontalAlignment(SwingConstants.CENTER);
         lblImagen.setPreferredSize(new Dimension(200, 180));
         lblImagen.setMaximumSize(new Dimension(200, 180));
         lblImagen.setMinimumSize(new Dimension(200, 180));
@@ -126,6 +129,24 @@ public class FrmAjustarStock extends JFrame {
         lblImagen.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
         panelImagen.add(lblImagen);
+
+        btnQuitarImagen = new BotonX("X");
+        Dimension size = new Dimension(120, 35);
+        btnQuitarImagen.setPreferredSize(size);
+        btnQuitarImagen.setMaximumSize(size);
+        btnQuitarImagen.setMinimumSize(size);
+
+        btnQuitarImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
+        btnQuitarImagen.setVisible(false);
+        lblImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
+
+        btnQuitarImagen.addActionListener(e -> {
+            ingrediente.setRutaImagen(null);
+            ponerImagenDefault();
+        });
+
+        panelImagen.add(Box.createVerticalStrut(10));
+        panelImagen.add(btnQuitarImagen);
 
         JPanel panelInfo = new JPanel();
         panelInfo.setLayout(new BoxLayout(panelInfo, BoxLayout.Y_AXIS));
@@ -203,6 +224,8 @@ public class FrmAjustarStock extends JFrame {
 
         add(panelPrincipal);
 
+        ponerImagenDefault();
+
         eventos();
     }
 
@@ -222,18 +245,23 @@ public class FrmAjustarStock extends JFrame {
     private void cargarImagen() {
         try {
             if (ingrediente.getRutaImagen() != null) {
-
                 ImageIcon icono = new ImageIcon(ingrediente.getRutaImagen());
                 Image imgEscalada = icono.getImage().getScaledInstance(
                         200,
                         180,
                         Image.SCALE_SMOOTH
                 );
-
                 lblImagen.setText("");
                 lblImagen.setIcon(new ImageIcon(imgEscalada));
+
+                btnQuitarImagen.setVisible(true);
+            } else {
+                ponerImagenDefault();
+                btnQuitarImagen.setVisible(false);
             }
         } catch (Exception e) {
+            ponerImagenDefault();
+            btnQuitarImagen.setVisible(false);
         }
     }
 
@@ -253,16 +281,30 @@ public class FrmAjustarStock extends JFrame {
         });
     }
 
+    private void ponerImagenDefault() {
+        ImageIcon icono = new ImageIcon("src\\main\\resources\\imagenes\\icono_sin_imagen.png");
+
+        Dimension size = lblImagen.getPreferredSize();
+
+        Image img = icono.getImage().getScaledInstance(
+                size.width,
+                size.height,
+                Image.SCALE_SMOOTH
+        );
+
+        lblImagen.setIcon(new ImageIcon(img));
+        lblImagen.setText("");
+        btnQuitarImagen.setVisible(false);
+    }
+
     private void seleccionarImagen() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Seleccionar imagen");
-
         int resultado = fileChooser.showOpenDialog(this);
 
         if (resultado == JFileChooser.APPROVE_OPTION) {
             try {
                 String ruta = fileChooser.getSelectedFile().getAbsolutePath();
-
                 ImageIcon icono = new ImageIcon(ruta);
                 Image imgEscalada = icono.getImage().getScaledInstance(
                         200,
@@ -273,9 +315,9 @@ public class FrmAjustarStock extends JFrame {
                 lblImagen.setText("");
                 lblImagen.setIcon(new ImageIcon(imgEscalada));
 
-                // guardar la nueva imagen
                 ingrediente.setRutaImagen(ruta);
 
+                btnQuitarImagen.setVisible(true);
             } catch (Exception ex) {
                 JOptionPane.showMessageDialog(this, "Error al cargar imagen");
             }
@@ -307,7 +349,7 @@ public class FrmAjustarStock extends JFrame {
             if (confirmacion != JOptionPane.YES_OPTION) {
                 return;
             }
-            
+
             coordinador.ajustarStock(
                     ingrediente.getIdIngrediente(),
                     cantidad,
@@ -315,7 +357,6 @@ public class FrmAjustarStock extends JFrame {
             );
 
             // dispose();
-
         } catch (Exception e) {
             JOptionPane.showMessageDialog(this, "Cantidad inválida");
         }

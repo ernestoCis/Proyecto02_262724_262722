@@ -2,6 +2,7 @@ package pantallas;
 
 import componentes.BotonEstilizado;
 import componentes.BotonRegresar;
+import componentes.BotonX;
 import componentes.PanelRedondeado;
 import controlador.Coordinador;
 import dtos.IngredienteDTO;
@@ -11,7 +12,7 @@ import javax.swing.*;
 import utilerias.Validacion;
 
 /**
- * 
+ *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmRegistrarIngrediente extends JFrame {
@@ -25,6 +26,7 @@ public class FrmRegistrarIngrediente extends JFrame {
     private BotonEstilizado btnRegistrar;
     private JLabel lblImagen;
     private BotonEstilizado btnSeleccionarImagen;
+    private BotonX btnQuitarImagen;
     private String rutaImagen;
 
     public FrmRegistrarIngrediente(Coordinador coordinador) {
@@ -103,9 +105,11 @@ public class FrmRegistrarIngrediente extends JFrame {
         panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.X_AXIS));
         panelContenido.setOpaque(false);
 
+// ================= CAMPOS =================
         JPanel panelCampos = new JPanel();
         panelCampos.setLayout(new BoxLayout(panelCampos, BoxLayout.Y_AXIS));
         panelCampos.setOpaque(false);
+        panelCampos.setPreferredSize(new Dimension(300, 250)); // 🔥 ancho fijo
 
         txtNombre = new JTextField();
         txtCantidad = new JTextField();
@@ -120,24 +124,44 @@ public class FrmRegistrarIngrediente extends JFrame {
         panelCampos.add(Box.createVerticalStrut(15));
         panelCampos.add(crearCampo("Cantidad actual en inventario", txtCantidad));
 
+// ================= IMAGEN =================
         JPanel panelImagen = new JPanel();
         panelImagen.setLayout(new BoxLayout(panelImagen, BoxLayout.Y_AXIS));
         panelImagen.setOpaque(false);
+        panelImagen.setPreferredSize(new Dimension(220, 250));
 
         lblImagen = new JLabel("Sin imagen", SwingConstants.CENTER);
-        lblImagen.setPreferredSize(new Dimension(210, 220));
-        lblImagen.setMaximumSize(new Dimension(210, 220));
+        lblImagen.setPreferredSize(new Dimension(180, 150));
+        lblImagen.setMaximumSize(new Dimension(180, 150));
         lblImagen.setBorder(BorderFactory.createLineBorder(Color.GRAY, 2, true));
+        lblImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
 
-        btnSeleccionarImagen = new BotonEstilizado("Seleccionar imagen");
+        btnSeleccionarImagen = new BotonEstilizado("Imagen");
+        btnQuitarImagen = new BotonX("X");
+        btnQuitarImagen.setVisible(false);
+
+        JPanel panelBotonesImagen = new JPanel();
+        panelBotonesImagen.setLayout(new FlowLayout(FlowLayout.CENTER, 15, 5));
+        panelBotonesImagen.setOpaque(false);
+
+        btnSeleccionarImagen.setPreferredSize(new Dimension(120, 35));
+        btnQuitarImagen.setPreferredSize(new Dimension(60, 35));
+
+        panelBotonesImagen.add(btnSeleccionarImagen);
+        panelBotonesImagen.add(btnQuitarImagen);
+        
+        lblImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
+        panelBotonesImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
 
         panelImagen.add(lblImagen);
         panelImagen.add(Box.createVerticalStrut(10));
-        panelImagen.add(btnSeleccionarImagen);
+        panelImagen.add(panelBotonesImagen);
 
         panelContenido.add(panelCampos);
-        panelContenido.add(Box.createHorizontalStrut(60));
+        panelContenido.add(Box.createHorizontalStrut(60)); 
         panelContenido.add(panelImagen);
+
+        btnQuitarImagen.addActionListener(e -> quitarImagen());
 
         btnRegistrar = new BotonEstilizado("Registrar");
 
@@ -158,14 +182,37 @@ public class FrmRegistrarIngrediente extends JFrame {
 
         add(panelPrincipal);
 
+        ponerImagenDefault();
+
         eventos();
+    }
+
+    private void quitarImagen() {
+        rutaImagen = null;
+        ponerImagenDefault();
+        btnQuitarImagen.setVisible(false);
+    }
+
+    private void ponerImagenDefault() {
+        ImageIcon icono = new ImageIcon("src\\main\\resources\\imagenes\\icono_sin_imagen.png");
+
+        Dimension size = lblImagen.getPreferredSize();
+
+        Image img = icono.getImage().getScaledInstance(
+                size.width,
+                size.height,
+                Image.SCALE_SMOOTH
+        );
+
+        lblImagen.setIcon(new ImageIcon(img));
+        lblImagen.setText("");
     }
 
     private JPanel crearCampo(String texto, JTextField campo) {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
 
-        campo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        campo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
         JPanel contenedor = new JPanel();
         contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
@@ -185,7 +232,7 @@ public class FrmRegistrarIngrediente extends JFrame {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
 
-        combo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 40));
+        combo.setMaximumSize(new Dimension(Integer.MAX_VALUE, 30));
 
         JPanel contenedor = new JPanel();
         contenedor.setLayout(new BoxLayout(contenedor, BoxLayout.Y_AXIS));
@@ -224,14 +271,17 @@ public class FrmRegistrarIngrediente extends JFrame {
 
             ImageIcon icono = new ImageIcon(rutaImagen);
 
+            Dimension size = lblImagen.getPreferredSize();
+
             Image imagenEscalada = icono.getImage().getScaledInstance(
-                    lblImagen.getWidth(),
-                    lblImagen.getHeight(),
+                    size.width,
+                    size.height,
                     Image.SCALE_SMOOTH
             );
 
             lblImagen.setText("");
             lblImagen.setIcon(new ImageIcon(imagenEscalada));
+            btnQuitarImagen.setVisible(true);
         }
     }
 
@@ -252,16 +302,25 @@ public class FrmRegistrarIngrediente extends JFrame {
             return;
         }
 
-        double cantidad = Double.parseDouble(cantidadTexto);
-        UnidadMedidaDTO unidad = UnidadMedidaDTO.valueOf(unidadTexto);
-
-        IngredienteDTO ingrediente = new IngredienteDTO(
-                nombre,
-                unidad,
-                cantidad,
-                rutaImagen
+        int confirmacion = JOptionPane.showConfirmDialog(
+                this,
+                "¿Deseas agregar el ingrediente " + nombre + "?",
+                "Confirmación",
+                JOptionPane.YES_NO_OPTION
         );
 
-        coordinador.registrarIngrediente(ingrediente);
+        if (confirmacion == JOptionPane.YES_OPTION) {
+            double cantidad = Double.parseDouble(cantidadTexto);
+            UnidadMedidaDTO unidad = UnidadMedidaDTO.valueOf(unidadTexto);
+
+            IngredienteDTO ingrediente = new IngredienteDTO(
+                    nombre,
+                    unidad,
+                    cantidad,
+                    rutaImagen
+            );
+
+            coordinador.registrarIngrediente(ingrediente);
+        }
     }
 }
