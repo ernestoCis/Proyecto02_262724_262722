@@ -144,16 +144,6 @@ public class Coordinador implements ICoordinador {
     //----- MOSTRAR FRAMES -----
     @Override
     public void iniciarSistema() {
-        
-        
-        try {
-            if (clienteFrecuenteBO.buscarClienteFrecuenteGeneral() == null) {
-                ClienteFrecuenteDTO clienteGeneral = new ClienteFrecuenteDTO(null, "Cliente general", "", "", "0", "", 0, 0.0, 0);
-                clienteFrecuenteBO.registrarCliente(clienteGeneral);
-            }
-        } catch (NegocioException e) {
-            System.out.println(e.getMessage());
-        }
 
         if (frmInicio == null) {
             frmInicio = new FrmInicio(this);
