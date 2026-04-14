@@ -4,7 +4,9 @@ import adaptadores.ProductoAdapter;
 import daos.ProductoDAO;
 import dtos.ProductoDTO;
 import dtos.RecetaDTO;
+import entidades.Ingrediente;
 import entidades.Producto;
+import enums.DisponibilidadProducto;
 import enums.DisponibilidadProductoDTO;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
@@ -76,6 +78,30 @@ public class ProductoBO implements IProductoBO {
         }
     }
 
+    @Override
+    public void eliminarProducto(Long id) throws NegocioException {
+        if (id == null) {
+            throw new NegocioException("El ID del producto es obligatorio");
+        }
+
+        try {
+            Producto producto = productoDAO.buscarPorId(id);
+
+            if (producto == null) {
+                throw new NegocioException("Producto no encontrado");
+            }
+
+            if (productoDAO.estaEnComandaAbierta(id)) {
+                throw new NegocioException("No se puede eliminar el producto porque está en comanda activa.");
+            }
+            
+            productoDAO.cambiarDisponibilidad(id, DisponibilidadProducto.NO_DISPONIBLE);
+
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al eliminar producto", e);
+        }
+    }
+    
     @Override
     public List<ProductoDTO> consultarTodos() throws NegocioException {
         try {

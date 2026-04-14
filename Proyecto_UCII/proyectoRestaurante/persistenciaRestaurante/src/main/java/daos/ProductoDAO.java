@@ -1,8 +1,10 @@
 package daos;
 
 import conexion.ConexionBD;
+import entidades.Ingrediente;
 import entidades.Producto;
 import enums.DisponibilidadProducto;
+import enums.EstadoComanda;
 import excepciones.PersistenciaException;
 import interfaces.IProductoDAO;
 import jakarta.persistence.EntityManager;
@@ -191,6 +193,52 @@ public class ProductoDAO implements IProductoDAO {
             ).setParameter("disp", DisponibilidadProducto.DISPONIBLE).getResultList();
         } catch (Exception e) {
             throw new PersistenciaException("Error al obtener los productos", e);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public void eliminar(Long id) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            em.getTransaction().begin();
+
+            Producto producto = em.find(Producto.class, id);
+
+            if (producto != null) {
+                em.remove(producto);
+            }
+
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+            em.getTransaction().rollback();
+            throw new PersistenciaException("Error al eliminar producto", e);
+        } finally {
+            em.close();
+        }
+    }
+
+    @Override
+    public boolean estaEnComandaAbierta(Long idProducto) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            Long count = em.createQuery(
+                    "SELECT COUNT(d) FROM DetallePedido d "
+                    + "JOIN d.comanda c "
+                    + "WHERE d.producto.idProducto = :id "
+                    + "AND c.estado = :estado",
+                    Long.class
+            )
+                    .setParameter("id", idProducto)
+                    .setParameter("estado", EstadoComanda.ABIERTA)
+                    .getSingleResult();
+
+            return count > 0;
+
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al verificar si el producto está en comanda abierta", e);
         } finally {
             em.close();
         }

@@ -85,6 +85,8 @@ public interface ICoordinador {
     void actualizarProducto(ProductoDTO productoDTO);
     
     void actualizarTablaProductos();
+    
+    void eliminarProducto();
 
     void setProductoSeleccionado(ProductoDTO producto);
 

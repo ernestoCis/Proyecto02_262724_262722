@@ -136,11 +136,13 @@ public class IngredienteDAO implements IIngredienteDAO {
             em.getTransaction().begin();
 
             Ingrediente ingrediente = em.find(Ingrediente.class, id);
+            
             if (ingrediente != null) {
                 em.remove(ingrediente);
             }
 
             em.getTransaction().commit();
+            
         } catch (Exception e) {
             em.getTransaction().rollback();
             throw new PersistenciaException("Error al eliminar ingrediente", e);
