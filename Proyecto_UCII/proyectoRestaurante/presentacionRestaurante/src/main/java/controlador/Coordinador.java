@@ -4,7 +4,6 @@
  */
 package controlador;
 
-import dtos.ClienteDTO;
 import dtos.ClienteFrecuenteDTO;
 import dtos.ComandaDTO;
 import dtos.DetallePedidoDTO;
@@ -24,7 +23,6 @@ import java.util.ArrayList;
 import java.util.List;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
-import objetosnegocio.ClienteBO;
 import objetosnegocio.ClienteFrecuenteBO;
 import objetosnegocio.ComandaBO;
 import objetosnegocio.MeseroBO;
