@@ -214,4 +214,13 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
 
         return filtrada;
     }
+
+    @Override
+    public boolean clienteConComandas(Long idCliente) throws NegocioException {
+        try{
+            return clienteFrecuenteDAO.tieneComandas(idCliente);
+        }catch(PersistenciaException e){
+            throw new NegocioException(e.getMessage(), e);
+        }
+    }
 }

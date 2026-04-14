@@ -175,4 +175,25 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
             em.close();
         }
     }
+
+    @Override
+    public boolean tieneComandas(Long idCliente) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try{
+            String comandoJPQL = "SELECT c FROM Comanda c WHERE c.cliente.idCliente = :cliente";
+            TypedQuery<ClienteFrecuente> query = em.createQuery(comandoJPQL, ClienteFrecuente.class);
+            query.setParameter("cliente", idCliente);
+            
+            if(query.getResultList().isEmpty() || query.getResultList() == null){
+                return false;
+            }
+            
+            return true;
+            
+        }catch(Exception e){
+            throw new PersistenciaException("Error al consultar las comandas de los clientes", e);
+        }finally{
+            em.close();
+        }
+    }
 }

@@ -27,5 +27,7 @@ public interface IClienteFrecuenteDAO {
     public void eliminarCliente(Long idCliente) throws PersistenciaException;
     
     public ClienteFrecuente buscarClienteFrecuenteGeneral() throws PersistenciaException;
+    
+    public boolean tieneComandas(Long idCliente) throws PersistenciaException;
 
 }

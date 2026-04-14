@@ -26,4 +26,6 @@ public interface IClienteFrecuenteBO {
     
     public ClienteFrecuenteDTO buscarClienteFrecuenteGeneral() throws NegocioException;
     
+    public boolean clienteConComandas(Long idCliente) throws NegocioException;
+    
 }

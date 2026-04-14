@@ -271,12 +271,19 @@ public class Coordinador implements ICoordinador {
     @Override
     public void eliminarCliente() {
         try {
-            clienteFrecuenteBO.eliminarCliente(clienteSeleccionado);
-            JOptionPane.showMessageDialog(null, "Cliente eliminado con exito");
-            clienteSeleccionado = null;
-            listaClientesActual = clienteFrecuenteBO.consultarTodos();
-            actualizarTablaClientes();
+            
+            if(clienteFrecuenteBO.clienteConComandas(clienteSeleccionado.getIdCliente())){
+                JOptionPane.showMessageDialog(null, "No se pueden eliminar clientes con comandas");
+            }else{
+                clienteFrecuenteBO.eliminarCliente(clienteSeleccionado);
+                JOptionPane.showMessageDialog(null, "Cliente eliminado con exito");
+                clienteSeleccionado = null;
+                listaClientesActual = clienteFrecuenteBO.consultarTodos();
+                actualizarTablaClientes();
+            }
+            
         } catch (NegocioException ex) {
+            ex.printStackTrace();
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
