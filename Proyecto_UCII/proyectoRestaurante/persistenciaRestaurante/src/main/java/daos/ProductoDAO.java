@@ -53,7 +53,9 @@ public class ProductoDAO implements IProductoDAO {
             em.merge(producto);
             em.getTransaction().commit();
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al actualizar producto", e);
         } finally {
             em.close();
@@ -74,6 +76,9 @@ public class ProductoDAO implements IProductoDAO {
                     .getSingleResult();
 
         } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al buscar por id", e);
         } finally {
             em.close();
@@ -91,6 +96,9 @@ public class ProductoDAO implements IProductoDAO {
                     Producto.class
             ).getResultList();
         } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al obtener los productos", e);
         } finally {
             em.close();
@@ -108,6 +116,9 @@ public class ProductoDAO implements IProductoDAO {
                     .setParameter("nombre", "%" + nombre + "%")
                     .getResultList();
         } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al buscar pro nombre", e);
         } finally {
             em.close();
@@ -133,6 +144,9 @@ public class ProductoDAO implements IProductoDAO {
             return lista.get(0);
 
         } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al consultar por nombre exacto", e);
         } finally {
             em.close();
@@ -153,7 +167,9 @@ public class ProductoDAO implements IProductoDAO {
 
             em.getTransaction().commit();
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al cambiar disponibilidad", e);
         } finally {
             em.close();
@@ -174,6 +190,9 @@ public class ProductoDAO implements IProductoDAO {
             return count > 0;
 
         } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al verificar uso del producto", e);
         } finally {
             em.close();
@@ -192,6 +211,9 @@ public class ProductoDAO implements IProductoDAO {
                     Producto.class
             ).setParameter("disp", DisponibilidadProducto.DISPONIBLE).getResultList();
         } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al obtener los productos", e);
         } finally {
             em.close();
@@ -213,7 +235,9 @@ public class ProductoDAO implements IProductoDAO {
             em.getTransaction().commit();
 
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al eliminar producto", e);
         } finally {
             em.close();
@@ -238,7 +262,72 @@ public class ProductoDAO implements IProductoDAO {
             return count > 0;
 
         } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al verificar si el producto está en comanda abierta", e);
+        } finally {
+            em.close();
+        }
+    }
+
+    public void actualizarProductosPorIngrediente(Long idIngrediente) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+
+            List<Long> idsProductos = em.createQuery(
+                    "SELECT DISTINCT r.producto.idProducto "
+                    + "FROM Receta r "
+                    + "WHERE r.ingrediente.idIngrediente = :id",
+                    Long.class
+            )
+                    .setParameter("id", idIngrediente)
+                    .getResultList();
+
+            for (Long idProducto : idsProductos) {
+                actualizarDisponibilidadPorStock(idProducto);
+            }
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Error al actualizar productos por ingrediente", e);
+        } finally {
+            em.close();
+        }
+    }
+
+    public void actualizarDisponibilidadPorStock(Long idProducto) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            em.getTransaction().begin();
+
+            Producto producto = em.find(Producto.class, idProducto);
+
+            Long faltantes = em.createQuery(
+                    "SELECT COUNT(r) FROM Receta r "
+                    + "WHERE r.producto.idProducto = :id "
+                    + "AND r.ingrediente.cantidadActual < r.cantidad",
+                    Long.class
+            )
+                    .setParameter("id", idProducto)
+                    .getSingleResult();
+
+            if (faltantes > 0) {
+                producto.setDisponibilidad(DisponibilidadProducto.NO_DISPONIBLE);
+            } else {
+                producto.setDisponibilidad(DisponibilidadProducto.DISPONIBLE);
+            }
+
+            em.merge(producto);
+            em.getTransaction().commit();
+
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Error al actualizar disponibilidad", e);
         } finally {
             em.close();
         }

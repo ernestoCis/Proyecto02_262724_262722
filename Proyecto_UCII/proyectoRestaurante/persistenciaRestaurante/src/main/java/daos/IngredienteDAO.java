@@ -37,6 +37,11 @@ public class IngredienteDAO implements IIngredienteDAO {
             em.getTransaction().begin();
             em.persist(ingrediente);
             em.getTransaction().commit();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Error al guardar ingrediente", e);
         } finally {
             em.close();
         }
@@ -49,8 +54,14 @@ public class IngredienteDAO implements IIngredienteDAO {
             em.getTransaction().begin();
             em.merge(ingrediente);
             em.getTransaction().commit();
+
+            // actualizar productos relacionados al ingrediente
+            ProductoDAO.getInstance().actualizarProductosPorIngrediente(ingrediente.getIdIngrediente());
+
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al actualizar ingrediente", e);
         } finally {
             em.close();
@@ -62,6 +73,11 @@ public class IngredienteDAO implements IIngredienteDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             return em.find(Ingrediente.class, id);
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Erroral buscar por id", e);
         } finally {
             em.close();
         }
@@ -74,6 +90,11 @@ public class IngredienteDAO implements IIngredienteDAO {
             return em.createQuery(
                     "SELECT i FROM Ingrediente i", Ingrediente.class
             ).getResultList();
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Erroral obtener ingredientes", e);
         } finally {
             em.close();
         }
@@ -104,6 +125,11 @@ public class IngredienteDAO implements IIngredienteDAO {
 
             return lista.get(0);
 
+        } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
+            throw new PersistenciaException("Error", e);
         } finally {
             em.close();
         }
@@ -123,6 +149,9 @@ public class IngredienteDAO implements IIngredienteDAO {
             return count > 0;
 
         } catch (Exception e) {
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al verificar uso del ingrediente", e);
         } finally {
             em.close();
@@ -136,15 +165,17 @@ public class IngredienteDAO implements IIngredienteDAO {
             em.getTransaction().begin();
 
             Ingrediente ingrediente = em.find(Ingrediente.class, id);
-            
+
             if (ingrediente != null) {
                 em.remove(ingrediente);
             }
 
             em.getTransaction().commit();
-            
+
         } catch (Exception e) {
-            em.getTransaction().rollback();
+            if (em.getTransaction().isActive()) {
+                em.getTransaction().rollback();
+            }
             throw new PersistenciaException("Error al eliminar ingrediente", e);
         } finally {
             em.close();
