@@ -248,7 +248,7 @@ public class FrmSeleccionProductos extends JFrame {
 
             //lista completa de productos para sacar los precios y nombres
             List<ProductoDTO> productosBD = coordinador.getListaProductosActual();
-            
+
             for (ProductoDTO p : productosBD) {
                 Integer cantidad = cantidades.get(p.getIdProducto());
 
@@ -317,39 +317,39 @@ public class FrmSeleccionProductos extends JFrame {
         panel.setLayout(new BoxLayout(panel, BoxLayout.Y_AXIS));
 
         JPanel panelImagen = new JPanel(new GridBagLayout());
-    panelImagen.setBackground(Color.WHITE);
-    panelImagen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
-    panelImagen.setPreferredSize(new Dimension(90, 70));
-    panelImagen.setMaximumSize(new Dimension(90, 70));
-    panelImagen.setMinimumSize(new Dimension(90, 70));
-    panelImagen.setAlignmentX(CENTER_ALIGNMENT);
+        panelImagen.setBackground(Color.WHITE);
+        panelImagen.setBorder(BorderFactory.createLineBorder(Color.BLACK, 1));
+        panelImagen.setPreferredSize(new Dimension(90, 70));
+        panelImagen.setMaximumSize(new Dimension(90, 70));
+        panelImagen.setMinimumSize(new Dimension(90, 70));
+        panelImagen.setAlignmentX(CENTER_ALIGNMENT);
 
-    // Lógica para cargar imagen o texto
-    if (producto.getRutaImagen() != null && !producto.getRutaImagen().isBlank()) {
-        try {
-            ImageIcon iconOriginal = new ImageIcon(producto.getRutaImagen());
-            
-            // Verificamos si la imagen cargó correctamente
-            if (iconOriginal.getImageLoadStatus() == java.awt.MediaTracker.COMPLETE) {
-                // Escalar imagen al tamaño del panel (90x70)
-                Image imgEscalada = iconOriginal.getImage().getScaledInstance(90, 70, Image.SCALE_SMOOTH);
-                JLabel lblImagen = new JLabel(new ImageIcon(imgEscalada));
-                panelImagen.add(lblImagen);
-            } else {
-                // Si la ruta existe pero el archivo no se pudo cargar
-                JLabel lblError = new JLabel("Error imagen");
-                lblError.setFont(new Font("SansSerif", Font.PLAIN, 10));
-                panelImagen.add(lblError);
+        // Lógica para cargar imagen o texto
+        if (producto.getRutaImagen() != null && !producto.getRutaImagen().isBlank()) {
+            try {
+                ImageIcon iconOriginal = new ImageIcon(producto.getRutaImagen());
+
+                // Verificamos si la imagen cargó correctamente
+                if (iconOriginal.getImageLoadStatus() == java.awt.MediaTracker.COMPLETE) {
+                    // Escalar imagen al tamaño del panel (90x70)
+                    Image imgEscalada = iconOriginal.getImage().getScaledInstance(90, 70, Image.SCALE_SMOOTH);
+                    JLabel lblImagen = new JLabel(new ImageIcon(imgEscalada));
+                    panelImagen.add(lblImagen);
+                } else {
+                    // Si la ruta existe pero el archivo no se pudo cargar
+                    JLabel lblError = new JLabel("Error imagen");
+                    lblError.setFont(new Font("SansSerif", Font.PLAIN, 10));
+                    panelImagen.add(lblError);
+                }
+            } catch (Exception ex) {
+                panelImagen.add(new JLabel("Sin imagen"));
             }
-        } catch (Exception ex) {
-            panelImagen.add(new JLabel("Sin imagen"));
+        } else {
+            // Si la ruta es nula o vacía
+            JLabel lblSinImagen = new JLabel("Sin imagen");
+            lblSinImagen.setFont(new Font("SansSerif", Font.PLAIN, 11));
+            panelImagen.add(lblSinImagen);
         }
-    } else {
-        // Si la ruta es nula o vacía
-        JLabel lblSinImagen = new JLabel("Sin imagen");
-        lblSinImagen.setFont(new Font("SansSerif", Font.PLAIN, 11));
-        panelImagen.add(lblSinImagen);
-    }
 
         JLabel lblNombre = new JLabel(producto.getNombre());
         lblNombre.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -397,21 +397,19 @@ public class FrmSeleccionProductos extends JFrame {
         btnNota.setMargin(new Insets(0, 0, 0, 0));
 
         btnMas.addActionListener(e -> {
-            int cantidadActual = cantidades.get(producto.getIdProducto());
-            int proximaCantidad = cantidadActual + 1;
 
-            if (coordinador.verificarStock(producto, proximaCantidad)) {
+            //validación global en lugar de la del coordinador
+            if (verificarStockGlobal(producto)) {
+                int cantidadActual = cantidades.get(producto.getIdProducto());
+                int proximaCantidad = cantidadActual + 1;
+
                 cantidades.put(producto.getIdProducto(), proximaCantidad);
                 lblCantidad.setText(String.valueOf(proximaCantidad));
                 btnNota.setVisible(proximaCantidad >= 1);
 
-                if (!coordinador.verificarStock(producto, proximaCantidad + 1)) {
-                    btnMas.setEnabled(false);
-                }
             } else {
-                btnMas.setEnabled(false);
                 JOptionPane.showMessageDialog(this,
-                        "No hay ingredientes suficientes para añadir más " + producto.getNombre(),
+                        "No hay ingredientes suficientes. Otros productos seleccionados están ocupando el inventario.",
                         "Sin Stock", JOptionPane.WARNING_MESSAGE);
             }
         });
@@ -424,9 +422,9 @@ public class FrmSeleccionProductos extends JFrame {
                 cantidades.put(producto.getIdProducto(), cantidadActual);
                 lblCantidad.setText(String.valueOf(cantidadActual));
                 btnNota.setVisible(cantidadActual >= 1);
-                
+
                 btnMas.setEnabled(true);
-                
+
             }
         });
 
@@ -496,5 +494,46 @@ public class FrmSeleccionProductos extends JFrame {
                 }
             }
         });
+    }
+
+    private boolean verificarStockGlobal(ProductoDTO productoAñadir) {
+        //mapa temporal para sumar el consumo total de ingredientes actual
+        Map<Long, Double> consumoTotalActual = new HashMap<>();
+
+        //recorrer todos los productos que ya tienen cantidad seleccionada
+        for (Map.Entry<Long, Integer> entry : cantidades.entrySet()) {
+            Long idProd = entry.getKey();
+            int cantSeleccionada = entry.getValue();
+
+            if (cantSeleccionada > 0) {
+                //buscamos el DTO del producto
+                ProductoDTO p = listaOriginalProductos.stream()
+                        .filter(prod -> prod.getIdProducto().equals(idProd))
+                        .findFirst().orElse(null);
+
+                if (p != null && p.getRecetas() != null) {
+                    for (dtos.RecetaDTO receta : p.getRecetas()) {
+                        long idIng = receta.getIngrediente().getIdIngrediente();
+                        double gasto = receta.getCantidad() * cantSeleccionada;
+                        consumoTotalActual.put(idIng, consumoTotalActual.getOrDefault(idIng, 0.0) + gasto);
+                    }
+                }
+            }
+        }
+
+        //verificar si añadir UNA unidad más del producto actual sobrepasa el stock real
+        if (productoAñadir.getRecetas() != null) {
+            for (dtos.RecetaDTO receta : productoAñadir.getRecetas()) {
+                long idIng = receta.getIngrediente().getIdIngrediente();
+                double cantidadNecesariaTotal = consumoTotalActual.getOrDefault(idIng, 0.0) + receta.getCantidad();
+
+                //comparamos contra el stock real que tiene el ingrediente en el DTO (que viene de la BD)
+                if (cantidadNecesariaTotal > receta.getIngrediente().getCantidadActual()) {
+                    return false; //no hay suficiente
+                }
+            }
+        }
+
+        return true;
     }
 }

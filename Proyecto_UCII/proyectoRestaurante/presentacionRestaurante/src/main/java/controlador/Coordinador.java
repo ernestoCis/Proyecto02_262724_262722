@@ -889,6 +889,7 @@ public class Coordinador implements ICoordinador {
         try {
             return comandaBO.actualizarComanda(comanda);
         } catch (NegocioException e) {
+            e.printStackTrace();
             JOptionPane.showMessageDialog(null, "No se pudo actualizar la comanda");
             return null;
         }

@@ -6,6 +6,7 @@ package daos;
 
 import conexion.ConexionBD;
 import entidades.Comanda;
+import entidades.DetallePedido;
 import entidades.Producto;
 import enums.EstadoComanda;
 import excepciones.PersistenciaException;
@@ -81,22 +82,75 @@ public class ComandaDAO implements IComandaDAO {
     }
 
     @Override
-    public Comanda actualizarComanda(Comanda comanda) throws PersistenciaException {
+    public Comanda actualizarComanda(Comanda comandaParam) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
-        try {
-            em.getTransaction().begin();
-            // merge es el que se encarga de insertar detalles nuevos o actualizar existentes
-            Comanda actualizada = em.merge(comanda);
-            em.getTransaction().commit();
-            return actualizada;
-        } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
-            throw new PersistenciaException("Error al actualizar la comanda");
-        } finally {
-            em.close();
+    try {
+        em.getTransaction().begin();
+
+        // 1. Cargamos la entidad actual
+        Comanda comandaExistente = em.find(Comanda.class, comandaParam.getIdComanda());
+        
+        if (comandaExistente == null) {
+            throw new PersistenciaException("La comanda no existe.");
         }
+
+        // 2. Sincronización de detalles (Limpiar y agregar nuevos)
+        comandaExistente.getDetalles().clear();
+        em.flush(); 
+
+        if (comandaParam.getDetalles() != null) {
+            for (DetallePedido nuevoDetalle : comandaParam.getDetalles()) {
+                nuevoDetalle.setComanda(comandaExistente);
+                
+                // Buscamos el producto para que esté en el contexto de persistencia
+                Producto p = em.find(Producto.class, nuevoDetalle.getProducto().getIdProducto());
+                nuevoDetalle.setProducto(p);
+                
+                comandaExistente.getDetalles().add(nuevoDetalle);
+            }
+        }
+
+        comandaExistente.setEstado(comandaParam.getEstado());
+        comandaExistente.setTotal(comandaParam.getTotal());
+
+        // Guardamos cambios
+        comandaExistente = em.merge(comandaExistente);
+        em.getTransaction().commit();
+
+        // --- BLOQUE DE PRECARGA (IMPORTANTE) ---
+        // Antes de cerrar la conexión, forzamos a Hibernate a traer las recetas 
+        // de los productos que acabamos de guardar para que el Adapter las encuentre.
+        for (DetallePedido dp : comandaExistente.getDetalles()) {
+            if (dp.getProducto() != null) {
+                // Esto fuerza la carga de la colección Lazy mientras la sesión sigue abierta
+                dp.getProducto().getRecetas().size(); 
+            }
+        }
+        // ----------------------------------------
+
+        return comandaExistente;
+    } catch (Exception e) {
+        if (em.getTransaction().isActive()) em.getTransaction().rollback();
+        throw new PersistenciaException("Error al actualizar y precargar comanda", e);
+    } finally {
+        em.close(); // Aquí se cierra la sesión
+    }
+
+//        EntityManager em = ConexionBD.crearConexion();
+//        try {
+//            em.getTransaction().begin();
+//            // merge es el que se encarga de insertar detalles nuevos o actualizar existentes
+//            Comanda actualizada = em.merge(comanda);
+//            em.getTransaction().commit();
+//            return actualizada;
+//        } catch (Exception e) {
+//            if (em.getTransaction().isActive()) {
+//                em.getTransaction().rollback();
+//            }
+//            throw new PersistenciaException("Error al actualizar la comanda");
+//        } finally {
+//            em.close();
+//        }
     }
 
     @Override

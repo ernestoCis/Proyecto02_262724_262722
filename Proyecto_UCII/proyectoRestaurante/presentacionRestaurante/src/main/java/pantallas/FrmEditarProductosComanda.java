@@ -411,43 +411,20 @@ public class FrmEditarProductosComanda extends JFrame {
         btnNota.setMargin(new Insets(0, 0, 0, 0));
 
         btnMas.addActionListener(e -> {
-            int cantidadActual = cantidades.get(producto.getIdProducto());
+            if (verificarStockGlobalEdicion(producto)) {
+                int cantidadActual = cantidades.get(producto.getIdProducto());
+                int proximaCantidad = cantidadActual + 1;
 
-            // Obtenemos cuántas unidades de este producto tenía la comanda originalmente
-            int cantidadOriginal = 0;
-            ComandaDTO comandaActual = coordinador.getComanda();
-            if (comandaActual != null && comandaActual.getDetalles() != null) {
-                for (DetallePedidoDTO d : comandaActual.getDetalles()) {
-                    if (d.getProductoDTO().getIdProducto().equals(producto.getIdProducto())) {
-                        cantidadOriginal = d.getCantidad();
-                        break;
-                    }
-                }
-            }
-
-            int proximaCantidad = cantidadActual + 1;
-
-            // LÓGICA DELTA:
-            // Si la proximaCantidad es menor o igual a la original, permitimos sin checar stock 
-            // (porque esos ingredientes ya se "pagaron" antes).
-            // Si es mayor, checamos stock solo por la diferencia.
-            boolean tieneStock;
-            if (proximaCantidad <= cantidadOriginal) {
-                tieneStock = true;
-            } else {
-                // Solo validamos las unidades "nuevas" (proximaCantidad - cantidadOriginal)
-                tieneStock = coordinador.verificarStock(producto, proximaCantidad - cantidadOriginal);
-            }
-
-            if (tieneStock) {
                 cantidades.put(producto.getIdProducto(), proximaCantidad);
                 lblCantidad.setText(String.valueOf(proximaCantidad));
                 btnNota.setVisible(proximaCantidad >= 1);
+
+                // Habilitamos el botón por si estaba deshabilitado
                 btnMas.setEnabled(true);
             } else {
-                btnMas.setEnabled(false);
                 JOptionPane.showMessageDialog(this,
-                        "No hay ingredientes en almacén para unidades extra de " + producto.getNombre());
+                        "No hay suficientes ingredientes en almacén para esta combinación de productos.",
+                        "Sin Stock", JOptionPane.WARNING_MESSAGE);
             }
         });
 
@@ -531,5 +508,65 @@ public class FrmEditarProductosComanda extends JFrame {
                 }
             }
         });
+    }
+    
+    private boolean verificarStockGlobalEdicion(ProductoDTO productoAñadir) {
+        // 1. Mapa para calcular el consumo total VIRTUAL de la pantalla
+        Map<Long, Double> consumoPantalla = new HashMap<>();
+
+        // Recorremos lo que el usuario tiene seleccionado actualmente en los botoncitos (+/-)
+        for (Map.Entry<Long, Integer> entry : cantidades.entrySet()) {
+            int cantSeleccionada = entry.getValue();
+            if (cantSeleccionada > 0) {
+                ProductoDTO p = listaOriginalProductos.stream()
+                        .filter(prod -> prod.getIdProducto().equals(entry.getKey()))
+                        .findFirst().orElse(null);
+
+                if (p != null && p.getRecetas() != null) {
+                    for (dtos.RecetaDTO r : p.getRecetas()) {
+                        long idIng = r.getIngrediente().getIdIngrediente();
+                        double gasto = r.getCantidad() * cantSeleccionada;
+                        consumoPantalla.put(idIng, consumoPantalla.getOrDefault(idIng, 0.0) + gasto);
+                    }
+                }
+            }
+        }
+
+        // 2. Mapa para saber cuánto stock ya está "apartado" por la comanda original en la BD
+        Map<Long, Double> consumoOriginalComanda = new HashMap<>();
+        ComandaDTO comandaActual = coordinador.getComanda();
+        if (comandaActual != null && comandaActual.getDetalles() != null) {
+            for (dtos.DetallePedidoDTO detalle : comandaActual.getDetalles()) {
+                if (detalle.getProductoDTO().getRecetas() != null) {
+                    for (dtos.RecetaDTO r : detalle.getProductoDTO().getRecetas()) {
+                        long idIng = r.getIngrediente().getIdIngrediente();
+                        double gastoOriginal = r.getCantidad() * detalle.getCantidad();
+                        consumoOriginalComanda.put(idIng, consumoOriginalComanda.getOrDefault(idIng, 0.0) + gastoOriginal);
+                    }
+                }
+            }
+        }
+
+        // 3. Validar si añadir uno más sobrepasa el Stock Real + Lo que ya liberamos virtualmente
+        if (productoAñadir.getRecetas() != null) {
+            for (dtos.RecetaDTO r : productoAñadir.getRecetas()) {
+                long idIng = r.getIngrediente().getIdIngrediente();
+
+                // Lo que se quiere consumir en total (incluyendo el nuevo click)
+                double consumoTotalDeseado = consumoPantalla.getOrDefault(idIng, 0.0) + r.getCantidad();
+
+                // Lo que la comanda ya tiene "apartado" de este ingrediente
+                double yaApartadoEnBD = consumoOriginalComanda.getOrDefault(idIng, 0.0);
+
+                // El stock disponible realmente para unidades NUEVAS es: 
+                // StockActual + yaApartadoEnBD (porque el StockActual ya viene restado de la BD)
+                double stockDisponibleReal = r.getIngrediente().getCantidadActual() + yaApartadoEnBD;
+
+                if (consumoTotalDeseado > stockDisponibleReal) {
+                    return false;
+                }
+            }
+        }
+        return true;
     }
 }

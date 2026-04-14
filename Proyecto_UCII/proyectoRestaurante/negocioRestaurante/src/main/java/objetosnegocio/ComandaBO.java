@@ -75,7 +75,6 @@ public class ComandaBO implements IComandaBO {
                 if (producto.getRecetas() != null && !producto.getRecetas().isEmpty()) {
                     for (RecetaDTO receta : producto.getRecetas()) {
                         IngredienteDTO ingrediente = receta.getIngrediente();
-                        JOptionPane.showMessageDialog(null, ingrediente.getNombre());
 
                         //cant a restar
                         double cantidadARestar = receta.getCantidad() * cantidadComanda;
@@ -153,6 +152,7 @@ public class ComandaBO implements IComandaBO {
             return comandaActualizadaDTO;
 
         } catch (PersistenciaException e) {
+            e.printStackTrace();
             throw new NegocioException("Error al intentar actualizar la comanda", e);
         }
     }
