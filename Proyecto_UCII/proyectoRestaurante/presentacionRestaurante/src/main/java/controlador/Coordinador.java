@@ -530,9 +530,9 @@ public class Coordinador implements ICoordinador {
         try {
             this.listaProductosActual = productoBO.consultarTodos();
 
-            if (frmProductos == null) {
+//            if (frmProductos == null) {
                 frmProductos = new FrmProductos(this);
-            }
+//            }
 
             frmProductos.setVisible(true);
             frmProductos.toFront();
