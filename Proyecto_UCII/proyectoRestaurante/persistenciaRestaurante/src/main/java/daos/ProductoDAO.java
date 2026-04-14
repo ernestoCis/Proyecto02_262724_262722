@@ -291,13 +291,16 @@ public class ProductoDAO implements IProductoDAO {
                     .setParameter("id", idProducto)
                     .getSingleResult();
 
-            if (faltantes > 0) {
-                producto.setDisponibilidad(DisponibilidadProducto.NO_DISPONIBLE);
-            } else {
-                producto.setDisponibilidad(DisponibilidadProducto.DISPONIBLE);
-            }
+            
+            DisponibilidadProducto nuevoEstado = (faltantes > 0) 
+                ? DisponibilidadProducto.NO_DISPONIBLE 
+                : DisponibilidadProducto.DISPONIBLE;
 
-            em.merge(producto);
+            em.createQuery("UPDATE Producto p SET p.disponibilidad = :estado WHERE p.idProducto = :id")
+                    .setParameter("estado", nuevoEstado)
+                    .setParameter("id", idProducto)
+                    .executeUpdate();
+
             em.getTransaction().commit();
 
         } catch (Exception e) {
