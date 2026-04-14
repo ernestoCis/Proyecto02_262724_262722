@@ -7,6 +7,7 @@ package objetosnegocio;
 import adaptadores.ComandaAdapter;
 import daos.ComandaDAO;
 import daos.IngredienteDAO;
+import daos.ProductoDAO;
 import dtos.ComandaDTO;
 import dtos.DetallePedidoDTO;
 import dtos.IngredienteDTO;
@@ -36,10 +37,12 @@ public class ComandaBO implements IComandaBO {
 
     private ComandaDAO comandaDAO;
     private IngredienteDAO ingredienteDAO;
+    private ProductoDAO productoDAO;
 
     private ComandaBO() {
         comandaDAO = ComandaDAO.getInstance();
         ingredienteDAO = IngredienteDAO.getInstance();
+        productoDAO = ProductoDAO.getInstance();
     }
 
     public static ComandaBO getInstance() {
@@ -81,6 +84,8 @@ public class ComandaBO implements IComandaBO {
                         Ingrediente ingredienteActualizado = ingredienteDAO.buscarPorId(ingrediente.getIdIngrediente());
                         ingredienteActualizado.setCantidadActual(ingredienteActualizado.getCantidadActual() - cantidadARestar);
                         ingredienteDAO.actualizar(ingredienteActualizado);
+
+                        productoDAO.actualizarDisponibilidadPorStock(producto.getIdProducto());
                     }
                 }
 
@@ -139,6 +144,7 @@ public class ComandaBO implements IComandaBO {
                             Ingrediente ingredienteBD = ingredienteDAO.buscarPorId(ingredienteDTO.getIdIngrediente());
                             ingredienteBD.setCantidadActual(ingredienteBD.getCantidadActual() - gastoAdicional);
                             ingredienteDAO.actualizar(ingredienteBD);
+                            productoDAO.actualizarDisponibilidadPorStock(producto.getIdProducto());
                         }
                     }
                 }

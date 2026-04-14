@@ -6,6 +6,7 @@ package objetosnegocio;
 
 import adaptadores.IngredienteAdapter;
 import daos.IngredienteDAO;
+import daos.ProductoDAO;
 import dtos.IngredienteDTO;
 import entidades.Ingrediente;
 import excepciones.NegocioException;
@@ -22,9 +23,11 @@ public class IngredienteBO implements IIngredienteBO {
 
     private static IngredienteBO instance;
     private IngredienteDAO ingredienteDAO;
+    private ProductoDAO productoDAO;
 
     private IngredienteBO() {
         ingredienteDAO = IngredienteDAO.getInstance();
+        productoDAO = ProductoDAO.getInstance();
     }
 
     public static IngredienteBO getInstance() {
@@ -72,9 +75,12 @@ public class IngredienteBO implements IIngredienteBO {
                 throw new NegocioException("Ya existe un ingrediente con ese nombre y unidad");
             }
 
-            Ingrediente entidad = IngredienteAdapter.dtoAEntidadExistente(dto);
+            Ingrediente entidad = ingredienteDAO.buscarPorId(dto.getIdIngrediente());
+            IngredienteAdapter.actualizarEntidad(dto, entidad);
 
             ingredienteDAO.actualizar(entidad);
+            
+            productoDAO.actualizarProductosPorIngrediente(entidad.getIdIngrediente());
 
         } catch (PersistenciaException e) {
             throw new NegocioException("Error al actualizar ingrediente", e);

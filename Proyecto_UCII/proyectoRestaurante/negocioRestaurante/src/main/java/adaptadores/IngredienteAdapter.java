@@ -66,7 +66,20 @@ public class IngredienteAdapter {
         entidad.setUnidadMedida(
                 UnidadMedida.valueOf(dto.getUnidadMedida().name())
         );
-        
+
         return entidad;
+    }
+
+    public static void actualizarEntidad(IngredienteDTO dto, Ingrediente entidad) {
+        if (dto == null || entidad == null) {
+            return;
+        }
+
+        entidad.setNombre(dto.getNombre());
+        entidad.setCantidadActual(dto.getCantidadActual());
+        entidad.setRutaImg(dto.getRutaImagen());
+        entidad.setUnidadMedida(
+                UnidadMedida.valueOf(dto.getUnidadMedida().name())
+        );
     }
 }

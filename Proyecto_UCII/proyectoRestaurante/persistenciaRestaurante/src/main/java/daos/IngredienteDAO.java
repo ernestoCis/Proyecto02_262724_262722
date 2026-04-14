@@ -74,9 +74,6 @@ public class IngredienteDAO implements IIngredienteDAO {
         try {
             return em.find(Ingrediente.class, id);
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Erroral buscar por id", e);
         } finally {
             em.close();
@@ -91,9 +88,6 @@ public class IngredienteDAO implements IIngredienteDAO {
                     "SELECT i FROM Ingrediente i", Ingrediente.class
             ).getResultList();
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Erroral obtener ingredientes", e);
         } finally {
             em.close();
@@ -126,9 +120,6 @@ public class IngredienteDAO implements IIngredienteDAO {
             return lista.get(0);
 
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Error", e);
         } finally {
             em.close();
@@ -149,9 +140,6 @@ public class IngredienteDAO implements IIngredienteDAO {
             return count > 0;
 
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Error al verificar uso del ingrediente", e);
         } finally {
             em.close();

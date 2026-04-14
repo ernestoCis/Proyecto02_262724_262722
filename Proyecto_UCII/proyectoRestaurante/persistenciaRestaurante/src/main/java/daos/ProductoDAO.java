@@ -76,9 +76,6 @@ public class ProductoDAO implements IProductoDAO {
                     .getSingleResult();
 
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Error al buscar por id", e);
         } finally {
             em.close();
@@ -96,9 +93,6 @@ public class ProductoDAO implements IProductoDAO {
                     Producto.class
             ).getResultList();
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Error al obtener los productos", e);
         } finally {
             em.close();
@@ -116,9 +110,6 @@ public class ProductoDAO implements IProductoDAO {
                     .setParameter("nombre", "%" + nombre + "%")
                     .getResultList();
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Error al buscar pro nombre", e);
         } finally {
             em.close();
@@ -144,9 +135,6 @@ public class ProductoDAO implements IProductoDAO {
             return lista.get(0);
 
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Error al consultar por nombre exacto", e);
         } finally {
             em.close();
@@ -190,9 +178,6 @@ public class ProductoDAO implements IProductoDAO {
             return count > 0;
 
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Error al verificar uso del producto", e);
         } finally {
             em.close();
@@ -211,9 +196,6 @@ public class ProductoDAO implements IProductoDAO {
                     Producto.class
             ).setParameter("disp", DisponibilidadProducto.DISPONIBLE).getResultList();
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Error al obtener los productos", e);
         } finally {
             em.close();
@@ -262,19 +244,16 @@ public class ProductoDAO implements IProductoDAO {
             return count > 0;
 
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Error al verificar si el producto está en comanda abierta", e);
         } finally {
             em.close();
         }
     }
 
+    // busca sobre un ingrediente (cuando se modifica un ingrediente)
     public void actualizarProductosPorIngrediente(Long idIngrediente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
-
             List<Long> idsProductos = em.createQuery(
                     "SELECT DISTINCT r.producto.idProducto "
                     + "FROM Receta r "
@@ -289,15 +268,13 @@ public class ProductoDAO implements IProductoDAO {
             }
 
         } catch (Exception e) {
-            if (em.getTransaction().isActive()) {
-                em.getTransaction().rollback();
-            }
             throw new PersistenciaException("Error al actualizar productos por ingrediente", e);
         } finally {
             em.close();
         }
     }
 
+    // busca sobre un solo producto (caso comanda)
     public void actualizarDisponibilidadPorStock(Long idProducto) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {

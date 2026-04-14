@@ -41,7 +41,7 @@ public class Ingrediente implements Serializable {
     
     private String rutaImg;
 
-    @OneToMany(mappedBy = "ingrediente",  cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
+    @OneToMany(mappedBy = "ingrediente",  cascade = {CascadeType.PERSIST, CascadeType.MERGE})
     private List<Receta> recetas = new ArrayList<>();
     
     public Ingrediente() {
