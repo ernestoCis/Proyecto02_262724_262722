@@ -14,6 +14,7 @@ import dtos.ProductoDTO;
 import dtos.RecetaDTO;
 import dtos.ReporteComandaDTO;
 import entidades.Comanda;
+import entidades.DetallePedido;
 import entidades.Ingrediente;
 import excepciones.NegocioException;
 import excepciones.PersistenciaException;
@@ -23,23 +24,24 @@ import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import javax.swing.JOptionPane;
 
 /**
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
-public class ComandaBO implements IComandaBO{
-    
+public class ComandaBO implements IComandaBO {
+
     private static ComandaBO instance;
-    
+
     private ComandaDAO comandaDAO;
     private IngredienteDAO ingredienteDAO;
-    
-    private ComandaBO(){
+
+    private ComandaBO() {
         comandaDAO = ComandaDAO.getInstance();
         ingredienteDAO = IngredienteDAO.getInstance();
     }
-    
+
     public static ComandaBO getInstance() {
         if (instance == null) {
             instance = new ComandaBO();
@@ -53,36 +55,37 @@ public class ComandaBO implements IComandaBO{
             throw new NegocioException("No se puede registrar una comanda sin productos.");
         }
         comanda.setIdComanda(null);
-        
+
         comanda.setFecha(LocalDateTime.now());
-        
+
         String folio = generarFolio();
         comanda.setFolio(folio);
-        
+
         try {
             comanda = ComandaAdapter.entidadADto(comandaDAO.registrarComanda(ComandaAdapter.dtoAEntidad(comanda)));
-            
+
             //restar ingredientes
-            for(DetallePedidoDTO detalle : comanda.getDetalles()){
+            for (DetallePedidoDTO detalle : comanda.getDetalles()) {
                 ProductoDTO producto = detalle.getProductoDTO();
                 int cantidadComanda = detalle.getCantidad();
-                
-                if(producto.getRecetas() != null && !producto.getRecetas().isEmpty()){
-                    for(RecetaDTO receta : producto.getRecetas()){
+
+                if (producto.getRecetas() != null && !producto.getRecetas().isEmpty()) {
+                    for (RecetaDTO receta : producto.getRecetas()) {
                         IngredienteDTO ingrediente = receta.getIngrediente();
-                        
+                        JOptionPane.showMessageDialog(null, ingrediente.getNombre());
+
                         //cant a restar
                         double cantidadARestar = receta.getCantidad() * cantidadComanda;
-                        
+
                         //restar
                         Ingrediente ingredienteActualizado = ingredienteDAO.buscarPorId(ingrediente.getIdIngrediente());
                         ingredienteActualizado.setCantidadActual(ingredienteActualizado.getCantidadActual() - cantidadARestar);
                         ingredienteDAO.actualizar(ingredienteActualizado);
                     }
                 }
-                
+
             }
-            
+
             return comanda;
         } catch (PersistenciaException e) {
             e.printStackTrace();
@@ -91,23 +94,80 @@ public class ComandaBO implements IComandaBO{
     }
 
     @Override
-    public ComandaDTO actualizarComanda(ComandaDTO comanda) throws NegocioException {
+    public ComandaDTO actualizarComanda(ComandaDTO comandaDTO) throws NegocioException {
         try {
-            if (comanda.getIdComanda() == null) {
+            if (comandaDTO.getIdComanda() == null) {
                 throw new NegocioException("No se puede actualizar una comanda sin ID");
             }
 
-            Comanda entidad = ComandaAdapter.dtoAEntidad(comanda);
+            // 1. Obtener el estado previo de la comanda para saber qué ya se había restado
+            Comanda comandaAnterior = comandaDAO.buscarComandaPorId(comandaDTO.getIdComanda());
+            if (comandaAnterior == null) {
+                throw new NegocioException("La comanda no existe.");
+            }
 
-            Comanda actualizada = comandaDAO.actualizarComanda(entidad);
+            // 2. Actualizar la comanda en la base de datos
+            Comanda entidadActualizada = comandaDAO.actualizarComanda(ComandaAdapter.dtoAEntidad(comandaDTO));
+            ComandaDTO comandaActualizadaDTO = ComandaAdapter.entidadADto(entidadActualizada);
 
-            return ComandaAdapter.entidadADto(actualizada);
+            // 3. Lógica de resta de ingredientes (Solo consumos nuevos)
+            for (DetallePedidoDTO detalleNuevo : comandaActualizadaDTO.getDetalles()) {
+                ProductoDTO producto = detalleNuevo.getProductoDTO();
+                int cantidadNueva = detalleNuevo.getCantidad();
+
+                // Buscar si este producto ya existía en la versión anterior
+                int cantidadAnterior = 0;
+                for (DetallePedido detalleAntiguo : comandaAnterior.getDetalles()) {
+                    if (detalleAntiguo.getProducto().getIdProducto().equals(producto.getIdProducto())) {
+                        cantidadAnterior = detalleAntiguo.getCantidad();
+                        break;
+                    }
+                }
+
+                // Solo restamos si la cantidad actual es mayor a la que ya se había procesado
+                if (cantidadNueva > cantidadAnterior) {
+                    int cantidadARestar = cantidadNueva - cantidadAnterior;
+
+                    if (producto.getRecetas() != null && !producto.getRecetas().isEmpty()) {
+                        for (RecetaDTO receta : producto.getRecetas()) {
+                            IngredienteDTO ingredienteDTO = receta.getIngrediente();
+
+                            // Calculamos el gasto adicional
+                            double gastoAdicional = receta.getCantidad() * cantidadARestar;
+
+                            // Actualizar el inventario
+                            Ingrediente ingredienteBD = ingredienteDAO.buscarPorId(ingredienteDTO.getIdIngrediente());
+                            ingredienteBD.setCantidadActual(ingredienteBD.getCantidadActual() - gastoAdicional);
+                            ingredienteDAO.actualizar(ingredienteBD);
+                        }
+                    }
+                }
+            }
+
+            return comandaActualizadaDTO;
 
         } catch (PersistenciaException e) {
             throw new NegocioException("Error al intentar actualizar la comanda", e);
         }
     }
 
+//    @Override
+//    public ComandaDTO actualizarComanda(ComandaDTO comanda) throws NegocioException {
+//        try {
+//            if (comanda.getIdComanda() == null) {
+//                throw new NegocioException("No se puede actualizar una comanda sin ID");
+//            }
+//
+//            Comanda entidad = ComandaAdapter.dtoAEntidad(comanda);
+//
+//            Comanda actualizada = comandaDAO.actualizarComanda(entidad);
+//
+//            return ComandaAdapter.entidadADto(actualizada);
+//
+//        } catch (PersistenciaException e) {
+//            throw new NegocioException("Error al intentar actualizar la comanda", e);
+//        }
+//    }
     @Override
     public ComandaDTO eliminarComanda(ComandaDTO comanda) throws NegocioException {
         try {
@@ -195,5 +255,5 @@ public class ComandaBO implements IComandaBO{
             throw new NegocioException("Error al obtener el reporte de comandas", e);
         }
     }
-    
+
 }

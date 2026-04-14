@@ -20,7 +20,7 @@ import java.util.List;
 
 /**
  *
- * @author Paulina Guevara, Ernesto Cisneros 
+ * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ComandaDAO implements IComandaDAO {
 
@@ -35,9 +35,9 @@ public class ComandaDAO implements IComandaDAO {
         }
         return instance;
     }
-    
+
     @Override
-    public int contarVisitas(Long idCliente) throws PersistenciaException  {
+    public int contarVisitas(Long idCliente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
 
         Long count = em.createQuery(
@@ -50,7 +50,7 @@ public class ComandaDAO implements IComandaDAO {
     }
 
     @Override
-    public double totalGastado(Long idCliente)  throws PersistenciaException {
+    public double totalGastado(Long idCliente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
 
         Double total = em.createQuery(
@@ -61,7 +61,8 @@ public class ComandaDAO implements IComandaDAO {
 
         return total;
     }
-    
+
+    @Override
     public Comanda registrarComanda(Comanda comanda) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
@@ -78,7 +79,8 @@ public class ComandaDAO implements IComandaDAO {
             em.close();
         }
     }
-    
+
+    @Override
     public Comanda actualizarComanda(Comanda comanda) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
@@ -96,12 +98,12 @@ public class ComandaDAO implements IComandaDAO {
             em.close();
         }
     }
-    
+
+    @Override
     public Comanda eliminarComanda(Comanda comanda) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
             em.getTransaction().begin();
-            // Buscamos la comanda antes de eliminar para que esté en contexto
             Comanda c = em.find(Comanda.class, comanda.getIdComanda());
             if (c != null) {
                 em.remove(c);
@@ -117,20 +119,27 @@ public class ComandaDAO implements IComandaDAO {
             em.close();
         }
     }
-    
-    public Comanda buscarComandaPorId(Long id) throws PersistenciaException {
+
+    @Override
+    public Comanda buscarComandaPorId(Long idParam) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
-            return em.find(Comanda.class, id);
+            String jpql = "SELECT c FROM Comanda c LEFT JOIN FETCH c.detalles WHERE c.idComanda = :id";
+
+            return em.createQuery(jpql, Comanda.class)
+                    .setParameter("id", idParam)
+                    .getSingleResult();
+        } catch (jakarta.persistence.NoResultException e) {
+            return null;
         } catch (Exception e) {
-            throw new PersistenciaException("Error al buscar comanda por ID");
+            throw new PersistenciaException("Error al buscar comanda por ID", e);
         } finally {
             em.close();
         }
     }
 
     @Override
-    public Long obtenerUltimoId(){
+    public Long obtenerUltimoId() {
         EntityManager em = ConexionBD.crearConexion();
         try {
             Long maxId = em.createQuery("SELECT MAX(c.idComanda) FROM Comanda c", Long.class)
@@ -153,29 +162,29 @@ public class ComandaDAO implements IComandaDAO {
                           LEFT JOIN FETCH d.producto p
                           WHERE c.mesa.numero = :numMesa AND c.estado = :estadoEnum
                           """;
-            
+
             TypedQuery<Comanda> query = em.createQuery(jpql, Comanda.class);
             query.setParameter("numMesa", numeroMesa);
             query.setParameter("estadoEnum", EstadoComanda.ABIERTA);
 
-            Comanda comanda =  query.getSingleResult();
-            
+            Comanda comanda = query.getSingleResult();
+
             //se cargan los detalles pedidos para que se queden en la memoria
-            if(comanda != null && comanda.getDetalles() != null){
+            if (comanda != null && comanda.getDetalles() != null) {
                 em.createQuery("SELECT p FROM Producto p LEFT JOIN FETCH p.recetas WHERE p IN (SELECT d.producto FROM Comanda c JOIN c.detalles d WHERE c = :comanda)", Producto.class)
                         .setParameter("comanda", comanda)
                         .getResultList();
             }
-            
+
             return comanda;
-            
+
         } catch (Exception e) {
             throw new PersistenciaException("Error al buscar la comanda abierta para la mesa " + numeroMesa, e);
         } finally {
             em.close();
         }
     }
-    
+
     public LocalDateTime obtenerUltimaComanda(Long idCliente) throws PersistenciaException {
 
         EntityManager em = ConexionBD.crearConexion();
@@ -220,5 +229,3 @@ public class ComandaDAO implements IComandaDAO {
         }
     }
 }
-
-    

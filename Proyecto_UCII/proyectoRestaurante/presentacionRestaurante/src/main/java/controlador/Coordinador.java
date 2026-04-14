@@ -378,9 +378,9 @@ public class Coordinador implements ICoordinador {
     public void mostrarIngredientes() {
         try {
             this.listaIngredientesActual = ingredienteBO.consultarTodos();
-            if (frmIngredientes == null) {
+//            if (frmIngredientes == null) {
                 frmIngredientes = new FrmIngredientes(this);
-            }
+//            }
             frmIngredientes.setVisible(true);
             frmIngredientes.toFront();
         } catch (NegocioException ex) {
