@@ -1,13 +1,19 @@
 package pantallas;
 
+import componentes.BotonRegresar;
 import controlador.Coordinador;
+import java.awt.BasicStroke;
 import java.awt.BorderLayout;
 import java.awt.Color;
+import static java.awt.Component.CENTER_ALIGNMENT;
 import java.awt.Cursor;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
 import java.awt.GridBagLayout;
 import java.awt.Image;
+import java.awt.RenderingHints;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
@@ -20,7 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
- * 
+ *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmInicioSesionMesero extends JFrame {
@@ -38,7 +44,7 @@ public class FrmInicioSesionMesero extends JFrame {
 
     private void configurarVentana() {
         setTitle("Restaurante");
-        setSize(1000, 700);
+        setSize(1000, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
@@ -54,11 +60,11 @@ public class FrmInicioSesionMesero extends JFrame {
         panelPrincipal.setBackground(colorFondo);
 
         JPanel panelSuperiorContenedor = new JPanel(new BorderLayout());
-        panelSuperiorContenedor.setPreferredSize(new Dimension(900, 170));
+        panelSuperiorContenedor.setPreferredSize(new Dimension(1000, 115));
 
         JPanel panelSuperior = new JPanel(new BorderLayout());
         panelSuperior.setBackground(colorMostaza);
-        panelSuperior.setPreferredSize(new Dimension(900, 105));
+        panelSuperior.setPreferredSize(new Dimension(1000, 110));
 
         JLabel lblLogo = new JLabel();
         lblLogo.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 10));
@@ -70,56 +76,36 @@ public class FrmInicioSesionMesero extends JFrame {
 
         JPanel panelTitulo = new JPanel(new GridBagLayout());
         panelTitulo.setOpaque(false);
+        panelTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 70));
 
-        JLabel lblTitulo = new JLabel("Restaurante");
-        lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 34));
+        JLabel lblTitulo = new JLabel("Mesero");
+        lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 36));
         lblTitulo.setForeground(new Color(52, 58, 70));
 
         panelTitulo.add(lblTitulo);
 
-        JPanel panelDerecho = new JPanel();
-        panelDerecho.setOpaque(false);
-        panelDerecho.setPreferredSize(new Dimension(90, 90));
-
         panelSuperior.add(lblLogo, BorderLayout.WEST);
         panelSuperior.add(panelTitulo, BorderLayout.CENTER);
-        panelSuperior.add(panelDerecho, BorderLayout.EAST);
-
-        JPanel panelFranjaRoja = new JPanel(new BorderLayout());
-        panelFranjaRoja.setBackground(colorRojo);
-        panelFranjaRoja.setPreferredSize(new Dimension(900, 65));
-
-        btnRegresar = new JButton("←");
-        btnRegresar.setFont(new Font("Dialog", Font.BOLD, 20));
-        btnRegresar.setForeground(Color.WHITE);
-        btnRegresar.setBackground(colorMostaza);
-        btnRegresar.setFocusPainted(false);
-        btnRegresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnRegresar.setPreferredSize(new Dimension(45, 40));
-        btnRegresar.setOpaque(true);
-        btnRegresar.setContentAreaFilled(true);
-        btnRegresar.setBorderPainted(false);
-        btnRegresar.setBorder(BorderFactory.createEmptyBorder());
-
-        JPanel panelBotonRegresar = new JPanel();
-        panelBotonRegresar.setOpaque(false);
-        panelBotonRegresar.setBorder(BorderFactory.createEmptyBorder(12, 15, 10, 0));
-        panelBotonRegresar.add(btnRegresar);
-
-        panelFranjaRoja.add(panelBotonRegresar, BorderLayout.WEST);
-
         panelSuperiorContenedor.add(panelSuperior, BorderLayout.CENTER);
-        panelSuperiorContenedor.add(panelFranjaRoja, BorderLayout.SOUTH);
+
+        btnRegresar = new BotonRegresar();
+
+        JPanel panelRegresar = new JPanel(null);
+        panelRegresar.setOpaque(false);
+        panelRegresar.setPreferredSize(new Dimension(1000, 60));
+
+        btnRegresar.setBounds(20, 20, 40, 40);
+        panelRegresar.add(btnRegresar);
 
         JPanel panelCentro = new JPanel();
         panelCentro.setBackground(colorFondo);
         panelCentro.setLayout(new BoxLayout(panelCentro, BoxLayout.Y_AXIS));
+        panelCentro.add(panelRegresar, BorderLayout.NORTH);
 
-        JLabel lblMesero = new JLabel("Mesero");
-        lblMesero.setFont(new Font("SansSerif", Font.BOLD, 30));
-        lblMesero.setForeground(colorTexto);
-        lblMesero.setAlignmentX(CENTER_ALIGNMENT);
-
+//        JLabel lblMesero = new JLabel("Mesero");
+//        lblMesero.setFont(new Font("SansSerif", Font.BOLD, 30));
+//        lblMesero.setForeground(colorTexto);
+//        lblMesero.setAlignmentX(CENTER_ALIGNMENT);
         JLabel lblIconoUsuario = new JLabel();
         lblIconoUsuario.setAlignmentX(CENTER_ALIGNMENT);
         lblIconoUsuario.setPreferredSize(new Dimension(120, 120));
@@ -145,20 +131,11 @@ public class FrmInicioSesionMesero extends JFrame {
         panelUsuario.add(Box.createHorizontalStrut(15));
         panelUsuario.add(txtUsuario);
 
-        btnAceptar = new JButton("Aceptar");
-        btnAceptar.setFont(new Font("SansSerif", Font.PLAIN, 20));
-        btnAceptar.setFocusPainted(false);
-        btnAceptar.setBackground(Color.WHITE);
-        btnAceptar.setForeground(Color.BLACK);
-        btnAceptar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnAceptar.setPreferredSize(new Dimension(320, 70));
-        btnAceptar.setMaximumSize(new Dimension(320, 70));
-        btnAceptar.setAlignmentX(CENTER_ALIGNMENT);
-        btnAceptar.setBorder(BorderFactory.createLineBorder(colorMostaza, 1));
+        btnAceptar = crearBoton("Aceptar");
 
         panelCentro.add(Box.createVerticalStrut(10));
-        panelCentro.add(lblMesero);
-        panelCentro.add(Box.createVerticalStrut(10));
+//        panelCentro.add(lblMesero);
+//        panelCentro.add(Box.createVerticalStrut(10));
         panelCentro.add(lblIconoUsuario);
         panelCentro.add(Box.createVerticalStrut(25));
         panelCentro.add(panelUsuario);
@@ -181,16 +158,76 @@ public class FrmInicioSesionMesero extends JFrame {
         });
 
         btnAceptar.addActionListener(e -> {
-            
-            if(txtUsuario.getText().trim() == null || txtUsuario.getText().trim().isEmpty()){
+
+            if (txtUsuario.getText().trim() == null || txtUsuario.getText().trim().isEmpty()) {
                 JOptionPane.showMessageDialog(null, "Ingrese un usuario");
                 return;
             }
-            
-            if(coordinador.buscarMeseroPorUsuario(txtUsuario.getText().trim()) != null){
+
+            if (coordinador.buscarMeseroPorUsuario(txtUsuario.getText().trim()) != null) {
                 coordinador.mostrarMesas();
                 dispose();
             }
         });
+    }
+
+    private JButton crearBoton(String texto) {
+
+        JButton boton = new JButton(texto) {
+
+            private boolean hover = false;
+            private final Color colorNormal = Color.WHITE;
+            private final Color colorHover = new Color(255, 245, 235);
+            private final Color colorBorde = new Color(235, 155, 94);
+
+            {
+                setContentAreaFilled(false);
+                setBorderPainted(false);
+                setFocusPainted(false);
+                setOpaque(false);
+
+                addMouseListener(new java.awt.event.MouseAdapter() {
+                    @Override
+                    public void mouseEntered(java.awt.event.MouseEvent e) {
+                        hover = true;
+                        repaint();
+                    }
+
+                    @Override
+                    public void mouseExited(java.awt.event.MouseEvent e) {
+                        hover = false;
+                        repaint();
+                    }
+                });
+            }
+
+            @Override
+            protected void paintComponent(Graphics g) {
+                Graphics2D g2 = (Graphics2D) g.create();
+                g2.setRenderingHint(RenderingHints.KEY_ANTIALIASING,
+                        RenderingHints.VALUE_ANTIALIAS_ON);
+
+                g2.setColor(hover ? colorHover : colorNormal);
+                g2.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+
+                g2.setColor(colorBorde);
+                g2.setStroke(new BasicStroke(2));
+                g2.drawRoundRect(0, 0, getWidth() - 1, getHeight() - 1, 20, 20);
+
+                g2.dispose();
+                super.paintComponent(g);
+            }
+        };
+
+        boton.setFont(new Font("SansSerif", Font.PLAIN, 16));
+        boton.setForeground(new Color(52, 58, 70));
+        boton.setCursor(new Cursor(Cursor.HAND_CURSOR));
+        boton.setAlignmentX(CENTER_ALIGNMENT);
+
+        boton.setPreferredSize(new Dimension(150, 60));
+        boton.setMaximumSize(new Dimension(150, 60));
+        boton.setMinimumSize(new Dimension(150, 60));
+
+        return boton;
     }
 }
