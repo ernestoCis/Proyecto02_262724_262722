@@ -166,9 +166,7 @@ public class FrmProductos extends JFrame {
 
         btnRegistrar = new BotonEstilizado("+ Registrar");
         btnEditar = new BotonEstilizado("Editar");
-        //btnEditar.setEnabled(false);
         btnEliminar = new BotonEstilizado("Eliminar");
-        //btnEliminar.setEnabled(false);
 
         panelBotones.add(btnRegistrar);
         panelBotones.add(Box.createHorizontalStrut(15));
@@ -327,7 +325,7 @@ public class FrmProductos extends JFrame {
 
         if (confirmacion == JOptionPane.YES_OPTION) {
             coordinador.setProductoSeleccionado(producto);
-            // coordinador.eliminarProducto();
+            coordinador.eliminarProducto();
         }
     }
 }

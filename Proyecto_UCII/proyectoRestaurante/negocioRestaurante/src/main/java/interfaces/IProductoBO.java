@@ -14,6 +14,8 @@ public interface IProductoBO {
     void registrarProducto(ProductoDTO dto) throws NegocioException;
 
     void actualizarProducto(ProductoDTO dto) throws NegocioException;
+    
+    void eliminarProducto(Long id) throws NegocioException;
 
     List<ProductoDTO> consultarTodos() throws NegocioException;
 

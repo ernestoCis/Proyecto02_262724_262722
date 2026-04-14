@@ -645,6 +645,22 @@ public class Coordinador implements ICoordinador {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
+    
+    @Override
+    public void eliminarProducto() {
+        try {
+            productoBO.eliminarProducto(productoSeleccionado.getIdProducto());
+
+            JOptionPane.showMessageDialog(null, "Producto eliminado correctamente");
+
+            productoSeleccionado = null;
+            actualizarTablaProductos();
+
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }
+
 
     @Override
     public void setProductoSeleccionado(ProductoDTO producto) {

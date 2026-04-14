@@ -3,7 +3,6 @@ package pantallas;
 import controlador.Coordinador;
 import dtos.ProductoDTO;
 import dtos.RecetaDTO;
-
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import java.awt.*;
@@ -25,7 +24,6 @@ public class FrmDetalleProducto extends JFrame {
     public FrmDetalleProducto(Coordinador coordinador) {
         this.coordinador = coordinador;
         this.producto = coordinador.getProductoSeleccionado();
-
         configurarVentana();
         inicializarComponentes();
         cargarDatos();
@@ -48,6 +46,7 @@ public class FrmDetalleProducto extends JFrame {
         panelPrincipal.setBackground(fondo);
         panelPrincipal.setBorder(BorderFactory.createLineBorder(new Color(200, 200, 200), 1));
 
+        // HEADER
         JPanel header = new JPanel(new BorderLayout());
         header.setBackground(primario);
         header.setBorder(BorderFactory.createEmptyBorder(10, 15, 10, 15));
@@ -68,7 +67,6 @@ public class FrmDetalleProducto extends JFrame {
         JButton btnEditar = new JButton();
         ImageIcon iconoEditar = new ImageIcon("src/main/resources/imagenes/icono_editar.png");
         Image img = iconoEditar.getImage().getScaledInstance(20, 20, Image.SCALE_SMOOTH);
-
         btnEditar.setIcon(new ImageIcon(img));
         btnEditar.setBackground(primario);
         btnEditar.setBorder(null);
@@ -89,6 +87,7 @@ public class FrmDetalleProducto extends JFrame {
         header.add(lblTitulo, BorderLayout.WEST);
         header.add(panelDerecho, BorderLayout.EAST);
 
+        // CONTENIDO
         JPanel contenido = new JPanel();
         contenido.setBackground(fondo);
         contenido.setLayout(new BoxLayout(contenido, BoxLayout.Y_AXIS));
@@ -112,9 +111,29 @@ public class FrmDetalleProducto extends JFrame {
         lblPrecio.setForeground(new Color(76, 175, 80));
         lblPrecio.setAlignmentX(Component.CENTER_ALIGNMENT);
 
+        JTextArea txtDescripcion = new JTextArea(producto.getDescripcion());
+        txtDescripcion.setFont(new Font("Segoe UI", Font.PLAIN, 14));
+        txtDescripcion.setForeground(new Color(90, 90, 90));
+        txtDescripcion.setLineWrap(true);
+        txtDescripcion.setWrapStyleWord(true);
+        txtDescripcion.setEditable(false);
+        txtDescripcion.setOpaque(false);
+        txtDescripcion.setBorder(null);
+
+        JScrollPane scrollDescripcion = new JScrollPane(txtDescripcion);
+        scrollDescripcion.setPreferredSize(new Dimension(340, 80));
+        scrollDescripcion.setMaximumSize(new Dimension(340, 80));
+        scrollDescripcion.setAlignmentX(Component.CENTER_ALIGNMENT);
+        scrollDescripcion.setVerticalScrollBarPolicy(ScrollPaneConstants.VERTICAL_SCROLLBAR_AS_NEEDED);
+        scrollDescripcion.setHorizontalScrollBarPolicy(ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        scrollDescripcion.setBorder(BorderFactory.createEmptyBorder());
+        scrollDescripcion.getViewport().setOpaque(false);
+
         panelCentro.add(lblImagen);
         panelCentro.add(Box.createVerticalStrut(15));
         panelCentro.add(lblPrecio);
+        panelCentro.add(Box.createVerticalStrut(8));
+        panelCentro.add(scrollDescripcion);
 
         JLabel lblIngredientes = new JLabel("Ingredientes");
         lblIngredientes.setFont(new Font("Segoe UI", Font.BOLD, 16));
@@ -122,6 +141,7 @@ public class FrmDetalleProducto extends JFrame {
         lblIngredientes.setHorizontalAlignment(SwingConstants.CENTER);
 
         String[] columnas = {"Nombre", "Unidad", "Cantidad"};
+
         modeloTabla = new DefaultTableModel(columnas, 0) {
             @Override
             public boolean isCellEditable(int row, int col) {
@@ -133,7 +153,6 @@ public class FrmDetalleProducto extends JFrame {
         tablaIngredientes.setRowHeight(28);
         tablaIngredientes.setFont(new Font("Segoe UI", Font.PLAIN, 13));
 
-        // centrar encabezados
         ((DefaultTableCellRenderer) tablaIngredientes.getTableHeader()
                 .getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
@@ -171,13 +190,14 @@ public class FrmDetalleProducto extends JFrame {
     }
 
     private void cargarDatos() {
+
         if (producto == null) {
             return;
         }
 
-        // Cargar imagen
         try {
             if (producto.getRutaImagen() != null && !producto.getRutaImagen().isEmpty()) {
+
                 ImageIcon icono = new ImageIcon(producto.getRutaImagen());
 
                 Image img = icono.getImage().getScaledInstance(
@@ -192,12 +212,13 @@ public class FrmDetalleProducto extends JFrame {
             } else {
                 ponerImagenDefault();
             }
+
         } catch (Exception e) {
-            ponerImagenDefault(); 
+            ponerImagenDefault();
         }
 
-        // Cargar ingredientes
         List<RecetaDTO> recetas = producto.getRecetas();
+
         for (RecetaDTO r : recetas) {
             modeloTabla.addRow(new Object[]{
                 r.getIngrediente().getNombre(),
@@ -206,5 +227,4 @@ public class FrmDetalleProducto extends JFrame {
             });
         }
     }
-
 }
