@@ -8,6 +8,11 @@ import enums.EstadoComanda;
 import excepciones.PersistenciaException;
 import interfaces.IProductoDAO;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -312,4 +317,38 @@ public class ProductoDAO implements IProductoDAO {
             em.close();
         }
     }
+
+    @Override
+    public List<Producto> consultarProductosConFiltro(String filtro) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Producto> cq = cb.createQuery(Producto.class);
+            Root<Producto> producto = cq.from(Producto.class);
+
+            producto.fetch("recetas", jakarta.persistence.criteria.JoinType.LEFT)
+                    .fetch("ingrediente", jakarta.persistence.criteria.JoinType.LEFT);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (filtro != null && !filtro.trim().isEmpty()) {
+                String pattern = "%" + filtro.toLowerCase() + "%";
+
+                Predicate nombreLike = cb.like(cb.lower(producto.get("nombre")), pattern);
+
+                Predicate tipoLike = cb.like(cb.lower(producto.get("tipo").as(String.class)), pattern);
+
+                predicates.add(cb.or(nombreLike, tipoLike));
+            }
+
+            cq.select(producto).distinct(true).where(predicates.toArray(new Predicate[0]));
+
+            return em.createQuery(cq).getResultList();
+
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al consultar productos con filtro", e);
+        } finally {
+            em.close();
+        }
+}
 }

@@ -18,6 +18,13 @@ import javax.swing.table.DefaultTableModel;
  */
 public class FrmProductos extends JFrame {
 
+    // --- NUEVO: Modos de pantalla ---
+    public enum Modo {
+        ADMINISTRAR, SELECCIONAR
+    }
+    private final Modo modoActual;
+    // --------------------------------
+
     private final Coordinador coordinador;
 
     private JTable tblProductos;
@@ -28,23 +35,30 @@ public class FrmProductos extends JFrame {
     private BotonEstilizado btnRegistrar;
     private BotonEstilizado btnEditar;
     private BotonEstilizado btnEliminar;
+    private BotonEstilizado btnSeleccionar; // NUEVO: Botón para seleccionar
 
     private List<ProductoDTO> listaOriginal;
     private List<ProductoDTO> listaMostrada;
 
-    public FrmProductos(Coordinador coordinador) {
+    // --- MODIFICADO: El constructor ahora recibe el Modo ---
+    public FrmProductos(Coordinador coordinador, Modo modo) {
         this.coordinador = coordinador;
+        this.modoActual = modo;
+        // La lista original ya no se usa para filtrar, pero la dejamos por si otros métodos la necesitan
         this.listaOriginal = this.coordinador.getListaProductosActual();
 
         configurarVentana();
         inicializarComponentes();
-        cargarDatosTabla(this.listaOriginal);
+        configurarVisibilidadSegunModo(); // NUEVO: Oculta/Muestra botones
+        
+        // Carga inicial usando el buscador de BD
+        accionBuscar(); 
     }
 
     private void configurarVentana() {
-        setTitle("Restaurante");
+        setTitle(modoActual == Modo.ADMINISTRAR ? "Gestión de Productos" : "Seleccionar Producto");
         setSize(1000, 650);
-        setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setResizable(false);
         setLayout(new BorderLayout());
@@ -78,7 +92,7 @@ public class FrmProductos extends JFrame {
         panelTitulo.setOpaque(false);
         panelTitulo.setBorder(BorderFactory.createEmptyBorder(10, 0, 0, 70));
 
-        JLabel lblTitulo = new JLabel("Productos");
+        JLabel lblTitulo = new JLabel(modoActual == Modo.ADMINISTRAR ? "Productos" : "Buscador de Productos");
         lblTitulo.setFont(new Font("SansSerif", Font.BOLD, 36));
         lblTitulo.setForeground(new Color(52, 58, 70));
 
@@ -151,6 +165,7 @@ public class FrmProductos extends JFrame {
         tblProductos.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 btnEliminar.setEnabled(tblProductos.getSelectedRow() != -1);
+                // Si quisieras bloquear el botón Seleccionar si no hay nada, lo harías aquí también
             }
         });
 
@@ -168,12 +183,15 @@ public class FrmProductos extends JFrame {
         btnRegistrar = new BotonEstilizado("+ Registrar");
         btnEditar = new BotonEstilizado("Editar");
         btnEliminar = new BotonEstilizado("Eliminar");
+        btnSeleccionar = new BotonEstilizado("Seleccionar"); // NUEVO
 
         panelBotones.add(btnRegistrar);
         panelBotones.add(Box.createHorizontalStrut(15));
         panelBotones.add(btnEditar);
         panelBotones.add(Box.createHorizontalStrut(15));
         panelBotones.add(btnEliminar);
+        panelBotones.add(Box.createHorizontalStrut(15)); // NUEVO
+        panelBotones.add(btnSeleccionar); // NUEVO
 
         panelInferior.add(Box.createVerticalStrut(8));
         panelInferior.add(panelBotones);
@@ -190,6 +208,18 @@ public class FrmProductos extends JFrame {
         registrarEventos();
     }
 
+    // --- NUEVO: Configura qué botones se ven ---
+    private void configurarVisibilidadSegunModo() {
+        boolean esAdmin = (modoActual == Modo.ADMINISTRAR);
+
+        btnRegistrar.setVisible(esAdmin);
+        btnEditar.setVisible(esAdmin);
+        btnEliminar.setVisible(esAdmin);
+
+        btnSeleccionar.setVisible(!esAdmin);
+    }
+    // ------------------------------------------
+
     private void registrarEventos() {
 
         txtBuscar.addKeyListener(new KeyAdapter() {
@@ -205,13 +235,32 @@ public class FrmProductos extends JFrame {
                 if (e.getClickCount() == 2) {
                     int fila = tblProductos.getSelectedRow();
                     if (fila != -1) {
-                        ProductoDTO producto = listaOriginal.get(fila);
+                        ProductoDTO producto = listaMostrada.get(fila);
                         coordinador.setProductoSeleccionado(producto);
-                        coordinador.mostrarDetalleProducto();
+                        
+                        if (modoActual == Modo.ADMINISTRAR) {
+                            coordinador.mostrarDetalleProducto();
+                        } else {
+                            // Si hace doble clic en modo selección, es como presionar "Seleccionar"
+                            dispose();
+                        }
                     }
                 }
             }
         });
+
+        // --- NUEVO EVENTO: Botón Seleccionar ---
+        btnSeleccionar.addActionListener(e -> {
+            int fila = tblProductos.getSelectedRow();
+            if (fila == -1) {
+                JOptionPane.showMessageDialog(this, "Seleccione un producto");
+                return;
+            }
+            ProductoDTO producto = listaMostrada.get(fila);
+            coordinador.setProductoSeleccionado(producto);
+            dispose();
+        });
+        // ---------------------------------------
 
         btnRegistrar.addActionListener(e -> {
             dispose();
@@ -227,7 +276,7 @@ public class FrmProductos extends JFrame {
                 return;
             }
 
-            ProductoDTO producto = listaOriginal.get(fila);
+            ProductoDTO producto = listaMostrada.get(fila); // Cambiado a listaMostrada para evitar bugs si buscó algo
             coordinador.setProductoSeleccionado(producto);
 
             coordinador.mostrarEditarProducto();
@@ -238,8 +287,12 @@ public class FrmProductos extends JFrame {
             dispose();
             coordinador.mostrarAcciones();
         });
+        
+        btnEliminar.addActionListener(e -> {
+            eliminarProductoSeleccionado();
+            accionBuscar();
+        });
 
-        btnEliminar.addActionListener(e -> eliminarProductoSeleccionado());
     }
 
     private void cargarDatosTabla(List<ProductoDTO> lista) {
@@ -260,26 +313,19 @@ public class FrmProductos extends JFrame {
         }
     }
 
+    // --- MODIFICADO: Búsqueda dinámica con el Criteria de la BD ---
     private void accionBuscar() {
-        String texto = txtBuscar.getText().trim().toLowerCase();
+        String texto = txtBuscar.getText().trim();
 
-        if (texto.isEmpty()) {
-            cargarDatosTabla(listaOriginal);
-            return;
+        if (texto.equals("Buscar producto")) {
+            texto = "";
         }
 
-        List<ProductoDTO> filtrados = new ArrayList<>();
-
-        for (ProductoDTO p : listaOriginal) {
-            String nombre = p.getNombre() != null ? p.getNombre().toLowerCase() : "";
-
-            if (nombre.contains(texto)) {
-                filtrados.add(p);
-            }
-        }
-
+        // Ya no iteramos sobre la listaOriginal en memoria, consultamos a la BD
+        List<ProductoDTO> filtrados = coordinador.consultarProductosFiltro(texto);
         cargarDatosTabla(filtrados);
     }
+    // --------------------------------------------------------------
 
     private void ponerPlaceholder() {
         txtBuscar.setText("Buscar producto");

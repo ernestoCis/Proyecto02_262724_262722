@@ -36,4 +36,6 @@ public interface IProductoDAO {
     public void eliminar(Long id) throws PersistenciaException;
     
     public boolean estaEnComandaAbierta(Long idProducto) throws PersistenciaException;
+    
+    public List<Producto> consultarProductosConFiltro(String filtro) throws PersistenciaException;
 }

@@ -398,7 +398,7 @@ public class FrmEditarProducto extends JFrame {
 
         btnRegresar.addActionListener(e -> {
             dispose();
-            coordinador.mostrarProductos();
+            coordinador.mostrarProductosAdmin();
         });
 
         btnSeleccionarImagen.addActionListener(e -> seleccionarImagen());
@@ -490,7 +490,6 @@ public class FrmEditarProducto extends JFrame {
 
                 coordinador.actualizarProducto(producto);
 
-                // coordinador.mostrarProductos();
             }
         });
 

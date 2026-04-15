@@ -323,7 +323,7 @@ public class FrmRegistrarProducto extends JFrame {
 
         btnRegresar.addActionListener(e -> {
             dispose();
-            coordinador.mostrarProductos();
+            coordinador.mostrarProductosAdmin();
         });
 
         btnSeleccionarImagen.addActionListener(e -> seleccionarImagen());

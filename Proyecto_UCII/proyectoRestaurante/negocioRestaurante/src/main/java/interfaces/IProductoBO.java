@@ -26,4 +26,6 @@ public interface IProductoBO {
     boolean hayStockSuficiente(ProductoDTO dto, int cantidadSolicitada);
     
     List<ProductoDTO> consultarProductosDisponibles() throws NegocioException;
+    
+    public List<ProductoDTO> consultarProductosConFiltro(String filtro) throws NegocioException;
 }

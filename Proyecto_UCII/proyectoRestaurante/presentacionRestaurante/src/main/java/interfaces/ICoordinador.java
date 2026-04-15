@@ -72,7 +72,7 @@ public interface ICoordinador {
     void eliminarIngrediente();
 
     // PRODUCTOS
-    void mostrarProductos();
+    void mostrarProductosAdmin();
 
     void mostrarRegistrarProducto();
 
@@ -159,4 +159,6 @@ public interface ICoordinador {
     List<ProductoDTO> obtenerProductosDisponibles();
     
     ClienteFrecuenteDTO registrarClienteGeneral();
+    
+     List<ProductoDTO> consultarProductosFiltro(String filtro);
 }
