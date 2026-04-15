@@ -404,8 +404,36 @@ public class FrmEditarProducto extends JFrame {
         btnSeleccionarImagen.addActionListener(e -> seleccionarImagen());
 
         btnAgregarIngrediente.addActionListener(e -> {
-            DlgAgregarIngrediente dialog = new DlgAgregarIngrediente(this, coordinador);
-            dialog.setVisible(true);
+            FrmIngredientes frm = new FrmIngredientes(
+                    coordinador,
+                    true,
+                    ingredientesSeleccionados -> {
+
+                        for (IngredienteDTO ingrediente : ingredientesSeleccionados) {
+
+                            String cantidadStr = JOptionPane.showInputDialog(
+                                    "Cantidad para " + ingrediente.getNombre()
+                            );
+
+                            if (cantidadStr == null || cantidadStr.trim().isEmpty()) {
+                                return false;
+                            }
+
+                            String unidad = ingrediente.getUnidadMedida().toString();
+
+                            if (!Validacion.esCantidadValida(cantidadStr, unidad)) {
+                                JOptionPane.showMessageDialog(this, "Cantidad inválida");
+                                return false;
+                            }
+
+                            double cantidad = Double.parseDouble(cantidadStr);
+
+                            agregarIngredienteATabla(ingrediente, cantidad);
+                        }
+
+                        return true;
+                    });
+            frm.setVisible(true);
         });
 
         btnEliminarIngrediente.addActionListener(e -> {
@@ -478,6 +506,14 @@ public class FrmEditarProducto extends JFrame {
                             ? DisponibilidadProductoDTO.NO_DISPONIBLE
                             : DisponibilidadProductoDTO.DISPONIBLE;
 
+            if (nuevoEstado == DisponibilidadProductoDTO.DISPONIBLE) {
+                if (!coordinador.verificarStock(producto, 1)) {
+                    JOptionPane.showMessageDialog(this,
+                            "No hay suficiente stock para habilitar el producto");
+                    return;
+                }
+            }
+
             String textoMostrar = nuevoEstado.toString().replace("_", " ");
 
             int opcion = JOptionPane.showConfirmDialog(
@@ -486,11 +522,19 @@ public class FrmEditarProducto extends JFrame {
                     "Confirmar cambio",
                     JOptionPane.YES_NO_OPTION
             );
-
             if (opcion == JOptionPane.YES_OPTION) {
-                producto.setDisponibilidad(nuevoEstado);
-                actualizarTextoDisponibilidad();
+                try {
+
+                    coordinador.cambiarDisponibilidadProducto(producto.getIdProducto(), nuevoEstado);
+
+                    producto.setDisponibilidad(nuevoEstado);
+                    actualizarTextoDisponibilidad();
+
+                } catch (Exception ex) {
+                    JOptionPane.showMessageDialog(this, ex.getMessage());
+                }
             }
+
         });
 
         tablaIngredientes.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -565,16 +609,14 @@ public class FrmEditarProducto extends JFrame {
         }
     }
 
-    public void agregarIngredienteATabla(IngredienteDTO ingrediente, Double cantidad) {
+    public boolean agregarIngredienteATabla(IngredienteDTO ingrediente, Double cantidad) {
 
-        // validar duplicados
         for (RecetaDTO r : recetas) {
             if (r.getIngrediente().getIdIngrediente()
                     .equals(ingrediente.getIdIngrediente())) {
-
                 JOptionPane.showMessageDialog(this,
                         "Este ingrediente ya fue agregado");
-                return;
+                return false;
             }
         }
 
@@ -588,5 +630,7 @@ public class FrmEditarProducto extends JFrame {
         receta.setIngrediente(ingrediente);
         receta.setCantidad(cantidad);
         recetas.add(receta);
+
+        return true;
     }
 }

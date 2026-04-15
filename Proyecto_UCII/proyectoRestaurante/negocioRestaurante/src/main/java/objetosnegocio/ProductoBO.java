@@ -15,7 +15,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * 
+ *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ProductoBO implements IProductoBO {
@@ -92,16 +92,24 @@ public class ProductoBO implements IProductoBO {
             }
 
             if (productoDAO.estaEnComandaAbierta(id)) {
-                throw new NegocioException("No se puede eliminar el producto porque está en comanda activa.");
+                productoDAO.cambiarDisponibilidad(id, DisponibilidadProducto.NO_DISPONIBLE);
+                return;
             }
-            
+            if (productoDAO.estaEnUso(id)) {
+                // SOLO DESACTIVAR
+                productoDAO.cambiarDisponibilidad(id, DisponibilidadProducto.NO_DISPONIBLE);
+                return;
+            }
+
+            // productoDAO.eliminar(id);
             productoDAO.cambiarDisponibilidad(id, DisponibilidadProducto.NO_DISPONIBLE);
 
         } catch (PersistenciaException e) {
-            throw new NegocioException("Error al eliminar producto", e);
+            e.printStackTrace();
+            throw new NegocioException("Error al eliminar producto: " + e.getMessage(), e);
         }
     }
-    
+
     @Override
     public List<ProductoDTO> consultarTodos() throws NegocioException {
         try {
@@ -139,7 +147,25 @@ public class ProductoBO implements IProductoBO {
     @Override
     public void cambiarDisponibilidad(Long id, DisponibilidadProductoDTO estado) throws NegocioException {
         try {
-            productoDAO.cambiarDisponibilidad(id, enums.DisponibilidadProducto.valueOf(estado.name()));
+
+            if (estado == DisponibilidadProductoDTO.DISPONIBLE) {
+
+                Producto producto = productoDAO.buscarPorId(id);
+                ProductoDTO dto = ProductoAdapter.entidadADTO(producto);
+
+                // validación de stock
+                if (!hayStockSuficiente(dto, 1)) {
+                    throw new NegocioException(
+                            "No hay suficiente stock para poner el producto DISPONIBLE"
+                    );
+                }
+            }
+
+            productoDAO.cambiarDisponibilidad(
+                    id,
+                    enums.DisponibilidadProducto.valueOf(estado.name())
+            );
+
         } catch (PersistenciaException e) {
             throw new NegocioException("Error al cambiar disponibilidad", e);
         }
@@ -176,7 +202,7 @@ public class ProductoBO implements IProductoBO {
 
         for (RecetaDTO receta : dto.getRecetas()) {
             double necesario = receta.getCantidad() * cantidadSolicitada;
-            
+
             if (receta.getIngrediente().getCantidadActual() < necesario) {
                 return false;
             }

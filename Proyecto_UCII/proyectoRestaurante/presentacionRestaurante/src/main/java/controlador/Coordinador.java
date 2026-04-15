@@ -12,6 +12,7 @@ import dtos.IngredienteDTO;
 import dtos.MesaDTO;
 import dtos.ProductoDTO;
 import dtos.ReporteComandaDTO;
+import enums.DisponibilidadProductoDTO;
 import enums.EstadoComandaDTO;
 import enums.EstadoMesaDTO;
 import excepciones.NegocioException;
@@ -269,17 +270,17 @@ public class Coordinador implements ICoordinador {
     @Override
     public void eliminarCliente() {
         try {
-            
-            if(clienteFrecuenteBO.clienteConComandas(clienteSeleccionado.getIdCliente())){
+
+            if (clienteFrecuenteBO.clienteConComandas(clienteSeleccionado.getIdCliente())) {
                 JOptionPane.showMessageDialog(null, "No se pueden eliminar clientes con comandas");
-            }else{
+            } else {
                 clienteFrecuenteBO.eliminarCliente(clienteSeleccionado);
                 JOptionPane.showMessageDialog(null, "Cliente eliminado con exito");
                 clienteSeleccionado = null;
                 listaClientesActual = clienteFrecuenteBO.consultarTodos();
                 actualizarTablaClientes();
             }
-            
+
         } catch (NegocioException ex) {
             ex.printStackTrace();
             JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -379,7 +380,7 @@ public class Coordinador implements ICoordinador {
         try {
             this.listaIngredientesActual = ingredienteBO.consultarTodos();
 //            if (frmIngredientes == null) {
-                frmIngredientes = new FrmIngredientes(this);
+            frmIngredientes = new FrmIngredientes(this);
 //            }
             frmIngredientes.setVisible(true);
             frmIngredientes.toFront();
@@ -409,7 +410,13 @@ public class Coordinador implements ICoordinador {
 
     @Override
     public List<IngredienteDTO> getListaIngredientesActual() {
-        return this.listaIngredientesActual;
+        try {
+            this.listaIngredientesActual = ingredienteBO.consultarTodos();
+            return this.listaIngredientesActual;
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, "Error al cargar ingredientes");
+            return new ArrayList<>();
+        }
     }
 
     @Override
@@ -531,7 +538,7 @@ public class Coordinador implements ICoordinador {
             this.listaProductosActual = productoBO.consultarTodos();
 
 //            if (frmProductos == null) {
-                frmProductos = new FrmProductos(this);
+            frmProductos = new FrmProductos(this);
 //            }
 
             frmProductos.setVisible(true);
@@ -645,22 +652,20 @@ public class Coordinador implements ICoordinador {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
-    
+
     @Override
     public void eliminarProducto() {
         try {
             productoBO.eliminarProducto(productoSeleccionado.getIdProducto());
 
-            JOptionPane.showMessageDialog(null, "Producto eliminado correctamente");
+            JOptionPane.showMessageDialog(null, "Producto eliminado correctamente o desactivado si estaba en uso");
 
-            productoSeleccionado = null;
             actualizarTablaProductos();
-
+            productoSeleccionado = null;
         } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
     }
-
 
     @Override
     public void setProductoSeleccionado(ProductoDTO producto) {
@@ -674,7 +679,13 @@ public class Coordinador implements ICoordinador {
 
     @Override
     public List<ProductoDTO> getListaProductosActual() {
-        return this.listaProductosActual;
+        try {
+            this.listaProductosActual = productoBO.consultarTodos();
+            return this.listaProductosActual;
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, "Error al cargar productos");
+            return new ArrayList<>();
+        }
     }
 
     //----- MESAS -----
@@ -783,6 +794,19 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    public void cambiarDisponibilidadProducto(Long idProducto, DisponibilidadProductoDTO estado) {
+        try {
+            productoBO.cambiarDisponibilidad(idProducto, estado);
+
+            JOptionPane.showMessageDialog(null, "Disponibilidad actualizada correctamente");
+
+            actualizarTablaProductos();
+
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }
+
     @Override
     public void setListaProductosAtual(List<ProductoDTO> productos) {
         listaProductosActual = productos;
@@ -827,15 +851,15 @@ public class Coordinador implements ICoordinador {
 
             comanda.setFecha(LocalDateTime.now());
             comanda.setEstado(EstadoComandaDTO.ABIERTA);
-            if(comanda.getCliente() == null){
-                if(clienteFrecuenteBO.buscarClienteFrecuenteGeneral() == null){
+            if (comanda.getCliente() == null) {
+                if (clienteFrecuenteBO.buscarClienteFrecuenteGeneral() == null) {
                     JOptionPane.showMessageDialog(null, "No hay un cliente general para guardar la comanda");
                     mostrarMesas();
                     return;
-                }else{
+                } else {
                     comanda.setCliente(clienteFrecuenteBO.buscarClienteFrecuenteGeneral());
                 }
-                
+
             }
 
             mesaSeleccionada.setDisponibilidad(EstadoMesaDTO.NO_DISPONIBLE);
@@ -1057,18 +1081,18 @@ public class Coordinador implements ICoordinador {
 
     @Override
     public ClienteFrecuenteDTO registrarClienteGeneral() {
-        try{
-            if(clienteFrecuenteBO.buscarClienteFrecuenteGeneral() == null){
-                ClienteFrecuenteDTO clienteGeneral = new ClienteFrecuenteDTO(null, "Cliente general", "", "","0","",0,0.0,0);
+        try {
+            if (clienteFrecuenteBO.buscarClienteFrecuenteGeneral() == null) {
+                ClienteFrecuenteDTO clienteGeneral = new ClienteFrecuenteDTO(null, "Cliente general", "", "", "0", "", 0, 0.0, 0);
                 return clienteFrecuenteBO.registrarCliente(clienteGeneral);
-            }else{
+            } else {
                 JOptionPane.showMessageDialog(null, "El cliente general ya esta registrado");
                 return null;
             }
-        }catch(NegocioException e){
+        } catch (NegocioException e) {
             JOptionPane.showMessageDialog(null, "Error al registrar al cliente general");
             return null;
         }
     }
-    
+
 }

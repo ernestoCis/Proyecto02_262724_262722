@@ -39,6 +39,15 @@ import javax.swing.table.DefaultTableModel;
  */
 public class FrmIngredientes extends JFrame {
 
+    private boolean modoSeleccion = false;
+
+    private SeleccionIngredienteListener listener;
+
+    public interface SeleccionIngredienteListener {
+
+        boolean onIngredientesSeleccionados(List<IngredienteDTO> ingredientes);
+    }
+
     private final Coordinador coordinador;
     private JTable tblIngredientes;
     private DefaultTableModel modeloTabla;
@@ -50,7 +59,17 @@ public class FrmIngredientes extends JFrame {
 
     public FrmIngredientes(Coordinador coordinador) {
         this.coordinador = coordinador;
-        this.listaOriginal = this.coordinador.getListaIngredientesActual();
+        this.listaOriginal = this.coordinador.obtenerIngredientes();
+        configurarVentana();
+        inicializarComponentes();
+        cargarDatosTabla(this.listaOriginal);
+    }
+
+    public FrmIngredientes(Coordinador coordinador, boolean modoSeleccion, SeleccionIngredienteListener listener) {
+        this.coordinador = coordinador;
+        this.modoSeleccion = modoSeleccion;
+        this.listener = listener;
+        this.listaOriginal = this.coordinador.obtenerIngredientes();
         configurarVentana();
         inicializarComponentes();
         cargarDatosTabla(this.listaOriginal);
@@ -174,6 +193,22 @@ public class FrmIngredientes extends JFrame {
         btnRegistrar = new BotonEstilizado("+ Registrar");
         btnEliminar = new BotonEstilizado("Eliminar");
 
+        if (modoSeleccion) {
+            btnRegistrar.setVisible(false);
+            btnEliminar.setVisible(false);
+            btnRegresar.setVisible(false);
+
+            BotonEstilizado btnListo = new BotonEstilizado("Listo");
+            btnListo.setPreferredSize(new Dimension(120, 40));
+
+            btnListo.addActionListener(e -> {
+                dispose();
+            });
+
+            panelBotones.add(Box.createHorizontalStrut(15));
+            panelBotones.add(btnListo);
+        }
+
         panelBotones.add(btnRegistrar);
         panelBotones.add(Box.createHorizontalStrut(15));
         panelBotones.add(btnEliminar);
@@ -208,25 +243,43 @@ public class FrmIngredientes extends JFrame {
                     int fila = tblIngredientes.getSelectedRow();
                     if (fila != -1) {
                         IngredienteDTO ingredienteSeleccionado = listaOriginal.get(fila);
+                        if (modoSeleccion) {
+                            if (listener != null) {
+                                List<IngredienteDTO> lista = new ArrayList<>();
+                                lista.add(ingredienteSeleccionado);
+                                
+                                boolean agregado = listener.onIngredientesSeleccionados(lista);
 
-                        coordinador.setIngredienteSeleccionado(ingredienteSeleccionado);
-                        coordinador.mostrarAjustarStock();
+                                if (agregado) {
+                                    dispose();
+                                }
+                            }
+                        } else {
+                            coordinador.setIngredienteSeleccionado(ingredienteSeleccionado);
+                            coordinador.mostrarAjustarStock();
+                        }
                     }
                 }
             }
-        });
+        }
+        );
 
-        btnRegistrar.addActionListener(e -> {
+        btnRegistrar.addActionListener(e
+                -> {
             dispose();
             coordinador.mostrarRegistrarIngrediente();
-        });
+        }
+        );
 
-        btnRegresar.addActionListener(e -> {
+        btnRegresar.addActionListener(e
+                -> {
             dispose();
             coordinador.mostrarAcciones();
-        });
+        }
+        );
 
-        btnEliminar.addActionListener(e -> eliminarIngredienteSeleccionado());
+        btnEliminar.addActionListener(e
+                -> eliminarIngredienteSeleccionado());
     }
 
     private void cargarDatosTabla(List<IngredienteDTO> lista) {

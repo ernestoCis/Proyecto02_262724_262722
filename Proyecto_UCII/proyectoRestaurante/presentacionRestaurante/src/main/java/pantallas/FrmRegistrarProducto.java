@@ -329,8 +329,37 @@ public class FrmRegistrarProducto extends JFrame {
         btnSeleccionarImagen.addActionListener(e -> seleccionarImagen());
 
         btnAgregarIngrediente.addActionListener(e -> {
-            DlgAgregarIngrediente dialog = new DlgAgregarIngrediente(this, coordinador);
-            dialog.setVisible(true);
+            FrmIngredientes frm = new FrmIngredientes(coordinador, true, ingredientesSeleccionados -> {
+
+                for (IngredienteDTO ingrediente : ingredientesSeleccionados) {
+
+                    String cantidadStr = JOptionPane.showInputDialog(
+                            "Cantidad para " + ingrediente.getNombre());
+
+                    if (cantidadStr == null || cantidadStr.trim().isEmpty()) {
+                        return false;
+                    }
+
+                    String unidad = ingrediente.getUnidadMedida().toString();
+
+                    if (!Validacion.esCantidadValida(cantidadStr, unidad)) {
+                        JOptionPane.showMessageDialog(null, "Cantidad inválida");
+                        return false;
+                    }
+
+                    double cantidad = Double.parseDouble(cantidadStr);
+
+                    boolean agregado = agregarIngredienteATabla(ingrediente, cantidad);
+
+                    if (!agregado) {
+                        return false; 
+                    }
+                }
+
+                return true; 
+            });
+            frm.setVisible(true);
+
         });
 
         btnEliminarIngrediente.addActionListener(e -> {
@@ -361,10 +390,11 @@ public class FrmRegistrarProducto extends JFrame {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 if (evt.getClickCount() == 2) {
                     int fila = tablaIngredientes.getSelectedRow();
-                    int columna = tablaIngredientes.getSelectedColumn();
+                    if (fila != -1) {
 
-                    if (fila != -1 && columna == 2) {
-                        String valorActual = modeloTabla.getValueAt(fila, columna).toString();
+                        int columnaCantidad = 2;
+
+                        String valorActual = modeloTabla.getValueAt(fila, columnaCantidad).toString();
 
                         String nuevaCantidad = JOptionPane.showInputDialog(
                                 FrmRegistrarProducto.this,
@@ -374,20 +404,23 @@ public class FrmRegistrarProducto extends JFrame {
 
                         if (nuevaCantidad != null) {
 
-                            // Obtener unidad del ingrediente 
                             String unidad = modeloTabla.getValueAt(fila, 1).toString();
 
                             if (!Validacion.esCantidadValida(nuevaCantidad, unidad)) {
                                 JOptionPane.showMessageDialog(
                                         FrmRegistrarProducto.this,
-                                        "Cantidad inválida para la unidad " + unidad
+                                        unidad.equalsIgnoreCase("Piezas")
+                                        ? "Solo se permiten números enteros para piezas"
+                                        : "Cantidad inválida"
                                 );
                                 return;
                             }
 
                             try {
                                 Double cantidad = Double.valueOf(nuevaCantidad);
-                                modeloTabla.setValueAt(cantidad, fila, columna);
+
+                                modeloTabla.setValueAt(cantidad, fila, columnaCantidad);
+
                                 recetas.get(fila).setCantidad(cantidad);
 
                             } catch (NumberFormatException e) {
@@ -479,7 +512,7 @@ public class FrmRegistrarProducto extends JFrame {
         }
     }
 
-    public void agregarIngredienteATabla(IngredienteDTO ingrediente, Double cantidad) {
+    public boolean agregarIngredienteATabla(IngredienteDTO ingrediente, Double cantidad) {
 
         // validar duplicados
         for (RecetaDTO r : recetas) {
@@ -488,7 +521,7 @@ public class FrmRegistrarProducto extends JFrame {
 
                 JOptionPane.showMessageDialog(this,
                         "Este ingrediente ya fue agregado");
-                return;
+                return false;
             }
         }
 
@@ -502,5 +535,7 @@ public class FrmRegistrarProducto extends JFrame {
         receta.setIngrediente(ingrediente);
         receta.setCantidad(cantidad);
         recetas.add(receta);
+
+        return true;
     }
 }

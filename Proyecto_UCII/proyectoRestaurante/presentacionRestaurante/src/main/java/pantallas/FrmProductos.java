@@ -30,6 +30,7 @@ public class FrmProductos extends JFrame {
     private BotonEstilizado btnEliminar;
 
     private List<ProductoDTO> listaOriginal;
+    private List<ProductoDTO> listaMostrada;
 
     public FrmProductos(Coordinador coordinador) {
         this.coordinador = coordinador;
@@ -244,6 +245,8 @@ public class FrmProductos extends JFrame {
     private void cargarDatosTabla(List<ProductoDTO> lista) {
         modeloTabla.setRowCount(0);
 
+        this.listaMostrada = lista;
+        
         if (lista != null) {
             for (ProductoDTO p : lista) {
                 Object[] fila = {
@@ -303,7 +306,8 @@ public class FrmProductos extends JFrame {
 
     public void actualizarTablaProductos(List<ProductoDTO> productos) {
         this.listaOriginal = productos;
-        cargarDatosTabla(productos);
+        cargarDatosTabla(productos); 
+        this.listaMostrada = productos;
     }
 
     private void eliminarProductoSeleccionado() {
@@ -314,7 +318,7 @@ public class FrmProductos extends JFrame {
             return;
         }
 
-        ProductoDTO producto = listaOriginal.get(fila);
+        ProductoDTO producto = listaMostrada.get(fila);
 
         int confirmacion = JOptionPane.showConfirmDialog(
                 this,
