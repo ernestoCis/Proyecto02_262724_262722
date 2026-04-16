@@ -1156,7 +1156,7 @@ public class Coordinador implements ICoordinador {
         frmClientes = new FrmClientes(this, true); // modo selección
         frmClientes.setVisible(true);
     }
-    
+
     @Override
     public void abrirBuscadorClientesParaComanda(FrmResumenPedidoEditado frmActual) {
         this.frmResumenPedidoEditado = frmActual;
@@ -1170,6 +1170,47 @@ public class Coordinador implements ICoordinador {
 
         frmClientes = new FrmClientes(this, true); // modo selección
         frmClientes.setVisible(true);
+    }
+
+    public void abrirBuscadorIngredientesParaProducto(FrmRegistrarProducto frmActual) {
+        this.frmRegistrarProducto = frmActual;
+        frmActual.setVisible(false);
+
+        try {
+            this.listaIngredientesActual = ingredienteBO.consultarTodos();
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+        // Abrir en modo selección
+        frmIngredientes = new FrmIngredientes(this, true, ingredientesSeleccionados -> {
+            frmActual.recibirIngredientesSeleccionados(ingredientesSeleccionados);
+            frmIngredientes.dispose();
+            frmActual.setVisible(true);
+            return true;
+        });
+
+        frmIngredientes.setVisible(true);
+    }
+
+    public void abrirBuscadorIngredientesParaEditarProducto(FrmEditarProducto frmActual) {
+        this.frmEditarProducto = frmActual;
+        frmActual.setVisible(false);
+
+        try {
+            this.listaIngredientesActual = ingredienteBO.consultarTodos();
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+        frmIngredientes = new FrmIngredientes(this, true, ingredientesSeleccionados -> {
+            frmActual.recibirIngredientesSeleccionados(ingredientesSeleccionados);
+            frmIngredientes.dispose();
+            frmActual.setVisible(true);
+            return true;
+        });
+
+        frmIngredientes.setVisible(true);
     }
 
 }

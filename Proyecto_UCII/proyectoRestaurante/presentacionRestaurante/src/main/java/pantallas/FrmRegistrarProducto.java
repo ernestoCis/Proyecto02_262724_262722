@@ -329,37 +329,7 @@ public class FrmRegistrarProducto extends JFrame {
         btnSeleccionarImagen.addActionListener(e -> seleccionarImagen());
 
         btnAgregarIngrediente.addActionListener(e -> {
-            FrmIngredientes frm = new FrmIngredientes(coordinador, true, ingredientesSeleccionados -> {
-
-                for (IngredienteDTO ingrediente : ingredientesSeleccionados) {
-
-                    String cantidadStr = JOptionPane.showInputDialog(
-                            "Cantidad para " + ingrediente.getNombre());
-
-                    if (cantidadStr == null || cantidadStr.trim().isEmpty()) {
-                        return false;
-                    }
-
-                    String unidad = ingrediente.getUnidadMedida().toString();
-
-                    if (!Validacion.esCantidadValida(cantidadStr, unidad)) {
-                        JOptionPane.showMessageDialog(null, "Cantidad inválida");
-                        return false;
-                    }
-
-                    double cantidad = Double.parseDouble(cantidadStr);
-
-                    boolean agregado = agregarIngredienteATabla(ingrediente, cantidad);
-
-                    if (!agregado) {
-                        return false; 
-                    }
-                }
-
-                return true; 
-            });
-            frm.setVisible(true);
-
+            coordinador.abrirBuscadorIngredientesParaProducto(this);
         });
 
         btnEliminarIngrediente.addActionListener(e -> {
@@ -537,5 +507,28 @@ public class FrmRegistrarProducto extends JFrame {
         recetas.add(receta);
 
         return true;
+    }
+    
+    public void recibirIngredientesSeleccionados(List<IngredienteDTO> ingredientesSeleccionados) {
+        for (IngredienteDTO ingrediente : ingredientesSeleccionados) {
+
+            String cantidadStr = JOptionPane.showInputDialog(
+                    "Cantidad para " + ingrediente.getNombre());
+
+            if (cantidadStr == null || cantidadStr.trim().isEmpty()) {
+                continue;
+            }
+
+            String unidad = ingrediente.getUnidadMedida().toString();
+
+            if (!Validacion.esCantidadValida(cantidadStr, unidad)) {
+                JOptionPane.showMessageDialog(null, "Cantidad inválida");
+                continue;
+            }
+
+            double cantidad = Double.parseDouble(cantidadStr);
+
+            agregarIngredienteATabla(ingrediente, cantidad);
+        }
     }
 }
