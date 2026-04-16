@@ -400,7 +400,7 @@ public class FrmSeleccionProductos extends JFrame {
         JPanel panelAcciones = new JPanel(new FlowLayout(FlowLayout.RIGHT, 10, 0));
         panelAcciones.setOpaque(false);
 
-        JButton btnEditarNota = new JButton("✏️ Editar Nota");
+        JButton btnEditarNota = new JButton("️Editar Nota");
         btnEditarNota.setFocusPainted(false);
         btnEditarNota.setCursor(new Cursor(Cursor.HAND_CURSOR));
 
