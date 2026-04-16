@@ -249,7 +249,10 @@ public class Coordinador implements ICoordinador {
         if (frmEditarCliente != null) {
             frmEditarCliente.dispose();
         }
-        frmClientes.dispose();
+
+        if (frmClientes != null) {
+            frmClientes.dispose();
+        }
         frmEditarCliente = new FrmEditarCliente(this);
         frmEditarCliente.setVisible(true);
         frmEditarCliente.toFront();
@@ -260,17 +263,16 @@ public class Coordinador implements ICoordinador {
         try {
             clienteFrecuenteBO.actualizarCliente(clienteDTO);
             JOptionPane.showMessageDialog(null, "Cliente editado correctamente");
-
-            actualizarTablaClientes();
-
         } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
         }
+
         if (frmEditarCliente != null) {
             frmEditarCliente.dispose();
             frmEditarCliente = null;
         }
-        frmClientes.setVisible(true);
+
+        mostrarClientes();
     }
 
     @Override

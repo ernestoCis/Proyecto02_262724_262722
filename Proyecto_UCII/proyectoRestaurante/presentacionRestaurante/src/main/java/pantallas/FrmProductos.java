@@ -18,6 +18,8 @@ import javax.swing.table.DefaultTableModel;
  */
 public class FrmProductos extends JFrame {
 
+    private JLabel lblNota;
+
     public enum Modo {
         ADMINISTRAR, SELECCIONAR
     }
@@ -163,6 +165,17 @@ public class FrmProductos extends JFrame {
             }
         });
 
+        lblNota = new JLabel();
+        lblNota.setFont(new Font("SansSerif", Font.ITALIC, 13));
+        lblNota.setForeground(new Color(120, 120, 120));
+        lblNota.setHorizontalAlignment(SwingConstants.CENTER);
+        lblNota.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
+
+        if (modoActual == Modo.SELECCIONAR) {
+            lblNota.setText("Da doble click para agregar producto a comanda");
+        } else {
+            lblNota.setText("Da doble click para ver el detalle del producto");
+        }
         JScrollPane scrollPane = new JScrollPane(tblProductos);
         scrollPane.setBorder(BorderFactory.createEmptyBorder());
 
@@ -191,9 +204,15 @@ public class FrmProductos extends JFrame {
         panelInferior.add(panelBotones);
 
         panelCentro.add(panelBusqueda, BorderLayout.NORTH);
-        panelCentro.add(scrollPane, BorderLayout.CENTER);
-        panelCentro.add(panelInferior, BorderLayout.SOUTH);
 
+        panelCentro.add(panelInferior, BorderLayout.SOUTH);
+        JPanel panelTabla = new JPanel(new BorderLayout());
+        panelTabla.setOpaque(false);
+
+        panelTabla.add(lblNota, BorderLayout.NORTH);
+        panelTabla.add(scrollPane, BorderLayout.CENTER);
+
+        panelCentro.add(panelTabla, BorderLayout.CENTER);
         panelPrincipal.add(panelSuperiorContenedor, BorderLayout.NORTH);
         panelPrincipal.add(panelCentro, BorderLayout.CENTER);
 

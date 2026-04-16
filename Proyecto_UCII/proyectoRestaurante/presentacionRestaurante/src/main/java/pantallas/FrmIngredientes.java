@@ -40,6 +40,7 @@ import javax.swing.table.DefaultTableModel;
 public class FrmIngredientes extends JFrame {
 
     private boolean modoSeleccion = false;
+    private JLabel lblNota;
 
     private SeleccionIngredienteListener listener;
 
@@ -193,6 +194,20 @@ public class FrmIngredientes extends JFrame {
         btnRegistrar = new BotonEstilizado("+ Registrar");
         btnEliminar = new BotonEstilizado("Eliminar");
 
+        lblNota = new JLabel();
+        lblNota.setFont(new Font("SansSerif", Font.ITALIC, 13));
+        lblNota.setForeground(new Color(90, 90, 90));
+        lblNota.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
+
+        if (modoSeleccion) {
+            lblNota.setText("Da doble click para ingresar cantidad de ingrediente y añadirlo al producto");
+        } else {
+            lblNota.setText("Da doble click para ajustar stock");
+        }
+
+        lblNota.setForeground(new Color(120, 120, 120));
+        lblNota.setHorizontalAlignment(SwingConstants.CENTER);
+
         if (modoSeleccion) {
             btnRegistrar.setVisible(false);
             btnEliminar.setVisible(false);
@@ -207,7 +222,13 @@ public class FrmIngredientes extends JFrame {
         panelInferior.add(panelBotones);
 
         panelCentro.add(panelBusqueda, BorderLayout.NORTH);
-        panelCentro.add(scrollPane, BorderLayout.CENTER);
+        JPanel panelTabla = new JPanel(new BorderLayout());
+        panelTabla.setOpaque(false);
+
+        panelTabla.add(lblNota, BorderLayout.NORTH);
+        panelTabla.add(scrollPane, BorderLayout.CENTER);
+
+        panelCentro.add(panelTabla, BorderLayout.CENTER);
         panelCentro.add(panelInferior, BorderLayout.SOUTH);
 
         panelPrincipal.add(panelSuperiorContenedor, BorderLayout.NORTH);

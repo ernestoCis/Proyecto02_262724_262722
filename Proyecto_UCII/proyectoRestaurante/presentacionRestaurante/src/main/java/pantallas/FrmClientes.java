@@ -40,6 +40,7 @@ import javax.swing.table.DefaultTableModel;
 public class FrmClientes extends JFrame {
 
     private boolean modoSeleccion = false;
+    private JLabel lblNota;
 
     private final Coordinador coordinador;
 
@@ -205,6 +206,18 @@ public class FrmClientes extends JFrame {
         btnRegistrarClienteGeneral.setMaximumSize(new Dimension(270, 40));
         btnRegistrarClienteGeneral.setMaximumSize(new Dimension(270, 40));
 
+        lblNota = new JLabel();
+        lblNota.setFont(new Font("SansSerif", Font.ITALIC, 13));
+        lblNota.setForeground(new Color(90, 90, 90));
+        lblNota.setBorder(BorderFactory.createEmptyBorder(5, 5, 10, 5));
+        lblNota.setHorizontalAlignment(SwingConstants.CENTER);
+
+        if (modoSeleccion) {
+            lblNota.setText("Da doble click para agregar cliente a comanda");
+        } else {
+            lblNota.setText("Da doble click para editar cliente");
+        }
+
         if (modoSeleccion) {
             btnRegistrar.setVisible(false);
             btnEliminar.setVisible(false);
@@ -221,7 +234,13 @@ public class FrmClientes extends JFrame {
         panelInferior.add(panelBotones);
 
         panelCentro.add(panelBusqueda, BorderLayout.NORTH);
-        panelCentro.add(scrollPane, BorderLayout.CENTER);
+        JPanel panelTabla = new JPanel(new BorderLayout());
+        panelTabla.setOpaque(false);
+
+        panelTabla.add(lblNota, BorderLayout.NORTH);
+        panelTabla.add(scrollPane, BorderLayout.CENTER);
+
+        panelCentro.add(panelTabla, BorderLayout.CENTER);
         panelCentro.add(panelInferior, BorderLayout.SOUTH);
 
         panelPrincipal.add(panelSuperiorContenedor, BorderLayout.NORTH);
