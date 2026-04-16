@@ -16,16 +16,28 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Clase de Objeto de Acceso a Datos (DAO) para la entidad Producto. Gestiona el
+ * catálogo de productos del restaurante, incluyendo la lógica compleja de
+ * actualización de disponibilidad basada en las existencias de ingredientes
+ * definidos en las recetas.
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ProductoDAO implements IProductoDAO {
 
     private static ProductoDAO instance;
 
+    /**
+     * Constructor privado para implementar el patrón Singleton.
+     */
     private ProductoDAO() {
     }
 
+    /**
+     * Obtiene la instancia única de ProductoDAO.
+     *
+     * * @return La instancia global de esta clase.
+     */
     public static ProductoDAO getInstance() {
         if (instance == null) {
             instance = new ProductoDAO();
@@ -33,6 +45,12 @@ public class ProductoDAO implements IProductoDAO {
         return instance;
     }
 
+    /**
+     * Persiste un nuevo producto en la base de datos.
+     *
+     * * @param producto El objeto {@link Producto} a guardar.
+     * @throws PersistenciaException Si ocurre un error en la transacción.
+     */
     @Override
     public void guardar(Producto producto) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -50,6 +68,12 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Actualiza la información de un producto existente.
+     *
+     * * @param producto Objeto con los datos actualizados.
+     * @throws PersistenciaException Si falla la actualización.
+     */
     @Override
     public void actualizar(Producto producto) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -67,6 +91,15 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Busca un producto por su ID, cargando de forma ansiosa (Eager) sus
+     * recetas e ingredientes asociados para evitar errores de sesión.
+     *
+     * * @param id Identificador del producto.
+     * @return El {@link Producto} con sus relaciones cargadas.
+     * @throws PersistenciaException Si el producto no se encuentra o hay error
+     * en la consulta.
+     */
     @Override
     public Producto buscarPorId(Long id) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -87,6 +120,13 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Recupera todos los productos registrados, incluyendo sus recetas e
+     * ingredientes.
+     *
+     * * @return Lista de todos los productos.
+     * @throws PersistenciaException Si ocurre un error en la base de datos.
+     */
     @Override
     public List<Producto> obtenerProductos() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -104,6 +144,14 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Busca productos cuyo nombre coincida parcialmente con el criterio
+     * proporcionado.
+     *
+     * * @param nombre Cadena de texto a buscar.
+     * @return Lista de productos que coinciden con el nombre.
+     * @throws PersistenciaException Si la consulta falla.
+     */
     @Override
     public List<Producto> buscarPorNombre(String nombre) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -121,6 +169,15 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Busca un producto por nombre exacto que se encuentre actualmente
+     * disponible.
+     *
+     * * @param nombre Nombre exacto del producto.
+     * @return El {@link Producto} encontrado o null si no está disponible o no
+     * existe.
+     * @throws PersistenciaException Si ocurre un error en la consulta.
+     */
     @Override
     public Producto buscarPorNombreExacto(String nombre) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -146,6 +203,14 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Cambia manualmente el estado de disponibilidad de un producto.
+     *
+     * * @param id ID del producto.
+     * @param estado Nuevo estado de {@link DisponibilidadProducto}.
+     * @throws PersistenciaException Si el producto no existe o falla la
+     * actualización.
+     */
     @Override
     public void cambiarDisponibilidad(Long id, DisponibilidadProducto estado) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -169,6 +234,13 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Verifica si un producto ha sido incluido en algún pedido (DetallePedido).
+     *
+     * * @param idProducto ID del producto a verificar.
+     * @return true si existen registros asociados, false de lo contrario.
+     * @throws PersistenciaException Si ocurre un error al contar los registros.
+     */
     @Override
     public boolean estaEnUso(Long idProducto) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -189,6 +261,12 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Recupera únicamente los productos marcados como disponibles.
+     *
+     * * @return Lista de productos disponibles con sus recetas cargadas.
+     * @throws PersistenciaException Si la consulta falla.
+     */
     @Override
     public List<Producto> obtenerProductosDisponibles() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -207,6 +285,12 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Elimina un producto de la base de datos.
+     *
+     * * @param id ID del producto a eliminar.
+     * @throws PersistenciaException Si ocurre un error durante el borrado.
+     */
     @Override
     public void eliminar(Long id) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -231,6 +315,14 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Comprueba si un producto forma parte de alguna comanda que aún no ha sido
+     * cerrada.
+     *
+     * * @param idProducto ID del producto.
+     * @return true si está en una comanda abierta, false en caso contrario.
+     * @throws PersistenciaException Si ocurre un error en la verificación.
+     */
     @Override
     public boolean estaEnComandaAbierta(Long idProducto) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -255,7 +347,15 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
-    // busca sobre un ingrediente (cuando se modifica un ingrediente)
+    /**
+     * Actualiza la disponibilidad de todos los productos que utilizan un
+     * ingrediente específico. Útil cuando se modifica el stock de un
+     * ingrediente.
+     *
+     * * @param idIngrediente ID del ingrediente modificado.
+     * @throws PersistenciaException Si falla la actualización masiva.
+     */
+    @Override
     public void actualizarProductosPorIngrediente(Long idIngrediente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
@@ -279,7 +379,15 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
-    // busca sobre un solo producto (caso comanda)
+    /**
+     * Evalúa si un producto tiene suficientes ingredientes en stock para ser
+     * preparado. Si algún ingrediente de la receta es insuficiente, marca el
+     * producto como NO_DISPONIBLE.
+     *
+     * * @param idProducto ID del producto a evaluar.
+     * @throws PersistenciaException Si ocurre un error al consultar el stock o
+     * actualizar el estado.
+     */
     public void actualizarDisponibilidadPorStock(Long idProducto) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
@@ -317,6 +425,15 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Consulta productos aplicando un filtro dinámico sobre nombre o tipo
+     * utilizando Criteria API.
+     *
+     * * @param filtro Texto para filtrar productos.
+     * @return Lista de productos filtrados.
+     * @throws PersistenciaException Si ocurre un error en la construcción de la
+     * consulta.
+     */
     @Override
     public List<Producto> consultarProductosConFiltro(String filtro) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -351,6 +468,13 @@ public class ProductoDAO implements IProductoDAO {
         }
     }
 
+    /**
+     * Consulta únicamente productos disponibles aplicando un filtro dinámico.
+     *
+     * * @param filtro Texto para filtrar los productos disponibles.
+     * @return Lista de productos disponibles que coinciden con el filtro.
+     * @throws PersistenciaException Si ocurre un error en la base de datos.
+     */
     @Override
     public List<Producto> consultarProductosDisponiblesConFiltro(String filtro) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -364,10 +488,8 @@ public class ProductoDAO implements IProductoDAO {
 
             List<Predicate> predicates = new ArrayList<>();
 
-            // --- CAMBIO AQUÍ: Comparamos directamente con el Enum ---
             Predicate soloDisponibles = cb.equal(producto.get("disponibilidad"), DisponibilidadProducto.DISPONIBLE);
             predicates.add(soloDisponibles);
-            // --------------------------------------------------------
 
             if (filtro != null && !filtro.trim().isEmpty()) {
                 String pattern = "%" + filtro.toLowerCase() + "%";

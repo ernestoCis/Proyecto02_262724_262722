@@ -9,25 +9,31 @@ import jakarta.persistence.EntityManagerFactory;
 import jakarta.persistence.Persistence;
 
 /**
- *
- * @author Paulina Guevara, Ernesto Cisneros
+ * Clase encargada de gestionar la conexión con la base de datos mediante JPA.
+ * Utiliza la unidad de persistencia "ConexionPU" para centralizar la creación 
+ * de gestores de entidades en el proyecto.
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ConexionBD {
+
+    /**
+     * Fábrica de gestores de entidades (EntityManagerFactory) configurada para el proyecto.
+     */
     private static final EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory("ConexionPU");
 
     /**
-     * Constructor privado para evitar instanciar la clase ConexionBD
+     * Constructor privado para evitar la instanciación de esta clase de utilidad.
      */
     private ConexionBD(){
         
     }
+
     /**
-     * Metodo que genera y devuelve el entityManager.
-     * @return 
+     * Genera y devuelve un objeto EntityManager para interactuar con el contexto de persistencia.
+     * * @return Una instancia de {@link EntityManager} configurada.
      */
     public static EntityManager crearConexion(){
         return entityManagerFactory.createEntityManager();
     }
-
 
 }

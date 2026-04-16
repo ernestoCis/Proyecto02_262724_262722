@@ -20,8 +20,12 @@ import org.junit.jupiter.api.*;
 import static org.junit.jupiter.api.Assertions.*;
 
 /**
+ * Clase de pruebas unitarias para ProductoDAO. Evalúa la gestión del catálogo
+ * de productos, la integridad de las recetas y la lógica de negocio que
+ * determina la disponibilidad de un producto en función del stock de sus
+ * ingredientes.
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ProductoDAOTest {
 
@@ -33,12 +37,21 @@ public class ProductoDAOTest {
         this.productoDAO = ProductoDAO.getInstance();
     }
 
+    /**
+     * Prepara el entorno antes de cada prueba inicializando las listas de
+     * seguimiento de identificadores.
+     */
     @BeforeEach
     public void setUp() {
         idsProductos = new ArrayList<>();
         idsIngredientes = new ArrayList<>();
     }
 
+    /**
+     * Realiza la limpieza profunda de la base de datos tras cada prueba.
+     * Elimina registros en cascada (Recetas, Productos, Ingredientes) para
+     * mantener la consistencia y evitar errores de integridad referencial.
+     */
     @AfterEach
     public void tearDown() {
         EntityManager em = ConexionBD.crearConexion();
@@ -66,6 +79,15 @@ public class ProductoDAOTest {
         }
     }
 
+    /**
+     * Prueba el flujo básico de persistencia y recuperación de un producto.
+     * Valida que tras invocar el método guardar, el objeto adquiera un
+     * identificador único y que los datos recuperados por ID mantengan la
+     * integridad respecto a los valores originales.
+     *
+     * * @throws PersistenciaException Si ocurre un error durante la escritura
+     * o lectura en la base de datos.
+     */
     @Test
     public void test1_GuardarYBuscarPorId() throws PersistenciaException {
         Producto p = new Producto("Taco de Asada", 35.0, TipoProducto.PLATILLO, "Clásico", DisponibilidadProducto.DISPONIBLE, "");
@@ -77,7 +99,15 @@ public class ProductoDAOTest {
         assertEquals("Taco de Asada", resultado.getNombre());
     }
 
-    //actualizar datos basicos
+    /**
+     * Verifica la capacidad de modificar los atributos de un producto
+     * existente. El test asegura que los cambios realizados en el objeto (como
+     * el precio) se sincronicen correctamente en la base de datos mediante el
+     * método actualizar.
+     *
+     * * @throws PersistenciaException Si la transacción de actualización
+     * falla.
+     */
     @Test
     public void test2_ActualizarProducto() throws PersistenciaException {
         Producto p = new Producto("Agua", 15.0, TipoProducto.BEBIDA, "", DisponibilidadProducto.DISPONIBLE, "");
@@ -90,7 +120,16 @@ public class ProductoDAOTest {
         assertEquals(20.0, productoDAO.buscarPorId(p.getIdProducto()).getPrecio());
     }
 
-    //buscar por nombre con LIKE (Case Insensitive)
+    /**
+     * Evalúa la funcionalidad de búsqueda dinámica utilizando coincidencias
+     * parciales. Valida que el motor de persistencia sea capaz de filtrar
+     * registros ignorando mayúsculas/minúsculas o nombres incompletos,
+     * simulando el comportamiento de una barra de búsqueda en la interfaz de
+     * usuario.
+     *
+     * * @throws PersistenciaException Si la consulta por criterios (Criteria
+     * API o JPQL) falla.
+     */
     @Test
     public void test3_BuscarPorNombreLike() throws PersistenciaException {
         Producto p = new Producto("Enchiladas Verdes", 100.0, TipoProducto.PLATILLO, "", DisponibilidadProducto.DISPONIBLE, "");
@@ -102,7 +141,13 @@ public class ProductoDAOTest {
         assertTrue(lista.get(0).getNombre().contains("Enchiladas"));
     }
 
-    //buscar nombre exacto
+    /**
+     * Valida la búsqueda por nombre exacto. Nota: En este escenario se verifica
+     * que el filtro funcione correctamente cuando un producto existe pero
+     * podría no cumplir con otros criterios de búsqueda.
+     *
+     * @throws PersistenciaException Si ocurre un error en la capa de datos.
+     */
     @Test
     public void test4_BuscarPorNombreExactoFiltro() throws PersistenciaException {
         Producto p = new Producto("Flan", 40.0, TipoProducto.POSTRE, "", DisponibilidadProducto.NO_DISPONIBLE, "");
@@ -112,7 +157,13 @@ public class ProductoDAOTest {
         assertNull(productoDAO.buscarPorNombreExacto("Flan"));
     }
 
-    //cambiar disponibilidad manualmente
+    /**
+     * Valida que el cambio manual de disponibilidad afecte correctamente al
+     * registro. Esencial para funciones administrativas donde se desea ocultar
+     * un producto temporalmente.
+     *
+     * @throws PersistenciaException Si la actualización de estado falla.
+     */
     @Test
     public void test5_CambiarDisponibilidadManual() throws PersistenciaException {
         Producto p = new Producto("Temp", 10.0, TipoProducto.POSTRE, "", DisponibilidadProducto.DISPONIBLE, "");
@@ -123,7 +174,14 @@ public class ProductoDAOTest {
         assertEquals(DisponibilidadProducto.NO_DISPONIBLE, productoDAO.buscarPorId(p.getIdProducto()).getDisponibilidad());
     }
 
-    //producto sin recetas
+    /**
+     * Verifica que los productos nuevos o sin ingredientes asociados se
+     * recuperen con una lista de recetas vacía, evitando errores de puntero
+     * nulo.
+     *
+     * @throws PersistenciaException Si ocurre un error al consultar el
+     * producto.
+     */
     @Test
     public void test6_BuscarProductoSinRecetas() throws PersistenciaException {
         Producto p = new Producto("Cerveza", 50.0, TipoProducto.BEBIDA, "Botella", DisponibilidadProducto.DISPONIBLE, "");
@@ -135,7 +193,12 @@ public class ProductoDAOTest {
         assertTrue(resultado.getRecetas().isEmpty());
     }
 
-    //logica de Stock (Faltantes > 0)
+    /**
+     * Verifica la lógica de stock: un producto debe quedar NO DISPONIBLE si sus
+     * ingredientes son insuficientes para preparar al menos una porción.
+     *
+     * @throws PersistenciaException Si falla el cálculo de disponibilidad.
+     */
     @Test
     public void test7_DisponibilidadPorStockInsuficiente() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -155,6 +218,13 @@ public class ProductoDAOTest {
         assertEquals(DisponibilidadProducto.NO_DISPONIBLE, productoDAO.buscarPorId(p.getIdProducto()).getDisponibilidad());
     }
 
+    /**
+     * Evalúa la actualización en cascada. Al agotarse un ingrediente, todos los
+     * productos que lo utilizan deben pasar a estado NO DISPONIBLE
+     * automáticamente.
+     *
+     * @throws PersistenciaException Si la actualización masiva falla.
+     */
     @Test
     public void test8_ActualizarProductosPorIngrediente() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -173,6 +243,12 @@ public class ProductoDAOTest {
         assertEquals(DisponibilidadProducto.NO_DISPONIBLE, productoDAO.buscarPorId(idsProductos.get(0)).getDisponibilidad());
     }
 
+    /**
+     * Valida la eliminación física del producto y el manejo de excepciones al
+     * intentar buscar un registro inexistente (ID eliminado).
+     *
+     * @throws PersistenciaException Si la eliminación es rechazada.
+     */
     @Test
     public void test9_EliminarProducto() throws PersistenciaException {
         Producto p = new Producto("Eliminar Me", 1.0, TipoProducto.POSTRE, "", DisponibilidadProducto.DISPONIBLE, "");
@@ -183,7 +259,12 @@ public class ProductoDAOTest {
         assertThrows(PersistenciaException.class, () -> productoDAO.buscarPorId(id));
     }
 
-    //obtener solo productos disponibles
+    /**
+     * Verifica que el método de recuperación de productos disponibles filtre
+     * correctamente a aquellos que están marcados como NO_DISPONIBLE.
+     *
+     * @throws PersistenciaException Si la consulta filtrada falla.
+     */
     @Test
     public void test10_ObtenerProductosDisponibles() throws PersistenciaException {
         Producto p1 = new Producto("P1", 10.0, TipoProducto.PLATILLO, "", DisponibilidadProducto.DISPONIBLE, "");
@@ -201,6 +282,11 @@ public class ProductoDAOTest {
         assertTrue(disponibles.stream().noneMatch(p -> p.getNombre().equals("P2")));
     }
 
+    /**
+     * Valida la recuperación total del catálogo de productos.
+     *
+     * @throws PersistenciaException Si falla la consulta masiva.
+     */
     @Test
     public void test11_ObtenerTodosLosProductos() throws PersistenciaException {
         Producto p1 = new Producto("Torta Ahogada", 65.0, TipoProducto.PLATILLO, "", DisponibilidadProducto.DISPONIBLE, "");
@@ -213,6 +299,11 @@ public class ProductoDAOTest {
         assertTrue(todos.stream().anyMatch(p -> p.getNombre().equals("Torta Ahogada")));
     }
 
+    /**
+     * Comprueba el funcionamiento de los filtros dinámicos por nombre parcial.
+     *
+     * @throws PersistenciaException Si el procesamiento del filtro falla.
+     */
     @Test
     public void test12_ConsultarProductosConFiltro() throws PersistenciaException {
         Producto p1 = new Producto("Taco de Pastor", 25.0, TipoProducto.PLATILLO, "", DisponibilidadProducto.DISPONIBLE, "");
@@ -225,6 +316,12 @@ public class ProductoDAOTest {
         assertTrue(filtrados.get(0).getNombre().toLowerCase().contains("pastor"));
     }
 
+    /**
+     * Verifica la intersección de filtros: debe buscar por nombre parcial pero
+     * solo entre aquellos productos que tengan stock disponible.
+     *
+     * @throws PersistenciaException Si la búsqueda compuesta falla.
+     */
     @Test
     public void test13_ConsultarProductosDisponiblesConFiltro() throws PersistenciaException {
         Producto p1 = new Producto("Jugo Verde", 35.0, TipoProducto.BEBIDA, "", DisponibilidadProducto.DISPONIBLE, "");
@@ -241,6 +338,13 @@ public class ProductoDAOTest {
         assertTrue(filtrados.stream().noneMatch(p -> p.getNombre().equals("Jugo de Naranja")));
     }
 
+    /**
+     * Verifica la detección de uso en comandas activas o históricas. Este test
+     * es vital para prevenir la eliminación de productos que tienen registros
+     * contables (DetallePedido), protegiendo la integridad referencial.
+     *
+     * @throws PersistenciaException Si ocurre un error en la validación de uso.
+     */
     @Test
     public void test14_EstaEnUso() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -287,7 +391,7 @@ public class ProductoDAOTest {
 
         em = ConexionBD.crearConexion();
         em.getTransaction().begin();
-        
+
         em.remove(em.find(entidades.DetallePedido.class, detalle.getIdDetallePedido()));
         em.remove(em.find(entidades.Comanda.class, comanda.getIdComanda()));
         em.remove(em.find(entidades.ClienteFrecuente.class, clienteDummy.getIdCliente()));

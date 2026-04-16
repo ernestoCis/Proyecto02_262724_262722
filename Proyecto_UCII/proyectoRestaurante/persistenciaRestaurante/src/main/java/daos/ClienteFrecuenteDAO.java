@@ -14,16 +14,28 @@ import java.time.LocalDate;
 import java.util.List;
 
 /**
+ * Clase de Objeto de Acceso a Datos (DAO) para la entidad ClienteFrecuente.
+ * Implementa el patrón Singleton para asegurar una única instancia de acceso a
+ * datos y proporciona métodos para realizar operaciones CRUD en la base de
+ * datos.
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
 
     private static ClienteFrecuenteDAO instance;
 
+    /**
+     * Constructor privado para implementar el patrón Singleton.
+     */
     private ClienteFrecuenteDAO() {
     }
 
+    /**
+     * Obtiene la instancia única de ClienteFrecuenteDAO.
+     *
+     * * @return La instancia global de esta clase.
+     */
     public static ClienteFrecuenteDAO getInstance() {
         if (instance == null) {
             instance = new ClienteFrecuenteDAO();
@@ -31,6 +43,12 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         return instance;
     }
 
+    /**
+     * Recupera una lista con todos los clientes frecuentes registrados.
+     *
+     * * @return Lista de objetos {@link ClienteFrecuente}.
+     * @throws PersistenciaException Si ocurre un error durante la consulta.
+     */
     @Override
     public List<ClienteFrecuente> obtenerFrecuentes() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -43,6 +61,14 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         }
     }
 
+    /**
+     * Busca clientes frecuentes que coincidan con un filtro de texto en nombre,
+     * teléfono o email.
+     *
+     * * @param filtro Cadena de texto a buscar.
+     * @return Lista de clientes que coinciden con el criterio.
+     * @throws PersistenciaException Si ocurre un error en la base de datos.
+     */
     @Override
     public List<ClienteFrecuente> buscarPorFiltro(String filtro) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -60,6 +86,13 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         }
     }
 
+    /**
+     * Persiste un nuevo cliente frecuente en la base de datos.
+     *
+     * * @param cliente El objeto {@link ClienteFrecuente} a guardar.
+     * @return El cliente guardado con su ID generado.
+     * @throws PersistenciaException Si la transacción falla.
+     */
     @Override
     public ClienteFrecuente guardar(ClienteFrecuente cliente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -74,6 +107,14 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         }
     }
 
+    /**
+     * Busca un cliente frecuente por su identificador único.
+     *
+     * * @param id Identificador del cliente.
+     * @return El objeto {@link ClienteFrecuente} encontrado o null si no
+     * existe.
+     * @throws PersistenciaException Si ocurre un error inesperado.
+     */
     @Override
     public ClienteFrecuente buscarPorId(Long id) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -86,6 +127,13 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         }
     }
 
+    /**
+     * Actualiza la información de un cliente frecuente existente.
+     *
+     * * @param cliente Objeto con los datos actualizados.
+     * @throws PersistenciaException Si falla la actualización o se requiere
+     * rollback.
+     */
     public void actualizar(ClienteFrecuente cliente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
 
@@ -101,6 +149,14 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         }
     }
 
+    /**
+     * Busca un cliente específico utilizando su número de teléfono.
+     *
+     * * @param telefono Número telefónico del cliente.
+     * @return {@link ClienteFrecuente} asociado al teléfono o null si no se
+     * encuentra.
+     * @throws PersistenciaException Si ocurre un error en la consulta JPQL.
+     */
     @Override
     public ClienteFrecuente buscarPorTelefono(String telefono) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -126,6 +182,13 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         }
     }
 
+    /**
+     * Elimina un cliente de la base de datos mediante su ID.
+     *
+     * * @param idCliente ID del cliente a eliminar.
+     * @throws PersistenciaException Si el cliente no existe o tiene
+     * restricciones de integridad.
+     */
     @Override
     public void eliminarCliente(Long idCliente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -154,6 +217,13 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         }
     }
 
+    /**
+     * Busca el registro predefinido como "Cliente general".
+     *
+     * * @return El objeto {@link ClienteFrecuente} general o null si no está
+     * registrado.
+     * @throws PersistenciaException Si ocurre un error en la consulta.
+     */
     @Override
     public ClienteFrecuente buscarClienteFrecuenteGeneral() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -177,6 +247,14 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         }
     }
 
+    /**
+     * Verifica si un cliente específico tiene comandas asociadas.
+     *
+     * * @param idCliente ID del cliente a consultar.
+     * @return true si tiene al menos una comanda, false de lo contrario.
+     * @throws PersistenciaException Si ocurre un error al consultar las
+     * comandas.
+     */
     @Override
     public boolean tieneComandas(Long idCliente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();

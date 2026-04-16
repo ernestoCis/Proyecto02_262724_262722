@@ -20,16 +20,27 @@ import java.time.LocalTime;
 import java.util.List;
 
 /**
+ * Clase de Objeto de Acceso a Datos (DAO) para la entidad Comanda. Centraliza
+ * las operaciones de persistencia para las órdenes del restaurante, incluyendo
+ * cálculos estadísticos de clientes, gestión de estados y filtros temporales.
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ComandaDAO implements IComandaDAO {
 
     private static ComandaDAO instance;
 
+    /**
+     * Constructor privado para implementar el patrón Singleton.
+     */
     private ComandaDAO() {
     }
 
+    /**
+     * Obtiene la instancia única de ComandaDAO.
+     *
+     * * @return La instancia global de esta clase.
+     */
     public static ComandaDAO getInstance() {
         if (instance == null) {
             instance = new ComandaDAO();
@@ -37,6 +48,13 @@ public class ComandaDAO implements IComandaDAO {
         return instance;
     }
 
+    /**
+     * Cuenta el número total de comandas asociadas a un cliente específico.
+     *
+     * * @param idCliente Identificador único del cliente.
+     * @return El número total de visitas (comandas) realizadas.
+     * @throws PersistenciaException Si ocurre un error en la consulta.
+     */
     @Override
     public int contarVisitas(Long idCliente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -50,6 +68,13 @@ public class ComandaDAO implements IComandaDAO {
         return count.intValue();
     }
 
+    /**
+     * Calcula la suma total de los montos de todas las comandas de un cliente.
+     *
+     * * @param idCliente Identificador único del cliente.
+     * @return El monto total gastado por el cliente.
+     * @throws PersistenciaException Si ocurre un error en la base de datos.
+     */
     @Override
     public double totalGastado(Long idCliente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -63,6 +88,13 @@ public class ComandaDAO implements IComandaDAO {
         return total;
     }
 
+    /**
+     * Registra una nueva comanda en el sistema.
+     *
+     * * @param comanda El objeto {@link Comanda} a persistir.
+     * @return La comanda registrada con su ID generado.
+     * @throws PersistenciaException Si la transacción falla.
+     */
     @Override
     public Comanda registrarComanda(Comanda comanda) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -81,6 +113,16 @@ public class ComandaDAO implements IComandaDAO {
         }
     }
 
+    /**
+     * Actualiza una comanda existente, gestionando la actualización de sus
+     * detalles de pedido y asegurando la integridad de los productos y recetas
+     * asociados.
+     *
+     * * @param comandaParam Objeto con los datos actualizados.
+     * @return La comanda actualizada y precargada.
+     * @throws PersistenciaException Si la comanda no existe o hay error en la
+     * actualización.
+     */
     @Override
     public Comanda actualizarComanda(Comanda comandaParam) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -131,6 +173,13 @@ public class ComandaDAO implements IComandaDAO {
         }
     }
 
+    /**
+     * Elimina físicamente una comanda de la base de datos.
+     *
+     * * @param comanda El objeto comanda a eliminar.
+     * @return El objeto eliminado.
+     * @throws PersistenciaException Si ocurre un error durante el borrado.
+     */
     @Override
     public Comanda eliminarComanda(Comanda comanda) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -152,6 +201,14 @@ public class ComandaDAO implements IComandaDAO {
         }
     }
 
+    /**
+     * Busca una comanda por su ID e incluye la carga de sus detalles de pedido
+     * mediante un FETCH JOIN.
+     *
+     * * @param idParam Identificador de la comanda.
+     * @return La {@link Comanda} encontrada o null si no existe.
+     * @throws PersistenciaException Si ocurre un error en la consulta.
+     */
     @Override
     public Comanda buscarComandaPorId(Long idParam) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -170,6 +227,11 @@ public class ComandaDAO implements IComandaDAO {
         }
     }
 
+    /**
+     * Obtiene el identificador más alto registrado en la tabla de comandas.
+     *
+     * * @return El último ID registrado o 0L si la tabla está vacía.
+     */
     @Override
     public Long obtenerUltimoId() {
         EntityManager em = ConexionBD.crearConexion();
@@ -184,6 +246,15 @@ public class ComandaDAO implements IComandaDAO {
         }
     }
 
+    /**
+     * Localiza la comanda que se encuentra actualmente en estado ABIERTA para
+     * una mesa específica.
+     *
+     * * @param numeroMesa Número de la mesa a consultar.
+     * @return La {@link Comanda} abierta encontrada.
+     * @throws PersistenciaException Si ocurre un error o no hay comandas
+     * abiertas para esa mesa.
+     */
     @Override
     public Comanda buscarComandaAbiertaPorMesa(Integer numeroMesa) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
@@ -216,6 +287,13 @@ public class ComandaDAO implements IComandaDAO {
         }
     }
 
+    /**
+     * Recupera la fecha y hora de la última comanda registrada por un cliente.
+     *
+     * * @param idCliente ID del cliente.
+     * @return Objeto {@link LocalDateTime} de la última visita.
+     * @throws PersistenciaException Si ocurre un error en la consulta.
+     */
     public LocalDateTime obtenerUltimaComanda(Long idCliente) throws PersistenciaException {
 
         EntityManager em = ConexionBD.crearConexion();
@@ -234,6 +312,16 @@ public class ComandaDAO implements IComandaDAO {
         }
     }
 
+    /**
+     * Consulta todas las comandas registradas dentro de un periodo de tiempo
+     * específico.
+     *
+     * * @param inicio Fecha inicial del rango.
+     * @param fin Fecha final del rango.
+     * @return Lista de comandas encontradas en el rango, ordenadas por fecha
+     * descendente.
+     * @throws PersistenciaException Si ocurre un error en la base de datos.
+     */
     @Override
     public List<Comanda> consultarPorRangoFechas(LocalDate inicio, LocalDate fin) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
