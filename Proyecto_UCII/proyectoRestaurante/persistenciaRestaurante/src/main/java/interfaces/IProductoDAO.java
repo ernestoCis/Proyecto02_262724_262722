@@ -38,4 +38,6 @@ public interface IProductoDAO {
     public boolean estaEnComandaAbierta(Long idProducto) throws PersistenciaException;
     
     public List<Producto> consultarProductosConFiltro(String filtro) throws PersistenciaException;
+    
+    public List<Producto> consultarProductosDisponiblesConFiltro(String filtro) throws PersistenciaException;
 }

@@ -296,10 +296,9 @@ public class ProductoDAO implements IProductoDAO {
                     .setParameter("id", idProducto)
                     .getSingleResult();
 
-            
-            DisponibilidadProducto nuevoEstado = (faltantes > 0) 
-                ? DisponibilidadProducto.NO_DISPONIBLE 
-                : DisponibilidadProducto.DISPONIBLE;
+            DisponibilidadProducto nuevoEstado = (faltantes > 0)
+                    ? DisponibilidadProducto.NO_DISPONIBLE
+                    : DisponibilidadProducto.DISPONIBLE;
 
             em.createQuery("UPDATE Producto p SET p.disponibilidad = :estado WHERE p.idProducto = :id")
                     .setParameter("estado", nuevoEstado)
@@ -350,5 +349,43 @@ public class ProductoDAO implements IProductoDAO {
         } finally {
             em.close();
         }
-}
+    }
+
+    @Override
+    public List<Producto> consultarProductosDisponiblesConFiltro(String filtro) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Producto> cq = cb.createQuery(Producto.class);
+            Root<Producto> producto = cq.from(Producto.class);
+
+            producto.fetch("recetas", jakarta.persistence.criteria.JoinType.LEFT)
+                    .fetch("ingrediente", jakarta.persistence.criteria.JoinType.LEFT);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            // --- CAMBIO AQUÍ: Comparamos directamente con el Enum ---
+            Predicate soloDisponibles = cb.equal(producto.get("disponibilidad"), DisponibilidadProducto.DISPONIBLE);
+            predicates.add(soloDisponibles);
+            // --------------------------------------------------------
+
+            if (filtro != null && !filtro.trim().isEmpty()) {
+                String pattern = "%" + filtro.toLowerCase() + "%";
+
+                Predicate nombreLike = cb.like(cb.lower(producto.get("nombre")), pattern);
+                Predicate tipoLike = cb.like(cb.lower(producto.get("tipo").as(String.class)), pattern);
+
+                predicates.add(cb.or(nombreLike, tipoLike));
+            }
+
+            cq.select(producto).distinct(true).where(predicates.toArray(new Predicate[0]));
+
+            return em.createQuery(cq).getResultList();
+
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al consultar productos disponibles con filtro", e);
+        } finally {
+            em.close();
+        }
+    }
 }

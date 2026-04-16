@@ -235,4 +235,13 @@ public class ProductoBO implements IProductoBO {
             throw new NegocioException("Error al cargar los productos", e);
         }
     }
+
+    @Override
+    public List<ProductoDTO> consultarProductosDisponiblesConFiltro(String filtro) throws NegocioException {
+        try {
+            return ProductoAdapter.listaEntidadADTO(productoDAO.consultarProductosDisponiblesConFiltro(filtro));
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al cargar los productos", e);
+        }
+    }
 }

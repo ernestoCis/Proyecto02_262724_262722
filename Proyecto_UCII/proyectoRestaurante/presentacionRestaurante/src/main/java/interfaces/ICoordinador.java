@@ -73,6 +73,8 @@ public interface ICoordinador {
 
     // PRODUCTOS
     void mostrarProductosAdmin();
+    
+    void mostrarProductosSelec();
 
     void mostrarRegistrarProducto();
 
@@ -83,8 +85,6 @@ public interface ICoordinador {
     void mostrarEditarProducto();
 
     void actualizarProducto(ProductoDTO productoDTO);
-    
-    void actualizarTablaProductos();
     
     void eliminarProducto();
 
@@ -160,5 +160,7 @@ public interface ICoordinador {
     
     ClienteFrecuenteDTO registrarClienteGeneral();
     
-     List<ProductoDTO> consultarProductosFiltro(String filtro);
+    List<ProductoDTO> consultarProductosFiltro(String filtro);
+    
+    List<ProductoDTO> consultarProductosDisponiblesFiltro(String filtro);
 }

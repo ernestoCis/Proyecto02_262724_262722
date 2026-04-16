@@ -28,4 +28,6 @@ public interface IProductoBO {
     List<ProductoDTO> consultarProductosDisponibles() throws NegocioException;
     
     public List<ProductoDTO> consultarProductosConFiltro(String filtro) throws NegocioException;
+    
+    public List<ProductoDTO> consultarProductosDisponiblesConFiltro(String filtro) throws NegocioException;
 }

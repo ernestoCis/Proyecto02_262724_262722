@@ -574,7 +574,6 @@ public class Coordinador implements ICoordinador {
 
             JOptionPane.showMessageDialog(null, "Producto registrado correctamente");
 
-            actualizarTablaProductos();
 
             if (frmRegistrarProducto != null) {
                 frmRegistrarProducto.dispose();
@@ -629,7 +628,6 @@ public class Coordinador implements ICoordinador {
 
             JOptionPane.showMessageDialog(null, "Producto actualizado correctamente");
 
-            actualizarTablaProductos();
 
             if (frmEditarProducto != null) {
                 frmEditarProducto.dispose();
@@ -646,27 +644,12 @@ public class Coordinador implements ICoordinador {
     }
 
     @Override
-    public void actualizarTablaProductos() {
-//        try {
-//            List<ProductoDTO> productos = productoBO.consultarTodos();
-//
-//            if (frmProductos != null) {
-//                frmProductos.actualizarTablaProductos(productos);
-//            }
-//
-//        } catch (NegocioException ex) {
-//            JOptionPane.showMessageDialog(null, ex.getMessage());
-//        }
-    }
-
-    @Override
     public void eliminarProducto() {
         try {
             productoBO.eliminarProducto(productoSeleccionado.getIdProducto());
 
             JOptionPane.showMessageDialog(null, "Producto eliminado correctamente o desactivado si estaba en uso");
 
-            actualizarTablaProductos();
             productoSeleccionado = null;
         } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -806,7 +789,6 @@ public class Coordinador implements ICoordinador {
 
             JOptionPane.showMessageDialog(null, "Disponibilidad actualizada correctamente");
 
-            actualizarTablaProductos();
 
         } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
@@ -1099,6 +1081,23 @@ public class Coordinador implements ICoordinador {
             JOptionPane.showMessageDialog(null, "Error al registrar al cliente general");
             return null;
         }
+    }
+
+    @Override
+    public List<ProductoDTO> consultarProductosDisponiblesFiltro(String filtro) {
+        try {
+            return productoBO.consultarProductosDisponiblesConFiltro(filtro);
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            return null;
+        }
+    }
+
+    @Override
+    public void mostrarProductosSelec() {
+        frmProductos = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
+        frmProductos.setVisible(true);
+        frmProductos.toFront();
     }
 
 }
