@@ -13,6 +13,7 @@ import enums.TipoProducto;
 import enums.UnidadMedida;
 import excepciones.PersistenciaException;
 import jakarta.persistence.EntityManager;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import org.junit.jupiter.api.*;
@@ -199,6 +200,101 @@ public class ProductoDAOTest {
 
         assertTrue(disponibles.stream().anyMatch(p -> p.getNombre().equals("P1")));
         assertTrue(disponibles.stream().noneMatch(p -> p.getNombre().equals("P2")));
+    }
+
+    @Test
+    public void test11_ObtenerTodosLosProductos() throws PersistenciaException {
+        Producto p1 = new Producto("Torta Ahogada", 65.0, TipoProducto.PLATILLO, "", DisponibilidadProducto.DISPONIBLE, "");
+        productoDAO.guardar(p1);
+        idsProductos.add(p1.getIdProducto());
+
+        List<Producto> todos = productoDAO.obtenerProductos();
+
+        assertFalse(todos.isEmpty(), "La lista de productos no debería estar vacía");
+        assertTrue(todos.stream().anyMatch(p -> p.getNombre().equals("Torta Ahogada")));
+    }
+
+    @Test
+    public void test12_ConsultarProductosConFiltro() throws PersistenciaException {
+        Producto p1 = new Producto("Taco de Pastor", 25.0, TipoProducto.PLATILLO, "", DisponibilidadProducto.DISPONIBLE, "");
+        productoDAO.guardar(p1);
+        idsProductos.add(p1.getIdProducto());
+
+        List<Producto> filtrados = productoDAO.consultarProductosConFiltro("pastor");
+
+        assertFalse(filtrados.isEmpty());
+        assertTrue(filtrados.get(0).getNombre().toLowerCase().contains("pastor"));
+    }
+
+    @Test
+    public void test13_ConsultarProductosDisponiblesConFiltro() throws PersistenciaException {
+        Producto p1 = new Producto("Jugo Verde", 35.0, TipoProducto.BEBIDA, "", DisponibilidadProducto.DISPONIBLE, "");
+        Producto p2 = new Producto("Jugo de Naranja", 35.0, TipoProducto.BEBIDA, "", DisponibilidadProducto.NO_DISPONIBLE, "");
+
+        productoDAO.guardar(p1);
+        productoDAO.guardar(p2);
+        idsProductos.add(p1.getIdProducto());
+        idsProductos.add(p2.getIdProducto());
+
+        List<Producto> filtrados = productoDAO.consultarProductosDisponiblesConFiltro("jugo");
+
+        assertTrue(filtrados.stream().anyMatch(p -> p.getNombre().equals("Jugo Verde")));
+        assertTrue(filtrados.stream().noneMatch(p -> p.getNombre().equals("Jugo de Naranja")));
+    }
+
+    @Test
+    public void test14_EstaEnUso() throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        em.getTransaction().begin();
+
+        Producto p = new Producto("Nachos", 50.0, TipoProducto.PLATILLO, "", DisponibilidadProducto.DISPONIBLE, "");
+        em.persist(p);
+        idsProductos.add(p.getIdProducto());
+
+        entidades.Comanda comanda = new entidades.Comanda();
+        comanda.setEstado(enums.EstadoComanda.CANCELADA);
+        comanda.setFecha(LocalDateTime.now());
+        comanda.setFolio("OB-" + System.currentTimeMillis());
+
+        entidades.ClienteFrecuente clienteDummy = new entidades.ClienteFrecuente();
+        clienteDummy.setNombres("Prueba");
+        clienteDummy.setTelefono("12345");
+        em.persist(clienteDummy);
+        comanda.setCliente(clienteDummy);
+        comanda.setFecha(LocalDateTime.now());
+        comanda.setFolio("OB-" + System.currentTimeMillis());
+
+        entidades.Mesero mesero = new entidades.Mesero();
+        mesero.setUsuario("" + System.currentTimeMillis());
+        em.persist(mesero);
+        comanda.setMesero(mesero);
+        comanda.setTotal(100.0);
+
+        em.persist(comanda);
+
+        entidades.DetallePedido detalle = new entidades.DetallePedido();
+        detalle.setProducto(p);
+        detalle.setComanda(comanda);
+        detalle.setCantidad(1);
+        detalle.setPrecioUnitario(10.0);
+        detalle.setSubtotal(20.0);
+        em.persist(detalle);
+
+        em.getTransaction().commit();
+        em.close();
+
+        boolean enUso = productoDAO.estaEnUso(p.getIdProducto());
+        assertTrue(enUso);
+
+        em = ConexionBD.crearConexion();
+        em.getTransaction().begin();
+        
+        em.remove(em.find(entidades.DetallePedido.class, detalle.getIdDetallePedido()));
+        em.remove(em.find(entidades.Comanda.class, comanda.getIdComanda()));
+        em.remove(em.find(entidades.ClienteFrecuente.class, clienteDummy.getIdCliente()));
+        em.remove(em.find(entidades.Mesero.class, mesero.getIdEmpleado()));
+        em.getTransaction().commit();
+        em.close();
     }
 
 }

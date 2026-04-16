@@ -51,7 +51,7 @@ public class FrmEditarProductosComanda extends JFrame {
     }
 
     private void configurarVentana() {
-        setTitle("Restaurante - Editar Comanda");
+        setTitle("Restaurante");
         setSize(1000, 750); 
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -203,7 +203,7 @@ public class FrmEditarProductosComanda extends JFrame {
         JPanel panelBusqueda = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBusqueda.setOpaque(false);
 
-        btnBuscarProducto = new JButton("🔍 Buscar y Agregar Producto");
+        btnBuscarProducto = new JButton("+ Añadir Producto");
         btnBuscarProducto.setFont(new Font("SansSerif", Font.BOLD, 16));
         btnBuscarProducto.setPreferredSize(new Dimension(300, 45));
         btnBuscarProducto.setBackground(new Color(177, 201, 182));
