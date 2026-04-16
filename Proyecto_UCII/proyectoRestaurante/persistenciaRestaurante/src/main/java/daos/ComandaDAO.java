@@ -107,6 +107,7 @@ public class ComandaDAO implements IComandaDAO {
                 }
             }
 
+            comandaExistente.setCliente(comandaParam.getCliente());
             comandaExistente.setEstado(comandaParam.getEstado());
             comandaExistente.setTotal(comandaParam.getTotal());
 

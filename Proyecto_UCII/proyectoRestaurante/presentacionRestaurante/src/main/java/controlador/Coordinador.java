@@ -277,9 +277,15 @@ public class Coordinador implements ICoordinador {
     public void setClienteSeleccionado(ClienteFrecuenteDTO cliente) {
         this.clienteSeleccionado = cliente;
 
+        // Para resumen normal
         if (this.frmResumenPedido != null) {
             frmResumenPedido.setVisible(true);
             frmResumenPedido.recibirClienteSeleccionado(cliente);
+        }
+
+        if (this.frmResumenPedidoEditado != null) {
+            frmResumenPedidoEditado.setVisible(true);
+            frmResumenPedidoEditado.recibirClienteSeleccionado(cliente);
         }
     }
 
@@ -1141,7 +1147,7 @@ public class Coordinador implements ICoordinador {
 
     public void abrirBuscadorParaComanda(FrmSeleccionProductos frmActual) {
         this.frmComandaActual = frmActual;
-        frmActual.setVisible(false); 
+        frmActual.setVisible(false);
 
         FrmProductos buscador = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
         buscador.setVisible(true);
@@ -1161,7 +1167,7 @@ public class Coordinador implements ICoordinador {
         FrmProductos frmBuscador = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
         frmBuscador.setVisible(true);
     }
-    
+
     public void volverDeBusquedaProductos() {
         if (origenActualBusquedaProductos == OrigenBusquedaProductos.EDICION_COMANDA) {
             if (frmEditarProductosComanda != null) {
@@ -1173,7 +1179,7 @@ public class Coordinador implements ICoordinador {
             }
         }
     }
-    
+
     @Override
     public void mostrarProductosSelec() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody

@@ -220,8 +220,6 @@ public class FrmResumenPedidoEditado extends JFrame {
         scrollTabla.setVerticalScrollBarPolicy(JScrollPane.VERTICAL_SCROLLBAR_AS_NEEDED);
         scrollTabla.setHorizontalScrollBarPolicy(JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 
-        
-
         JPanel panelTotal = new JPanel(new FlowLayout(FlowLayout.CENTER, 0, 10));
         panelTotal.setOpaque(false);
 
@@ -336,7 +334,7 @@ public class FrmResumenPedidoEditado extends JFrame {
         });
 
         btnBuscarCliente.addActionListener(e -> {
-            accionBuscarCliente();
+            coordinador.abrirBuscadorClientesParaComanda(this);
         });
 
         txtBuscarCliente.addActionListener(e -> {
@@ -457,4 +455,10 @@ public class FrmResumenPedidoEditado extends JFrame {
             }
         });
     }
+
+    public void recibirClienteSeleccionado(ClienteFrecuenteDTO cliente) {
+        this.clienteSeleccionado = cliente;
+        actualizarClienteSeleccionado();
+    }
+
 }
