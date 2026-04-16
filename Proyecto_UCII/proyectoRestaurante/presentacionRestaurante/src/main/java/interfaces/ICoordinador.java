@@ -24,6 +24,8 @@ public interface ICoordinador {
 
     void mostrarAcciones();
 
+    List<ClienteFrecuenteDTO> buscarClientes(String filtro);
+    
     void mostrarClientes();
 
     void mostrarRegistrarCliente();
@@ -49,7 +51,7 @@ public interface ICoordinador {
     MeseroDTO getMeseroActual();
 
     MeseroDTO buscarMeseroPorUsuario(String usuario);
-    
+
     void setMeseroActual(MeseroDTO mesero);
 
     // INGREDIENTES
@@ -68,12 +70,14 @@ public interface ICoordinador {
     void registrarIngrediente(IngredienteDTO ingredienteDTO);
 
     void actualizarTablaIngredientes();
-    
+
     void eliminarIngrediente();
+
+    List<IngredienteDTO> buscarIngredientes(String filtro);
 
     // PRODUCTOS
     void mostrarProductosAdmin();
-    
+
     void mostrarProductosSelec();
 
     void mostrarRegistrarProducto();
@@ -85,7 +89,7 @@ public interface ICoordinador {
     void mostrarEditarProducto();
 
     void actualizarProducto(ProductoDTO productoDTO);
-    
+
     void eliminarProducto();
 
     void setProductoSeleccionado(ProductoDTO producto);
@@ -129,38 +133,40 @@ public interface ICoordinador {
     void limpiarSesionComanda();
 
     void mostrarEstadosComanda();
-    
+
     ComandaDTO buscarComandaAbiertaPorMesa(Integer numeroMesa);
-    
+
     ComandaDTO actualizarComanda(ComandaDTO comanda);
-    
+
     void mostrarEditarProductosComanda();
-    
+
     MesaDTO actualizarMesa(MesaDTO mesa);
-    
+
     // REPORTES
     void mostrarOpcionesReporte();
-    
+
     void mostrarResumenPedidoEditado();
-    
+
     void mostrarReporteClientesFrecuentes();
-        
+
     JasperPrint generarReporteClientes(String nombre, Integer visitas) throws Exception;
+
     void mostrarReportesComandas();
-    
+
     List<ReporteComandaDTO> obetnerComandasPorRangoFechas(LocalDate inicio, LocalDate fin);
-    
+
     JasperPrint generarJasperComandas(List<ReporteComandaDTO> lista, LocalDate inicio, LocalDate fin) throws Exception;
-    
+
     ClienteFrecuenteDTO getClienteGeneral();
-    
+
     boolean verificarStock(ProductoDTO producto, int proximaCantidad);
-    
+
     List<ProductoDTO> obtenerProductosDisponibles();
-    
+
     ClienteFrecuenteDTO registrarClienteGeneral();
-    
+
     List<ProductoDTO> consultarProductosFiltro(String filtro);
-    
+
     List<ProductoDTO> consultarProductosDisponiblesFiltro(String filtro);
+
 }

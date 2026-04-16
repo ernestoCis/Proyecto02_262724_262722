@@ -161,6 +161,16 @@ public class Coordinador implements ICoordinador {
 
     //----- CLIENTES -----
     @Override
+    public List<ClienteFrecuenteDTO> buscarClientes(String filtro) {
+        try {
+            return clienteFrecuenteBO.consultarClientesPorFiltro(filtro);
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
+    @Override
     public void mostrarClientes() {
         try {
             this.listaClientesActual = clienteFrecuenteBO.consultarTodos();
@@ -531,6 +541,16 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    @Override
+    public List<IngredienteDTO> buscarIngredientes(String filtro) {
+        try {
+            return ingredienteBO.buscarPorFiltro(filtro);
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     // PRODUCTOS 
     @Override
     public void mostrarProductosAdmin() {
@@ -538,11 +558,10 @@ public class Coordinador implements ICoordinador {
         frmProductos.setVisible(true);
         frmProductos.toFront();
 
-        
     }
-    
+
     @Override
-    public List<ProductoDTO> consultarProductosFiltro(String filtro){
+    public List<ProductoDTO> consultarProductosFiltro(String filtro) {
         try {
             return productoBO.consultarProductosConFiltro(filtro);
         } catch (NegocioException e) {
@@ -574,14 +593,13 @@ public class Coordinador implements ICoordinador {
 
             JOptionPane.showMessageDialog(null, "Producto registrado correctamente");
 
-
             if (frmRegistrarProducto != null) {
                 frmRegistrarProducto.dispose();
                 frmRegistrarProducto = null;
             }
-            
+
             frmProductos = new FrmProductos(this, FrmProductos.Modo.ADMINISTRAR);
-            
+
             frmProductos.setVisible(true);
 
         } catch (NegocioException ex) {
@@ -628,14 +646,13 @@ public class Coordinador implements ICoordinador {
 
             JOptionPane.showMessageDialog(null, "Producto actualizado correctamente");
 
-
             if (frmEditarProducto != null) {
                 frmEditarProducto.dispose();
                 frmEditarProducto = null;
             }
-            
+
             frmProductos = new FrmProductos(this, FrmProductos.Modo.ADMINISTRAR);
-            
+
             frmProductos.setVisible(true);
 
         } catch (NegocioException ex) {
@@ -788,7 +805,6 @@ public class Coordinador implements ICoordinador {
             productoBO.cambiarDisponibilidad(idProducto, estado);
 
             JOptionPane.showMessageDialog(null, "Disponibilidad actualizada correctamente");
-
 
         } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());

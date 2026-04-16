@@ -247,7 +247,7 @@ public class FrmIngredientes extends JFrame {
                             if (listener != null) {
                                 List<IngredienteDTO> lista = new ArrayList<>();
                                 lista.add(ingredienteSeleccionado);
-                                
+
                                 boolean agregado = listener.onIngredientesSeleccionados(lista);
 
                                 if (agregado) {
@@ -298,23 +298,14 @@ public class FrmIngredientes extends JFrame {
     }
 
     private void accionBuscar() {
-        String texto = txtBuscar.getText().trim().toLowerCase();
+        String texto = txtBuscar.getText().trim();
 
         if (texto.isEmpty()) {
-            cargarDatosTabla(listaOriginal);
+            cargarDatosTabla(coordinador.obtenerIngredientes());
             return;
         }
 
-        List<IngredienteDTO> filtrados = new ArrayList<>();
-
-        for (IngredienteDTO ingrediente : listaOriginal) {
-            String nombre = ingrediente.getNombre() != null ? ingrediente.getNombre().toLowerCase() : "";
-
-            if (nombre.contains(texto)) {
-                filtrados.add(ingrediente);
-            }
-        }
-
+        List<IngredienteDTO> filtrados = coordinador.buscarIngredientes(texto);
         cargarDatosTabla(filtrados);
     }
 

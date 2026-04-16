@@ -49,10 +49,11 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
         try {
             return em.createQuery(
                     "SELECT c FROM ClienteFrecuente c "
-                    + "WHERE c.nombres LIKE :filtro "
-                    + "OR c.telefono LIKE :filtro "
-                    + "OR c.email LIKE :filtro", ClienteFrecuente.class)
-                    .setParameter("filtro", "%" + filtro + "%")
+                    + "WHERE LOWER(c.nombres) LIKE :filtro "
+                    + "OR LOWER(c.telefono) LIKE :filtro "
+                    + "OR LOWER(c.email) LIKE :filtro",
+                    ClienteFrecuente.class)
+                    .setParameter("filtro", "%" + filtro.toLowerCase() + "%")
                     .getResultList();
         } finally {
             em.close();
@@ -67,7 +68,7 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
             em.persist(cliente);
             em.getTransaction().commit();
             return cliente;
-            
+
         } finally {
             em.close();
         }
@@ -156,22 +157,22 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
     @Override
     public ClienteFrecuente buscarClienteFrecuenteGeneral() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
-        try{
+        try {
             String comandoJPQL = "SELECT c FROM ClienteFrecuente c WHERE nombres = :nom";
             TypedQuery<ClienteFrecuente> query = em.createQuery(comandoJPQL, ClienteFrecuente.class);
             query.setParameter("nom", "Cliente general");
-            
+
             List<ClienteFrecuente> clientes = query.getResultList();
-            
+
             if (clientes != null && !clientes.isEmpty()) {
                 return clientes.get(0);
             }
 
             return null;
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
             throw new PersistenciaException("Error al consultar al cliente general", e);
-        }finally{
+        } finally {
             em.close();
         }
     }
@@ -179,20 +180,20 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
     @Override
     public boolean tieneComandas(Long idCliente) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
-        try{
+        try {
             String comandoJPQL = "SELECT c FROM Comanda c WHERE c.cliente.idCliente = :cliente";
             TypedQuery<ClienteFrecuente> query = em.createQuery(comandoJPQL, ClienteFrecuente.class);
             query.setParameter("cliente", idCliente);
-            
-            if(query.getResultList().isEmpty() || query.getResultList() == null){
+
+            if (query.getResultList().isEmpty() || query.getResultList() == null) {
                 return false;
             }
-            
+
             return true;
-            
-        }catch(Exception e){
+
+        } catch (Exception e) {
             throw new PersistenciaException("Error al consultar las comandas de los clientes", e);
-        }finally{
+        } finally {
             em.close();
         }
     }
