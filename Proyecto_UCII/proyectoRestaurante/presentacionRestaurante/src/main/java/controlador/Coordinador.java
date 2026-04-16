@@ -1172,6 +1172,8 @@ public class Coordinador implements ICoordinador {
                 frmSeleccionProductos.setVisible(true);
             }
         }
+    }
+    
     @Override
     public void mostrarProductosSelec() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
