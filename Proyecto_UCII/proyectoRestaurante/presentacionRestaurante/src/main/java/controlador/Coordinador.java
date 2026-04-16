@@ -79,6 +79,7 @@ public class Coordinador implements ICoordinador {
     // SELECCION DE PRODUCTOS
     private FrmSeleccionProductos frmSeleccionProductos;
     private FrmResumenPedido frmResumenPedido;
+    private FrmResumenPedidoEditado frmResumenPedidoEditado;
 
     private List<DetallePedidoDTO> carrito;
 
@@ -127,7 +128,6 @@ public class Coordinador implements ICoordinador {
     FrmEstadosComanda frmEstadosComanda;
 
     FrmEditarProductosComanda frmEditarProductosComanda;
-    FrmResumenPedidoEditado frmResumenPedidoEditado;
 
     private FrmSeleccionProductos frmComandaActual;
 
@@ -267,6 +267,11 @@ public class Coordinador implements ICoordinador {
     @Override
     public void setClienteSeleccionado(ClienteFrecuenteDTO cliente) {
         this.clienteSeleccionado = cliente;
+
+        if (this.frmResumenPedido != null) {
+            frmResumenPedido.setVisible(true);
+            frmResumenPedido.recibirClienteSeleccionado(cliente);
+        }
     }
 
     @Override
@@ -1130,6 +1135,41 @@ public class Coordinador implements ICoordinador {
         // Abrimos FrmProductos en modo SELECCIONAR
         FrmProductos buscador = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
         buscador.setVisible(true);
+    }
+
+    @Override
+    public void mostrarProductosSelec() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void abrirBuscadorClientesParaComanda(FrmResumenPedido frmActual) {
+        this.frmResumenPedido = frmActual;
+        frmActual.setVisible(false);
+
+        try {
+            this.listaClientesActual = clienteFrecuenteBO.consultarTodos();
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+        frmClientes = new FrmClientes(this, true); // modo selección
+        frmClientes.setVisible(true);
+    }
+    
+    @Override
+    public void abrirBuscadorClientesParaComanda(FrmResumenPedidoEditado frmActual) {
+        this.frmResumenPedidoEditado = frmActual;
+        frmActual.setVisible(false);
+
+        try {
+            this.listaClientesActual = clienteFrecuenteBO.consultarTodos();
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+        frmClientes = new FrmClientes(this, true); // modo selección
+        frmClientes.setVisible(true);
     }
 
 }

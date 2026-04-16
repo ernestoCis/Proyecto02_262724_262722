@@ -23,23 +23,24 @@ public class ClienteFrecuenteAdapter {
         ClienteFrecuenteDTO dto = new ClienteFrecuenteDTO();
 
         dto.setIdCliente(c.getIdCliente());
-        if(c.getApellidoPaterno() == null){
-            c.setApellidoPaterno("");
-        }
-        if(c.getApellidoMaterno() == null){
-            c.setApellidoMaterno("");
-        }
-        
         dto.setNombres(c.getNombres());
-        dto.setApellidoPaterno(c.getApellidoPaterno());
-        if(c.getApellidoMaterno() != null || !c.getApellidoMaterno().trim().isEmpty()){
-            dto.setApellidoMaterno(c.getApellidoMaterno());
-        }
-        dto.setTelefono(c.getTelefono());
-        if(c.getEmail() != null || !c.getEmail().trim().isEmpty()){
-            dto.setEmail(c.getEmail());
-        }
-        
+
+        dto.setApellidoPaterno(
+                c.getApellidoPaterno() != null ? c.getApellidoPaterno().trim() : ""
+        );
+
+        dto.setApellidoMaterno(
+                c.getApellidoMaterno() != null ? c.getApellidoMaterno().trim() : ""
+        );
+
+        dto.setTelefono(
+                c.getTelefono() != null ? c.getTelefono().trim() : ""
+        );
+
+        dto.setEmail(
+                c.getEmail() != null ? c.getEmail().trim() : ""
+        );
+
         return dto;
     }
 
@@ -61,10 +62,10 @@ public class ClienteFrecuenteAdapter {
 
         ClienteFrecuente cliente = new ClienteFrecuente();
         cliente.setIdCliente(dto.getIdCliente());
-        
+
         cliente.setNombres(dto.getNombres());
         cliente.setApellidoPaterno(dto.getApellidoPaterno());
-        if(dto.getApellidoMaterno() != null || !dto.getApellidoMaterno().trim().isEmpty()){
+        if (dto.getApellidoMaterno() != null && !dto.getApellidoMaterno().trim().isEmpty()) {
             cliente.setApellidoMaterno(dto.getApellidoMaterno());
         }
 
@@ -73,18 +74,17 @@ public class ClienteFrecuenteAdapter {
 
         return cliente;
     }
-    
+
     public static ClienteFrecuente dtoAEntidadNuevo(ClienteFrecuenteDTO dto) {
         if (dto == null) {
             return null;
         }
 
         ClienteFrecuente cliente = new ClienteFrecuente();
-        
 
         cliente.setNombres(dto.getNombres());
         cliente.setApellidoPaterno(dto.getApellidoPaterno());
-        if(dto.getApellidoMaterno() != null || !dto.getApellidoMaterno().trim().isEmpty()){
+        if (dto.getApellidoMaterno() != null && !dto.getApellidoMaterno().trim().isEmpty()) {
             cliente.setApellidoMaterno(dto.getApellidoMaterno());
         }
 

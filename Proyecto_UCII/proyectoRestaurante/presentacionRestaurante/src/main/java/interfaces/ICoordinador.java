@@ -12,6 +12,8 @@ import dtos.ReporteComandaDTO;
 import java.time.LocalDate;
 import java.util.List;
 import net.sf.jasperreports.engine.JasperPrint;
+import pantallas.FrmResumenPedido;
+import pantallas.FrmResumenPedidoEditado;
 //import net.sf.jasperreports.engine.JasperPrint;
 
 /**
@@ -25,7 +27,7 @@ public interface ICoordinador {
     void mostrarAcciones();
 
     List<ClienteFrecuenteDTO> buscarClientes(String filtro);
-    
+
     void mostrarClientes();
 
     void mostrarRegistrarCliente();
@@ -79,9 +81,8 @@ public interface ICoordinador {
     void mostrarProductosAdmin();
 
     void mostrarProductosSelec();
-    
-//    void mostrarProductosSelec();
 
+//    void mostrarProductosSelec();
     void mostrarRegistrarProducto();
 
     void registrarProducto(ProductoDTO productoDTO);
@@ -170,5 +171,9 @@ public interface ICoordinador {
     List<ProductoDTO> consultarProductosFiltro(String filtro);
 
     List<ProductoDTO> consultarProductosDisponiblesFiltro(String filtro);
+
+    void abrirBuscadorClientesParaComanda(FrmResumenPedido frmActual);
+
+    void abrirBuscadorClientesParaComanda(FrmResumenPedidoEditado frmActual);
 
 }

@@ -52,7 +52,7 @@ public class FrmResumenPedido extends JFrame {
     private List<DetallePedidoDTO> listaDetalles;
     private List<ClienteFrecuenteDTO> listaClientes;
     private ClienteFrecuenteDTO clienteSeleccionado;
-    
+
     private Double total = 0.0;
 
     public FrmResumenPedido(Coordinador coordinador) {
@@ -238,7 +238,7 @@ public class FrmResumenPedido extends JFrame {
                 BorderFactory.createEmptyBorder(5, 12, 5, 12)
         ));
 
-        ponerPlaceholder();
+       // ponerPlaceholder();
 
         btnBuscarCliente = new JButton("Buscar");
         btnBuscarCliente.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -248,7 +248,7 @@ public class FrmResumenPedido extends JFrame {
         btnBuscarCliente.setPreferredSize(new Dimension(90, 35));
 
         panelBuscarCliente.add(lblAsociar);
-        panelBuscarCliente.add(txtBuscarCliente);
+        //panelBuscarCliente.add(txtBuscarCliente);
         panelBuscarCliente.add(btnBuscarCliente);
 
         JPanel panelClienteSeleccionado = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));
@@ -333,18 +333,13 @@ public class FrmResumenPedido extends JFrame {
             comanda.setCliente(coordinador.getClienteSeleccionado());
             comanda.setTotal(total);
             coordinador.setComanda(comanda);
-            
+
             coordinador.mostrarConfirmacionComanda();
             dispose();
         });
 
         btnBuscarCliente.addActionListener(e -> {
-            accionBuscarCliente();
-
-        });
-
-        txtBuscarCliente.addActionListener(e -> {
-            accionBuscarCliente();
+            coordinador.abrirBuscadorClientesParaComanda(this);
         });
     }
 
@@ -364,38 +359,8 @@ public class FrmResumenPedido extends JFrame {
         }
 
         this.total = total;
-        
+
         lblTotal.setText("Total: $" + total);
-    }
-
-    private void accionBuscarCliente() {
-        String texto = txtBuscarCliente.getText().trim().toLowerCase();
-
-        if (texto.isEmpty() || texto.equals("buscar por nombre, teléfono o correo")) {
-            JOptionPane.showMessageDialog(this, "Escribe un nombre, teléfono o correo para buscar.");
-            return;
-        }
-
-        if (listaClientes == null || listaClientes.isEmpty()) {
-            JOptionPane.showMessageDialog(this, "No hay clientes cargados para buscar.");
-            return;
-        }
-
-        for (ClienteFrecuenteDTO cliente : listaClientes) {
-            String nombre = cliente.getNombreCompleto() != null ? cliente.getNombreCompleto().toLowerCase() : "";
-            String telefono = cliente.getTelefono() != null ? cliente.getTelefono().toLowerCase() : "";
-            String correo = cliente.getEmail() != null ? cliente.getEmail().toLowerCase() : "";
-
-            if (nombre.contains(texto) || telefono.contains(texto) || correo.contains(texto)) {
-                clienteSeleccionado = cliente;
-                actualizarClienteSeleccionado();
-                return;
-            }
-        }
-
-        clienteSeleccionado = null;
-        actualizarClienteSeleccionado();
-        JOptionPane.showMessageDialog(this, "No se encontró ningún cliente con ese criterio.");
     }
 
     private void actualizarClienteSeleccionado() {
@@ -410,6 +375,11 @@ public class FrmResumenPedido extends JFrame {
             );
             btnQuitarCliente.setEnabled(true);
         }
+    }
+
+    public void recibirClienteSeleccionado(ClienteFrecuenteDTO cliente) {
+        this.clienteSeleccionado = cliente;
+        actualizarClienteSeleccionado();
     }
 
     private void ponerPlaceholder() {
