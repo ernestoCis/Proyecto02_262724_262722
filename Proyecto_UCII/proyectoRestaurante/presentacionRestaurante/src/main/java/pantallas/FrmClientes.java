@@ -51,7 +51,6 @@ public class FrmClientes extends JFrame {
     private JButton btnRegistrar;
     private JButton btnEliminar;
     private JButton btnRegistrarClienteGeneral;
-    private JButton btnSalir;
 
     private List<ClienteFrecuenteDTO> listaOriginal;
 
@@ -129,10 +128,6 @@ public class FrmClientes extends JFrame {
         panelBusqueda.setBorder(BorderFactory.createEmptyBorder(0, 0, 18, 0));
 
         btnRegresar = new BotonRegresar();
-
-        btnSalir = new BotonEstilizado("Salir");
-        btnSalir.setPreferredSize(new Dimension(120, 40));
-        btnSalir.setVisible(false);
 
         JPanel panelIzquierdoBusqueda = new JPanel();
         panelIzquierdoBusqueda.setOpaque(false);
@@ -214,8 +209,6 @@ public class FrmClientes extends JFrame {
             btnRegistrar.setVisible(false);
             btnEliminar.setVisible(false);
             btnRegistrarClienteGeneral.setVisible(false);
-            btnRegresar.setVisible(false);
-            btnSalir.setVisible(true);
         }
 
         panelBotones.add(btnRegistrar);
@@ -223,9 +216,6 @@ public class FrmClientes extends JFrame {
         panelBotones.add(btnEliminar);
         panelBotones.add(Box.createHorizontalStrut(15));
         panelBotones.add(btnRegistrarClienteGeneral);
-
-        panelBotones.add(Box.createHorizontalStrut(15));
-        panelBotones.add(btnSalir);
 
         panelInferior.add(Box.createVerticalStrut(8));
         panelInferior.add(panelBotones);
@@ -243,9 +233,6 @@ public class FrmClientes extends JFrame {
     }
 
     private void registrarEventos() {
-        btnSalir.addActionListener(e -> {
-            dispose();
-        });
 
         txtBuscar.addKeyListener(new KeyAdapter() {
             @Override
@@ -281,7 +268,11 @@ public class FrmClientes extends JFrame {
 
         btnRegresar.addActionListener(e -> {
             dispose();
-            coordinador.mostrarAcciones();
+            if (modoSeleccion) {
+                coordinador.volverDeBusquedaClientes();
+            } else {
+                coordinador.mostrarAcciones();
+            }
         });
 
         btnEliminar.addActionListener(e -> eliminarClienteSeleccionado());

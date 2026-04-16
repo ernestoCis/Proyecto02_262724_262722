@@ -196,17 +196,7 @@ public class FrmIngredientes extends JFrame {
         if (modoSeleccion) {
             btnRegistrar.setVisible(false);
             btnEliminar.setVisible(false);
-            btnRegresar.setVisible(false);
-
-            BotonEstilizado btnListo = new BotonEstilizado("Listo");
-            btnListo.setPreferredSize(new Dimension(120, 40));
-
-            btnListo.addActionListener(e -> {
-                dispose();
-            });
-
-            panelBotones.add(Box.createHorizontalStrut(15));
-            panelBotones.add(btnListo);
+            // btnRegresar.setVisible(false);
         }
 
         panelBotones.add(btnRegistrar);
@@ -271,12 +261,14 @@ public class FrmIngredientes extends JFrame {
         }
         );
 
-        btnRegresar.addActionListener(e
-                -> {
+        btnRegresar.addActionListener(e -> {
             dispose();
-            coordinador.mostrarAcciones();
-        }
-        );
+            if (modoSeleccion) {
+                coordinador.volverDeBusquedaIngredientes();
+            } else {
+                coordinador.mostrarAcciones();
+            }
+        });
 
         btnEliminar.addActionListener(e
                 -> eliminarIngredienteSeleccionado());

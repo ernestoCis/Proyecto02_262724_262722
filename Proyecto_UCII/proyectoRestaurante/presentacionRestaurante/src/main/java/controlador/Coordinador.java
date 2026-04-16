@@ -1261,4 +1261,19 @@ public class Coordinador implements ICoordinador {
         frmIngredientes.setVisible(true);
     }
 
+    public void volverDeBusquedaIngredientes() {
+        if (frmRegistrarProducto != null) {
+            frmRegistrarProducto.setVisible(true);
+        } else if (frmEditarProducto != null) {
+            frmEditarProducto.setVisible(true);
+        }
+    }
+
+    public void volverDeBusquedaClientes() {
+        if (frmResumenPedido != null) {
+            frmResumenPedido.setVisible(true);
+        } else if (frmResumenPedidoEditado != null) {
+            frmResumenPedidoEditado.setVisible(true);
+        }
+    }
 }

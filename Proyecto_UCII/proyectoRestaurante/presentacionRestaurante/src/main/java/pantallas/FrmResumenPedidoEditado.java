@@ -1,5 +1,6 @@
 package pantallas;
 
+import componentes.BotonRegresar;
 import controlador.Coordinador;
 import dtos.ClienteFrecuenteDTO;
 import dtos.ComandaDTO;
@@ -158,17 +159,7 @@ public class FrmResumenPedidoEditado extends JFrame {
         JPanel panelDerechoFranja = new JPanel(new FlowLayout(FlowLayout.RIGHT, 18, 12));
         panelDerechoFranja.setOpaque(false);
 
-        btnRegresar = new JButton("←");
-        btnRegresar.setFont(new Font("SansSerif", Font.BOLD, 18));
-        btnRegresar.setForeground(Color.WHITE);
-        btnRegresar.setBackground(colorMostaza);
-        btnRegresar.setFocusPainted(false);
-        btnRegresar.setCursor(new Cursor(Cursor.HAND_CURSOR));
-        btnRegresar.setPreferredSize(new Dimension(38, 38));
-        btnRegresar.setMargin(new Insets(0, 0, 0, 0));
-        btnRegresar.setOpaque(true);
-        btnRegresar.setContentAreaFilled(true);
-        btnRegresar.setBorderPainted(false);
+        btnRegresar = new BotonRegresar();
 
         panelDerechoFranja.add(btnRegresar);
 
