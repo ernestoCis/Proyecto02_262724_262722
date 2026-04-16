@@ -50,9 +50,9 @@ public class FrmProductos extends JFrame {
         configurarVentana();
         inicializarComponentes();
         configurarVisibilidadSegunModo(); // NUEVO: Oculta/Muestra botones
-        
+
         // Carga inicial usando el buscador de BD
-        accionBuscar(); 
+        accionBuscar();
     }
 
     private void configurarVentana() {
@@ -237,7 +237,7 @@ public class FrmProductos extends JFrame {
                     if (fila != -1) {
                         ProductoDTO producto = listaMostrada.get(fila);
                         coordinador.setProductoSeleccionado(producto);
-                        
+
                         if (modoActual == Modo.ADMINISTRAR) {
                             coordinador.mostrarDetalleProducto();
                         } else {
@@ -287,7 +287,7 @@ public class FrmProductos extends JFrame {
             dispose();
             coordinador.mostrarAcciones();
         });
-        
+
         btnEliminar.addActionListener(e -> {
             eliminarProductoSeleccionado();
             accionBuscar();
@@ -299,7 +299,7 @@ public class FrmProductos extends JFrame {
         modeloTabla.setRowCount(0);
 
         this.listaMostrada = lista;
-        
+
         if (lista != null) {
             for (ProductoDTO p : lista) {
                 Object[] fila = {
@@ -313,19 +313,22 @@ public class FrmProductos extends JFrame {
         }
     }
 
-    // --- MODIFICADO: Búsqueda dinámica con el Criteria de la BD ---
     private void accionBuscar() {
         String texto = txtBuscar.getText().trim();
 
         if (texto.equals("Buscar producto")) {
             texto = "";
         }
+        List<ProductoDTO> filtrados;
 
-        // Ya no iteramos sobre la listaOriginal en memoria, consultamos a la BD
-        List<ProductoDTO> filtrados = coordinador.consultarProductosFiltro(texto);
+        if (modoActual == Modo.SELECCIONAR) {
+            filtrados = coordinador.consultarProductosDisponiblesFiltro(texto);
+        } else {
+            filtrados = coordinador.consultarProductosFiltro(texto);
+        }
+
         cargarDatosTabla(filtrados);
     }
-    // --------------------------------------------------------------
 
     private void ponerPlaceholder() {
         txtBuscar.setText("Buscar producto");
@@ -352,7 +355,7 @@ public class FrmProductos extends JFrame {
 
     public void actualizarTablaProductos(List<ProductoDTO> productos) {
         this.listaOriginal = productos;
-        cargarDatosTabla(productos); 
+        cargarDatosTabla(productos);
         this.listaMostrada = productos;
     }
 

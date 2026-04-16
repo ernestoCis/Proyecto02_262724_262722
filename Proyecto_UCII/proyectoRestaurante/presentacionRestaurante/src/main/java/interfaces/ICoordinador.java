@@ -74,7 +74,7 @@ public interface ICoordinador {
     // PRODUCTOS
     void mostrarProductosAdmin();
     
-    void mostrarProductosSelec();
+//    void mostrarProductosSelec();
 
     void mostrarRegistrarProducto();
 
