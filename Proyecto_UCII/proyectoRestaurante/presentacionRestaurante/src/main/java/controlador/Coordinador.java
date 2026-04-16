@@ -129,6 +129,8 @@ public class Coordinador implements ICoordinador {
     FrmEditarProductosComanda frmEditarProductosComanda;
     FrmResumenPedidoEditado frmResumenPedidoEditado;
 
+    private FrmSeleccionProductos frmComandaActual;
+
     private ComandaDTO comanda;
 
     public Coordinador() {
@@ -676,6 +678,12 @@ public class Coordinador implements ICoordinador {
     @Override
     public void setProductoSeleccionado(ProductoDTO producto) {
         this.productoSeleccionado = producto;
+
+        //si estabsmos armando una comanda le pasamos el producto y la volvemos a mostrar
+        if (this.frmComandaActual != null) {
+            frmComandaActual.setVisible(true);
+            frmComandaActual.recibirProductoSeleccionado(producto);
+        }
     }
 
     @Override
@@ -1109,11 +1117,19 @@ public class Coordinador implements ICoordinador {
         }
     }
 
-    @Override
-    public void mostrarProductosSelec() {
-        frmProductos = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
-        frmProductos.setVisible(true);
-        frmProductos.toFront();
+//    @Override
+//    public void mostrarProductosSelec() {
+//        frmProductos = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
+//        frmProductos.setVisible(true);
+//        frmProductos.toFront();
+//    }
+    public void abrirBuscadorParaComanda(FrmSeleccionProductos frmActual) {
+        this.frmComandaActual = frmActual;
+        frmActual.setVisible(false); // Ocultamos el carrito temporalmente
+
+        // Abrimos FrmProductos en modo SELECCIONAR
+        FrmProductos buscador = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
+        buscador.setVisible(true);
     }
 
 }
