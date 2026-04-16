@@ -34,11 +34,13 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
- * 
+ *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmClientes extends JFrame {
-    
+
+    private boolean modoSeleccion = false;
+
     private final Coordinador coordinador;
 
     private JTable tblClientes;
@@ -49,11 +51,22 @@ public class FrmClientes extends JFrame {
     private JButton btnRegistrar;
     private JButton btnEliminar;
     private JButton btnRegistrarClienteGeneral;
+    private JButton btnSalir;
 
     private List<ClienteFrecuenteDTO> listaOriginal;
 
     public FrmClientes(Coordinador coordinador) {
         this.coordinador = coordinador;
+        this.modoSeleccion = false;
+        this.listaOriginal = this.coordinador.getListaClientesActual();
+        configurarVentana();
+        inicializarComponentes();
+        cargarDatosTabla(this.listaOriginal);
+    }
+
+    public FrmClientes(Coordinador coordinador, boolean modoSeleccion) {
+        this.coordinador = coordinador;
+        this.modoSeleccion = modoSeleccion;
         this.listaOriginal = this.coordinador.getListaClientesActual();
         configurarVentana();
         inicializarComponentes();
@@ -105,7 +118,6 @@ public class FrmClientes extends JFrame {
         panelSuperior.add(lblLogo, BorderLayout.WEST);
         panelSuperior.add(panelTitulo, BorderLayout.CENTER);
 
-
         panelSuperiorContenedor.add(panelSuperior, BorderLayout.CENTER);
 
         JPanel panelCentro = new JPanel(new BorderLayout());
@@ -118,10 +130,14 @@ public class FrmClientes extends JFrame {
 
         btnRegresar = new BotonRegresar();
 
+        btnSalir = new BotonEstilizado("Salir");
+        btnSalir.setPreferredSize(new Dimension(120, 40));
+        btnSalir.setVisible(false);
+
         JPanel panelIzquierdoBusqueda = new JPanel();
         panelIzquierdoBusqueda.setOpaque(false);
         panelIzquierdoBusqueda.add(btnRegresar);
-        
+
         txtBuscar = new JTextField();
         txtBuscar.setPreferredSize(new Dimension(420, 40));
         txtBuscar.setFont(new Font("Segoe UI", Font.PLAIN, 14));
@@ -132,7 +148,7 @@ public class FrmClientes extends JFrame {
                 BorderFactory.createLineBorder(new Color(200, 200, 200), 1, true),
                 BorderFactory.createEmptyBorder(8, 15, 8, 15)
         ));
-        
+
         ponerPlaceholder();
 
         JPanel panelCentroBusqueda = new JPanel();
@@ -152,7 +168,7 @@ public class FrmClientes extends JFrame {
                 return false;
             }
         };
-        
+
         tblClientes = new JTable(modeloTabla);
         tblClientes.setRowHeight(40);
         tblClientes.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -165,13 +181,13 @@ public class FrmClientes extends JFrame {
         tblClientes.getColumnModel().getColumn(0).setMinWidth(0);
         tblClientes.getColumnModel().getColumn(0).setMaxWidth(0);
         tblClientes.getColumnModel().getColumn(0).setPreferredWidth(0);
-        
+
         tblClientes.getSelectionModel().addListSelectionListener(e -> {
             if (!e.getValueIsAdjusting()) {
                 btnEliminar.setEnabled(tblClientes.getSelectedRow() != -1);
             }
         });
-        
+
         ((DefaultTableCellRenderer) tblClientes.getTableHeader()
                 .getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
@@ -194,11 +210,22 @@ public class FrmClientes extends JFrame {
         btnRegistrarClienteGeneral.setMaximumSize(new Dimension(270, 40));
         btnRegistrarClienteGeneral.setMaximumSize(new Dimension(270, 40));
 
+        if (modoSeleccion) {
+            btnRegistrar.setVisible(false);
+            btnEliminar.setVisible(false);
+            btnRegistrarClienteGeneral.setVisible(false);
+            btnRegresar.setVisible(false);
+            btnSalir.setVisible(true);
+        }
+
         panelBotones.add(btnRegistrar);
         panelBotones.add(Box.createHorizontalStrut(15));
         panelBotones.add(btnEliminar);
         panelBotones.add(Box.createHorizontalStrut(15));
         panelBotones.add(btnRegistrarClienteGeneral);
+
+        panelBotones.add(Box.createHorizontalStrut(15));
+        panelBotones.add(btnSalir);
 
         panelInferior.add(Box.createVerticalStrut(8));
         panelInferior.add(panelBotones);
@@ -216,6 +243,10 @@ public class FrmClientes extends JFrame {
     }
 
     private void registrarEventos() {
+        btnSalir.addActionListener(e -> {
+            dispose();
+        });
+
         txtBuscar.addKeyListener(new KeyAdapter() {
             @Override
             public void keyReleased(KeyEvent e) {
@@ -230,9 +261,14 @@ public class FrmClientes extends JFrame {
                     int fila = tblClientes.getSelectedRow();
                     if (fila != -1) {
                         ClienteFrecuenteDTO clienteSeleccionado = listaOriginal.get(fila);
-                        
-                        coordinador.setClienteSeleccionado(clienteSeleccionado);
-                        coordinador.mostrarEditarCliente();
+
+                        if (modoSeleccion) {
+                            coordinador.setClienteSeleccionado(clienteSeleccionado);
+                            dispose();
+                        } else {
+                            coordinador.setClienteSeleccionado(clienteSeleccionado);
+                            coordinador.mostrarEditarCliente();
+                        }
                     }
                 }
             }
@@ -247,9 +283,9 @@ public class FrmClientes extends JFrame {
             dispose();
             coordinador.mostrarAcciones();
         });
-        
+
         btnEliminar.addActionListener(e -> eliminarClienteSeleccionado());
-        
+
         btnRegistrarClienteGeneral.addActionListener(e -> {
             coordinador.registrarClienteGeneral();
             listaOriginal = coordinador.consultarClientes();
@@ -259,6 +295,7 @@ public class FrmClientes extends JFrame {
 
     private void cargarDatosTabla(List<ClienteFrecuenteDTO> lista) {
         modeloTabla.setRowCount(0);
+        this.listaOriginal = lista;
 
         if (lista != null) {
             for (ClienteFrecuenteDTO cliente : lista) {
@@ -277,28 +314,17 @@ public class FrmClientes extends JFrame {
     }
 
     private void accionBuscar() {
-        String texto = txtBuscar.getText().trim().toLowerCase();
+        String texto = txtBuscar.getText().trim();
 
-        if (texto.isEmpty()) {
+        if (texto.isEmpty() || texto.equals("Buscar por nombre, teléfono o correo")) {
             cargarDatosTabla(listaOriginal);
             return;
         }
 
-        List<ClienteFrecuenteDTO> filtrados = new ArrayList<>();
-
-        for (ClienteFrecuenteDTO cliente : listaOriginal) {
-            String nombre = cliente.getNombreCompleto() != null ? cliente.getNombreCompleto().toLowerCase() : "";
-            String telefono = cliente.getTelefono() != null ? cliente.getTelefono().toLowerCase() : "";
-            String correo = cliente.getEmail() != null ? cliente.getEmail().toLowerCase() : "";
-
-            if (nombre.contains(texto) || telefono.contains(texto) || correo.contains(texto)) {
-                filtrados.add(cliente);
-            }
-        }
-
+        List<ClienteFrecuenteDTO> filtrados = coordinador.buscarClientes(texto);
         cargarDatosTabla(filtrados);
     }
-    
+
     private void ponerPlaceholder() {
         txtBuscar.setText("Buscar por nombre, teléfono o correo");
         txtBuscar.setForeground(Color.GRAY);
@@ -321,12 +347,12 @@ public class FrmClientes extends JFrame {
             }
         });
     }
-    
+
     public void actualizarTablaClientes(List<ClienteFrecuenteDTO> clientes) {
         this.listaOriginal = clientes;
         cargarDatosTabla(this.listaOriginal);
     }
-    
+
     private void eliminarClienteSeleccionado() {
         int fila = tblClientes.getSelectedRow();
 

@@ -79,6 +79,7 @@ public class Coordinador implements ICoordinador {
     // SELECCION DE PRODUCTOS
     private FrmSeleccionProductos frmSeleccionProductos;
     private FrmResumenPedido frmResumenPedido;
+    private FrmResumenPedidoEditado frmResumenPedidoEditado;
 
     private List<DetallePedidoDTO> carrito;
 
@@ -129,7 +130,6 @@ public class Coordinador implements ICoordinador {
     FrmEstadosComanda frmEstadosComanda;
 
     FrmEditarProductosComanda frmEditarProductosComanda;
-    FrmResumenPedidoEditado frmResumenPedidoEditado;
 
     private FrmSeleccionProductos frmComandaActual;
 
@@ -171,6 +171,16 @@ public class Coordinador implements ICoordinador {
     }
 
     //----- CLIENTES -----
+    @Override
+    public List<ClienteFrecuenteDTO> buscarClientes(String filtro) {
+        try {
+            return clienteFrecuenteBO.consultarClientesPorFiltro(filtro);
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            return new ArrayList<>();
+        }
+    }
+
     @Override
     public void mostrarClientes() {
         try {
@@ -266,6 +276,11 @@ public class Coordinador implements ICoordinador {
     @Override
     public void setClienteSeleccionado(ClienteFrecuenteDTO cliente) {
         this.clienteSeleccionado = cliente;
+
+        if (this.frmResumenPedido != null) {
+            frmResumenPedido.setVisible(true);
+            frmResumenPedido.recibirClienteSeleccionado(cliente);
+        }
     }
 
     @Override
@@ -539,6 +554,16 @@ public class Coordinador implements ICoordinador {
 
         } catch (NegocioException ex) {
             JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }
+
+    @Override
+    public List<IngredienteDTO> buscarIngredientes(String filtro) {
+        try {
+            return ingredienteBO.buscarPorFiltro(filtro);
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+            return new ArrayList<>();
         }
     }
 
@@ -1147,6 +1172,80 @@ public class Coordinador implements ICoordinador {
                 frmSeleccionProductos.setVisible(true);
             }
         }
+    @Override
+    public void mostrarProductosSelec() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public void abrirBuscadorClientesParaComanda(FrmResumenPedido frmActual) {
+        this.frmResumenPedido = frmActual;
+        frmActual.setVisible(false);
+
+        try {
+            this.listaClientesActual = clienteFrecuenteBO.consultarTodos();
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+        frmClientes = new FrmClientes(this, true); // modo selección
+        frmClientes.setVisible(true);
+    }
+
+    @Override
+    public void abrirBuscadorClientesParaComanda(FrmResumenPedidoEditado frmActual) {
+        this.frmResumenPedidoEditado = frmActual;
+        frmActual.setVisible(false);
+
+        try {
+            this.listaClientesActual = clienteFrecuenteBO.consultarTodos();
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+        frmClientes = new FrmClientes(this, true); // modo selección
+        frmClientes.setVisible(true);
+    }
+
+    public void abrirBuscadorIngredientesParaProducto(FrmRegistrarProducto frmActual) {
+        this.frmRegistrarProducto = frmActual;
+        frmActual.setVisible(false);
+
+        try {
+            this.listaIngredientesActual = ingredienteBO.consultarTodos();
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+        // Abrir en modo selección
+        frmIngredientes = new FrmIngredientes(this, true, ingredientesSeleccionados -> {
+            frmActual.recibirIngredientesSeleccionados(ingredientesSeleccionados);
+            frmIngredientes.dispose();
+            frmActual.setVisible(true);
+            return true;
+        });
+
+        frmIngredientes.setVisible(true);
+    }
+
+    public void abrirBuscadorIngredientesParaEditarProducto(FrmEditarProducto frmActual) {
+        this.frmEditarProducto = frmActual;
+        frmActual.setVisible(false);
+
+        try {
+            this.listaIngredientesActual = ingredienteBO.consultarTodos();
+        } catch (NegocioException e) {
+            JOptionPane.showMessageDialog(null, e.getMessage());
+        }
+
+        frmIngredientes = new FrmIngredientes(this, true, ingredientesSeleccionados -> {
+            frmActual.recibirIngredientesSeleccionados(ingredientesSeleccionados);
+            frmIngredientes.dispose();
+            frmActual.setVisible(true);
+            return true;
+        });
+
+        frmIngredientes.setVisible(true);
     }
 
 }

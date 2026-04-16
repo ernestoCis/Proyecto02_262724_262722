@@ -79,7 +79,7 @@ public class IngredienteBO implements IIngredienteBO {
             IngredienteAdapter.actualizarEntidad(dto, entidad);
 
             ingredienteDAO.actualizar(entidad);
-            
+
             productoDAO.actualizarProductosPorIngrediente(entidad.getIdIngrediente());
 
         } catch (PersistenciaException e) {
@@ -106,7 +106,19 @@ public class IngredienteBO implements IIngredienteBO {
 
     @Override
     public List<IngredienteDTO> buscarPorFiltro(String filtro) throws NegocioException {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        try {
+            List<Ingrediente> lista = ingredienteDAO.buscarPorFiltro(filtro);
+            List<IngredienteDTO> dtos = new ArrayList<>();
+
+            for (Ingrediente i : lista) {
+                dtos.add(IngredienteAdapter.entidadADTO(i));
+            }
+
+            return dtos;
+
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al buscar ingredientes", e);
+        }
     }
 
     private void validarDatos(IngredienteDTO dto) throws NegocioException {
@@ -168,4 +180,5 @@ public class IngredienteBO implements IIngredienteBO {
             throw new NegocioException("Error al eliminar ingrediente", e);
         }
     }
+
 }

@@ -10,6 +10,11 @@ import enums.UnidadMedida;
 import excepciones.PersistenciaException;
 import interfaces.IIngredienteDAO;
 import jakarta.persistence.EntityManager;
+import jakarta.persistence.criteria.CriteriaBuilder;
+import jakarta.persistence.criteria.CriteriaQuery;
+import jakarta.persistence.criteria.Predicate;
+import jakarta.persistence.criteria.Root;
+import java.util.ArrayList;
 import java.util.List;
 
 /**
@@ -96,7 +101,39 @@ public class IngredienteDAO implements IIngredienteDAO {
 
     @Override
     public List<Ingrediente> buscarPorFiltro(String filtro) throws PersistenciaException {
-        return null;
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            CriteriaBuilder cb = em.getCriteriaBuilder();
+            CriteriaQuery<Ingrediente> cq = cb.createQuery(Ingrediente.class);
+            Root<Ingrediente> root = cq.from(Ingrediente.class);
+
+            List<Predicate> predicates = new ArrayList<>();
+
+            if (filtro != null && !filtro.isBlank()) { 
+                String filtroLike = "%" + filtro.toLowerCase() + "%";
+
+                Predicate porNombre = cb.like(
+                        cb.lower(root.get("nombre")),
+                        filtroLike
+                );
+
+                Predicate porUnidad = cb.like(
+                        cb.lower(root.get("unidadMedida").as(String.class)),
+                        filtroLike
+                );
+
+                predicates.add(cb.or(porNombre, porUnidad));
+            }
+
+            cq.where(predicates.toArray(new Predicate[0]));
+
+            return em.createQuery(cq).getResultList();
+
+        } catch (Exception e) {
+            throw new PersistenciaException("Error al buscar ingredientes", e);
+        } finally {
+            em.close();
+        }
     }
 
     @Override

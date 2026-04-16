@@ -13,6 +13,8 @@ import java.time.LocalDate;
 import java.util.List;
 import net.sf.jasperreports.engine.JasperPrint;
 import pantallas.FrmEditarProductosComanda;
+import pantallas.FrmResumenPedido;
+import pantallas.FrmResumenPedidoEditado;
 //import net.sf.jasperreports.engine.JasperPrint;
 
 /**
@@ -24,6 +26,8 @@ public interface ICoordinador {
     void iniciarSistema();
 
     void mostrarAcciones();
+
+    List<ClienteFrecuenteDTO> buscarClientes(String filtro);
 
     void mostrarClientes();
 
@@ -50,7 +54,7 @@ public interface ICoordinador {
     MeseroDTO getMeseroActual();
 
     MeseroDTO buscarMeseroPorUsuario(String usuario);
-    
+
     void setMeseroActual(MeseroDTO mesero);
 
     // INGREDIENTES
@@ -69,14 +73,19 @@ public interface ICoordinador {
     void registrarIngrediente(IngredienteDTO ingredienteDTO);
 
     void actualizarTablaIngredientes();
-    
+
     void eliminarIngrediente();
+
+    List<IngredienteDTO> buscarIngredientes(String filtro);
 
     // PRODUCTOS
     void mostrarProductosAdmin();
     
     void mostrarProductosSelec(FrmEditarProductosComanda frmOrigen);
 
+    void mostrarProductosSelec();
+
+//    void mostrarProductosSelec();
     void mostrarRegistrarProducto();
 
     void registrarProducto(ProductoDTO productoDTO);
@@ -86,7 +95,7 @@ public interface ICoordinador {
     void mostrarEditarProducto();
 
     void actualizarProducto(ProductoDTO productoDTO);
-    
+
     void eliminarProducto();
 
     void setProductoSeleccionado(ProductoDTO producto);
@@ -130,38 +139,44 @@ public interface ICoordinador {
     void limpiarSesionComanda();
 
     void mostrarEstadosComanda();
-    
+
     ComandaDTO buscarComandaAbiertaPorMesa(Integer numeroMesa);
-    
+
     ComandaDTO actualizarComanda(ComandaDTO comanda);
-    
+
     void mostrarEditarProductosComanda();
-    
+
     MesaDTO actualizarMesa(MesaDTO mesa);
-    
+
     // REPORTES
     void mostrarOpcionesReporte();
-    
+
     void mostrarResumenPedidoEditado();
-    
+
     void mostrarReporteClientesFrecuentes();
-        
+
     JasperPrint generarReporteClientes(String nombre, Integer visitas) throws Exception;
+
     void mostrarReportesComandas();
-    
+
     List<ReporteComandaDTO> obetnerComandasPorRangoFechas(LocalDate inicio, LocalDate fin);
-    
+
     JasperPrint generarJasperComandas(List<ReporteComandaDTO> lista, LocalDate inicio, LocalDate fin) throws Exception;
-    
+
     ClienteFrecuenteDTO getClienteGeneral();
-    
+
     boolean verificarStock(ProductoDTO producto, int proximaCantidad);
-    
+
     List<ProductoDTO> obtenerProductosDisponibles();
-    
+
     ClienteFrecuenteDTO registrarClienteGeneral();
-    
+
     List<ProductoDTO> consultarProductosFiltro(String filtro);
-    
+
     List<ProductoDTO> consultarProductosDisponiblesFiltro(String filtro);
+
+    void abrirBuscadorClientesParaComanda(FrmResumenPedido frmActual);
+
+    void abrirBuscadorClientesParaComanda(FrmResumenPedidoEditado frmActual);
+
 }
