@@ -250,7 +250,7 @@ public class FrmResumenPedidoEditado extends JFrame {
                 BorderFactory.createEmptyBorder(5, 12, 5, 12)
         ));
 
-        ponerPlaceholder();
+        // ponerPlaceholder();
 
         btnBuscarCliente = new JButton("Buscar");
         btnBuscarCliente.setFont(new Font("SansSerif", Font.PLAIN, 14));
@@ -260,7 +260,7 @@ public class FrmResumenPedidoEditado extends JFrame {
         btnBuscarCliente.setPreferredSize(new Dimension(90, 35));
 
         panelBuscarCliente.add(lblAsociar);
-        panelBuscarCliente.add(txtBuscarCliente);
+        // panelBuscarCliente.add(txtBuscarCliente);
         panelBuscarCliente.add(btnBuscarCliente);
 
         JPanel panelClienteSeleccionado = new JPanel(new FlowLayout(FlowLayout.CENTER, 10, 5));

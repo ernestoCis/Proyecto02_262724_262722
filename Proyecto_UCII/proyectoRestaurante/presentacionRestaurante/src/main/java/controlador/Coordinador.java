@@ -277,15 +277,20 @@ public class Coordinador implements ICoordinador {
     public void setClienteSeleccionado(ClienteFrecuenteDTO cliente) {
         this.clienteSeleccionado = cliente;
 
-        // Para resumen normal
+        if (frmClientes != null) {
+            frmClientes.dispose();
+            frmClientes = null;
+        }
+
         if (this.frmResumenPedido != null) {
             frmResumenPedido.setVisible(true);
             frmResumenPedido.recibirClienteSeleccionado(cliente);
-        }
+            frmResumenPedido = null;
 
-        if (this.frmResumenPedidoEditado != null) {
+        } else if (this.frmResumenPedidoEditado != null) {
             frmResumenPedidoEditado.setVisible(true);
             frmResumenPedidoEditado.recibirClienteSeleccionado(cliente);
+            frmResumenPedidoEditado = null;
         }
     }
 
