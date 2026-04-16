@@ -116,6 +116,8 @@ public class Coordinador implements ICoordinador {
         this.clienteSeleccionado = null;
         this.carrito = null;
         this.comanda = null;
+        this.productoSeleccionado = null;
+        this.frmComandaActual = null;
 
     }
 
@@ -130,6 +132,13 @@ public class Coordinador implements ICoordinador {
     FrmResumenPedidoEditado frmResumenPedidoEditado;
 
     private FrmSeleccionProductos frmComandaActual;
+
+    public enum OrigenBusquedaProductos {
+        NUEVA_COMANDA,
+        EDICION_COMANDA
+    }
+
+    private OrigenBusquedaProductos origenActualBusquedaProductos;
 
     private ComandaDTO comanda;
 
@@ -1097,19 +1106,47 @@ public class Coordinador implements ICoordinador {
         }
     }
 
-//    @Override
-//    public void mostrarProductosSelec() {
-//        frmProductos = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
-//        frmProductos.setVisible(true);
-//        frmProductos.toFront();
-//    }
+    @Override
+    public void mostrarProductosSelec(FrmEditarProductosComanda frmOrigen) {
+        frmProductos = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
+        frmProductos.setVisible(true);
+        frmProductos.toFront();
+        frmOrigen.setVisible(false);
+    }
+
     public void abrirBuscadorParaComanda(FrmSeleccionProductos frmActual) {
         this.frmComandaActual = frmActual;
-        frmActual.setVisible(false); // Ocultamos el carrito temporalmente
+        frmActual.setVisible(false); 
 
-        // Abrimos FrmProductos en modo SELECCIONAR
         FrmProductos buscador = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
         buscador.setVisible(true);
+    }
+
+    public void abrirBuscadorProductos(OrigenBusquedaProductos origen) {
+        this.origenActualBusquedaProductos = origen;
+
+        //ccultamos la ventana dependiendo de quien llamó
+        if (origen == OrigenBusquedaProductos.EDICION_COMANDA && frmEditarProductosComanda != null) {
+            frmEditarProductosComanda.setVisible(false);
+        } else if (origen == OrigenBusquedaProductos.NUEVA_COMANDA && frmSeleccionProductos != null) {
+            frmSeleccionProductos.setVisible(false);
+        }
+
+        //bbuscador
+        FrmProductos frmBuscador = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
+        frmBuscador.setVisible(true);
+    }
+    
+    public void volverDeBusquedaProductos() {
+        if (origenActualBusquedaProductos == OrigenBusquedaProductos.EDICION_COMANDA) {
+            if (frmEditarProductosComanda != null) {
+                frmEditarProductosComanda.setVisible(true);
+            }
+        } else if (origenActualBusquedaProductos == OrigenBusquedaProductos.NUEVA_COMANDA) {
+            if (frmSeleccionProductos != null) {
+                frmSeleccionProductos.setVisible(true);
+            }
+        }
     }
 
 }

@@ -11,6 +11,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 
 /**
  *
@@ -23,25 +24,39 @@ public class FrmSeleccionProductos extends JFrame {
     private JButton btnSalir;
     private JButton btnRegresar;
     private JButton btnTerminar;
-    private JButton btnAnadirProducto; 
+    private JButton btnAnadirProducto;
 
-    private JPanel panelCarrito; 
+    private JPanel panelCarrito;
 
-    // ¡NUEVO!: Reemplazamos los Mapas por una lista directa de detalles
     private final List<DetallePedidoDTO> listaDetalles = new ArrayList<>();
-    
+
     private List<ProductoDTO> listaOriginalProductos;
 
     public FrmSeleccionProductos(Coordinador coordinador) {
         this.coordinador = coordinador;
-        this.listaOriginalProductos = coordinador.getListaProductosActual(); 
-        
+        this.listaOriginalProductos = coordinador.getListaProductosActual();
+
         configurarVentana();
         inicializarComponentes();
+
+        this.addComponentListener(new java.awt.event.ComponentAdapter() {
+            @Override
+            public void componentShown(java.awt.event.ComponentEvent e) {
+
+                ProductoDTO producto = coordinador.getProductoSeleccionado();
+
+                if (producto != null) {
+
+                    recibirProductoSeleccionado(producto);
+
+                    coordinador.setProductoSeleccionado(null);
+                }
+            }
+        });
     }
 
     private void configurarVentana() {
-        setTitle("Restaurante - Comanda");
+        setTitle("Restaurante");
         setSize(1000, 700);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
@@ -157,7 +172,7 @@ public class FrmSeleccionProductos extends JFrame {
         btnAnadirProducto.setFocusPainted(false);
         btnAnadirProducto.setCursor(new Cursor(Cursor.HAND_CURSOR));
         btnAnadirProducto.setPreferredSize(new Dimension(250, 45));
-        
+
         panelTopCentro.add(btnAnadirProducto);
 
         panelCarrito = new JPanel();
@@ -206,7 +221,7 @@ public class FrmSeleccionProductos extends JFrame {
         });
 
         btnAnadirProducto.addActionListener(e -> {
-            coordinador.abrirBuscadorParaComanda(this);
+            coordinador.abrirBuscadorProductos(Coordinador.OrigenBusquedaProductos.NUEVA_COMANDA);
         });
 
         btnTerminar.addActionListener(e -> {
@@ -215,8 +230,7 @@ public class FrmSeleccionProductos extends JFrame {
             } else {
                 coordinador.setCarrito(listaDetalles);
                 ComandaDTO comanda = coordinador.getComanda();
-                // Pasamos una copia de la lista para evitar problemas de referencias
-                comanda.setDetalles(new ArrayList<>(listaDetalles)); 
+                comanda.setDetalles(new ArrayList<>(listaDetalles));
                 comanda.setMesero(coordinador.getMeseroActual());
                 coordinador.setComanda(comanda);
 
@@ -228,13 +242,14 @@ public class FrmSeleccionProductos extends JFrame {
 
     public void recibirProductoSeleccionado(ProductoDTO producto) {
         String inputCantidad = JOptionPane.showInputDialog(
-                this, 
-                "¿Qué cantidad de '" + producto.getNombre() + "' deseas agregar?", 
+                this,
+                "¿Qué cantidad de '" + producto.getNombre() + "' deseas agregar?",
                 "1"
         );
-        
-        if (inputCantidad == null || inputCantidad.trim().isEmpty()) return; //canceló
 
+        if (inputCantidad == null || inputCantidad.trim().isEmpty()) {
+            return; //canceló
+        }
         try {
             int cantSolicitada = Integer.parseInt(inputCantidad);
             if (cantSolicitada <= 0) {
@@ -246,24 +261,26 @@ public class FrmSeleccionProductos extends JFrame {
 
             if (cantSolicitada > maxPosible) {
                 JOptionPane.showMessageDialog(
-                        this, 
-                        "¡Sin stock suficiente!\nSolo se pueden ordenar " + maxPosible + " unidades de este producto con los ingredientes actuales.", 
-                        "Límite de inventario", 
+                        this,
+                        "¡Sin stock suficiente!\nSolo se pueden ordenar " + maxPosible + " unidades de este producto con los ingredientes actuales.",
+                        "Límite de inventario",
                         JOptionPane.WARNING_MESSAGE
                 );
                 return;
             }
 
             String nota = JOptionPane.showInputDialog(this, "Escribe una nota para este platillo (Opcional):", "");
-            if (nota == null) nota = "";
+            if (nota == null) {
+                nota = "";
+            }
             nota = nota.trim();
 
             boolean agrupado = false;
-            
+
             for (DetallePedidoDTO detalleExistente : listaDetalles) {
-                if (detalleExistente.getProductoDTO().getIdProducto().equals(producto.getIdProducto()) 
+                if (detalleExistente.getProductoDTO().getIdProducto().equals(producto.getIdProducto())
                         && detalleExistente.getNota().equalsIgnoreCase(nota)) {
-                    
+
                     detalleExistente.setCantidad(detalleExistente.getCantidad() + cantSolicitada);
                     detalleExistente.setSubtotal(detalleExistente.getCantidad() * detalleExistente.getPrecioUnitario());
                     agrupado = true;
@@ -278,7 +295,7 @@ public class FrmSeleccionProductos extends JFrame {
                 nuevoDetalle.setPrecioUnitario(producto.getPrecio());
                 nuevoDetalle.setSubtotal(cantSolicitada * producto.getPrecio());
                 nuevoDetalle.setNota(nota);
-                
+
                 listaDetalles.add(nuevoDetalle);
             }
 
@@ -311,7 +328,7 @@ public class FrmSeleccionProductos extends JFrame {
                 long idIng = receta.getIngrediente().getIdIngrediente();
                 double stockRealBD = receta.getIngrediente().getCantidadActual();
                 double consumido = consumoCarrito.getOrDefault(idIng, 0.0);
-                
+
                 double stockSobrante = stockRealBD - consumido;
 
                 if (stockSobrante <= 0) {
@@ -319,7 +336,7 @@ public class FrmSeleccionProductos extends JFrame {
                 }
 
                 int maxPorEsteIngrediente = (int) (stockSobrante / receta.getCantidad());
-                
+
                 if (maxPorEsteIngrediente < maxPermitido) {
                     maxPermitido = maxPorEsteIngrediente;
                 }
@@ -344,7 +361,7 @@ public class FrmSeleccionProductos extends JFrame {
         } else {
             for (DetallePedidoDTO detalle : listaDetalles) {
                 panelCarrito.add(crearFilaDetalle(detalle));
-                panelCarrito.add(Box.createVerticalStrut(10)); 
+                panelCarrito.add(Box.createVerticalStrut(10));
             }
         }
 
@@ -352,7 +369,6 @@ public class FrmSeleccionProductos extends JFrame {
         panelCarrito.repaint();
     }
 
-    // Ahora recibe directamente el objeto DetallePedidoDTO
     private JPanel crearFilaDetalle(DetallePedidoDTO detalle) {
         JPanel panelFila = new JPanel(new BorderLayout());
         panelFila.setBackground(Color.WHITE);

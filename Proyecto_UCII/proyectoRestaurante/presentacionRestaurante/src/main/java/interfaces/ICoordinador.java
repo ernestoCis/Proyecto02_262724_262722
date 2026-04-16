@@ -12,6 +12,7 @@ import dtos.ReporteComandaDTO;
 import java.time.LocalDate;
 import java.util.List;
 import net.sf.jasperreports.engine.JasperPrint;
+import pantallas.FrmEditarProductosComanda;
 //import net.sf.jasperreports.engine.JasperPrint;
 
 /**
@@ -74,7 +75,7 @@ public interface ICoordinador {
     // PRODUCTOS
     void mostrarProductosAdmin();
     
-//    void mostrarProductosSelec();
+    void mostrarProductosSelec(FrmEditarProductosComanda frmOrigen);
 
     void mostrarRegistrarProducto();
 
