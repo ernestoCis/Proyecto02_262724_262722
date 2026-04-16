@@ -155,7 +155,6 @@ public class ProductoDAOTest {
         assertEquals(DisponibilidadProducto.NO_DISPONIBLE, productoDAO.buscarPorId(p.getIdProducto()).getDisponibilidad());
     }
 
-    //actualizar productos por ingrediente (Efecto Cascada)
     @Test
     public void test8_ActualizarProductosPorIngrediente() throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
