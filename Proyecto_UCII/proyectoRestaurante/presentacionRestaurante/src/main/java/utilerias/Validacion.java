@@ -144,6 +144,18 @@ public class Validacion {
         return precio.matches("^\\d+(\\.\\d{1,3})?$");
     }
 
+    /**
+     * Valida que una cadena represente un número entero positivo.
+     * <p>
+     * Este método es útil para validar campos que no admiten decimales ni
+     * caracteres especiales, asegurando que la entrada consista únicamente en
+     * dígitos del 0 al 9.</p>
+     *
+     * * @param texto La cadena de texto a evaluar.
+     * @return {@code true} si la cadena contiene solo dígitos y no está vacía;
+     * {@code false} si es {@code null}, está vacía o contiene caracteres no
+     * numéricos.
+     */
     public static boolean esEnteroValido(String texto) {
         if (texto == null || texto.trim().isEmpty()) {
             return false;
