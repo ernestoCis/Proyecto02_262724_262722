@@ -7,11 +7,41 @@ import javax.swing.ImageIcon;
 import javax.swing.JButton;
 import static javax.swing.SwingConstants.CENTER;
 
+/**
+ * Componente de botón personalizado optimizado para el acceso a módulos de
+ * reportes.
+ * <p>
+ * Extiende de {@link JButton} y proporciona un diseño de gran formato (450x80)
+ * con soporte para iconografía. Utiliza una paleta cromática en tonos azul
+ * petróleo para diferenciar las acciones analíticas de las acciones operativas
+ * del sistema.</p>
+ *
+ * * @author Paulina Guevara, Ernesto Cisneros
+ */
 public class BotonReportes extends JButton {
 
+    /**
+     * Color de fondo base en estado normal, tono azul petróleo oscuro
+     * (#54737A).
+     */
     private Color colorNormal = Color.decode("#54737A");
+
+    /**
+     * Color de fondo aclarado para el efecto visual al pasar el mouse
+     * (#84A9B3).
+     */
     private Color colorHover = Color.decode("#84A9B3");
 
+    /**
+     * Construye un botón de reportes con texto e icono escalado.
+     * <p>
+     * Establece dimensiones fijas de gran tamaño para facilitar la interacción
+     * en paneles de administración y escala automáticamente el icono
+     * proporcionado a un tamaño de 26x26 píxeles.</p>
+     *
+     * * @param texto Etiqueta descriptiva del reporte.
+     * @param rutaIcono Ruta del archivo de imagen para el icono decorativo.
+     */
     public BotonReportes(String texto, String rutaIcono) {
         super(texto);
 
@@ -21,7 +51,7 @@ public class BotonReportes extends JButton {
 
         setFocusPainted(false);
         setBorderPainted(false);
-        setContentAreaFilled(false); // importante para dibujar nosotros
+        setContentAreaFilled(false);
         setOpaque(false);
 
         setHorizontalAlignment(CENTER);
@@ -54,6 +84,15 @@ public class BotonReportes extends JButton {
         setBackground(colorNormal);
     }
 
+    /**
+     * Sobrescribe el dibujo del componente para aplicar una forma de cápsula.
+     * <p>
+     * Utiliza un radio de arco de 30 píxeles y activa el renderizado suavizado
+     * para asegurar que los bordes del botón se vean nítidos y
+     * profesionales.</p>
+     *
+     * * @param g El contexto gráfico de Java 2D.
+     */
     @Override
     protected void paintComponent(Graphics g) {
         Graphics2D g2 = (Graphics2D) g.create();
