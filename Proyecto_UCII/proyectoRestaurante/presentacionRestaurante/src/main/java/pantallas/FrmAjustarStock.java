@@ -13,24 +13,71 @@ import javax.swing.*;
 import utilerias.Validacion;
 
 /**
+ * Ventana para el ajuste de stock e información visual de un ingrediente.
+ * <p>
+ * Esta interfaz permite al administrador incrementar o disminuir la existencia
+ * física de un ingrediente en el inventario, así como gestionar la imagen
+ * representativa del insumo.</p>
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmAjustarStock extends JFrame {
 
+    /**
+     * Enlace con el coordinador para la ejecución de la lógica de negocio.
+     */
     private final Coordinador coordinador;
+    /**
+     * Objeto de transferencia con los datos del ingrediente a modificar.
+     */
     private final IngredienteDTO ingrediente;
 
+    /**
+     * Etiqueta que muestra el nombre del ingrediente seleccionado.
+     */
     private JLabel lblNombre;
+    /**
+     * Etiqueta que muestra la cantidad de stock actual y su unidad de medida.
+     */
     private JLabel lblStock;
+    /**
+     * Contenedor visual para la imagen del ingrediente.
+     */
     private JLabel lblImagen;
+    /**
+     * Campo de texto para ingresar el valor numérico del ajuste.
+     */
     private JTextField txtCantidad;
+    /**
+     * Opción para indicar que la cantidad ingresada se sumará al stock.
+     */
     private JRadioButton rbAgregar;
+    /**
+     * Opción para indicar que la cantidad ingresada se restará del stock.
+     */
     private JRadioButton rbDescontar;
+    /**
+     * Botón para confirmar y procesar el ajuste de inventario.
+     */
     private BotonEstilizado btnGuardar;
+    /**
+     * Botón para cerrar la ventana y volver al listado de ingredientes.
+     */
     private BotonRegresar btnRegresar;
+    /**
+     * Botón para eliminar la imagen personalizada y volver a la predeterminada.
+     */
     private BotonX btnQuitarImagen;
 
+    /**
+     * Construye la ventana de ajuste de stock.
+     * <p>
+     * Inicializa el componente recuperando el ingrediente seleccionado
+     * previamente en el coordinador y prepara la interfaz gráfica.</p>
+     *
+     * * @param coordinador El coordinador del sistema que provee el contexto
+     * de datos.
+     */
     public FrmAjustarStock(Coordinador coordinador) {
         this.coordinador = coordinador;
         this.ingrediente = coordinador.getIngredienteSeleccionado();
@@ -40,6 +87,10 @@ public class FrmAjustarStock extends JFrame {
         cargarDatos();
     }
 
+    /**
+     * Define las propiedades de visualización y comportamiento de la ventana
+     * principal.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 650);
@@ -48,6 +99,10 @@ public class FrmAjustarStock extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Crea, organiza y estiliza los elementos visuales que componen el
+     * formulario.
+     */
     private void inicializarComponentes() {
 
         Color colorMostaza = new Color(229, 171, 75);
@@ -229,6 +284,10 @@ public class FrmAjustarStock extends JFrame {
         eventos();
     }
 
+    /**
+     * Puebla las etiquetas de la interfaz con la información actual del
+     * ingrediente.
+     */
     private void cargarDatos() {
         if (ingrediente == null) {
             return;
@@ -242,6 +301,10 @@ public class FrmAjustarStock extends JFrame {
         cargarImagen();
     }
 
+    /**
+     * Intenta cargar la imagen desde la ruta almacenada o coloca la imagen por
+     * defecto.
+     */
     private void cargarImagen() {
         try {
             if (ingrediente.getRutaImagen() != null) {
@@ -265,6 +328,10 @@ public class FrmAjustarStock extends JFrame {
         }
     }
 
+    /**
+     * Configura los escuchadores de acciones para botones y la interacción con
+     * la imagen.
+     */
     private void eventos() {
         btnGuardar.addActionListener(e -> guardar());
 
@@ -281,6 +348,9 @@ public class FrmAjustarStock extends JFrame {
         });
     }
 
+    /**
+     * Restablece el contenedor de imagen al icono de sistema "sin imagen".
+     */
     private void ponerImagenDefault() {
         ImageIcon icono = new ImageIcon("src\\main\\resources\\imagenes\\icono_sin_imagen.png");
 
@@ -297,6 +367,10 @@ public class FrmAjustarStock extends JFrame {
         btnQuitarImagen.setVisible(false);
     }
 
+    /**
+     * Abre un selector de archivos para permitir al usuario elegir una nueva
+     * imagen de disco.
+     */
     private void seleccionarImagen() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Seleccionar imagen");
@@ -324,6 +398,13 @@ public class FrmAjustarStock extends JFrame {
         }
     }
 
+    /**
+     * Valida la entrada del usuario y solicita al coordinador el ajuste del
+     * inventario.
+     * <p>
+     * Verifica que la cantidad sea coherente con la unidad de medida y solicita
+     * confirmación antes de realizar cambios en la persistencia.</p>
+     */
     private void guardar() {
         String cantidadTxt = txtCantidad.getText();
         try {

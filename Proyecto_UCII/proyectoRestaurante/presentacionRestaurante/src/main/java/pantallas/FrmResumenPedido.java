@@ -31,30 +31,93 @@ import javax.swing.JTextField;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.JTable;
 
+/**
+ * Pantalla de resumen de pedido donde se visualizan los productos agregados al
+ * carrito, el cálculo del total y la asociación opcional de un cliente
+ * frecuente.
+ * <p>
+ * Esta ventana permite revisar el detalle de la comanda, gestionar el cliente
+ * vinculado y proceder a la confirmación final de la orden.</p>
+ *
+ * @author Paulina Guevara, Ernesto Cisneros
+ */
 public class FrmResumenPedido extends JFrame {
 
+    /**
+     * Controlador para gestionar el flujo de navegación y persistencia de la
+     * comanda.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Boton de control para la navegación y acciones de la comanda.
+     */
     private JButton btnSalir;
+    /**
+     * Boton de control para la navegación y acciones de la comanda.
+     */
     private JButton btnRegresar;
+    /**
+     * Boton de control para la navegación y acciones de la comanda.
+     */
     private JButton btnTerminarComanda;
+    /**
+     * Boton de control para la navegación y acciones de la comanda.
+     */
     private JButton btnQuitarCliente;
+    /**
+     * Boton de control para la navegación y acciones de la comanda.
+     */
     private JButton btnBuscarCliente;
 
+    /**
+     * Tabla para mostrar el desglose de productos y subtotales.
+     */
     private JTable tblDetalles;
+    /**
+     * Modelo para mostrar el desglose de productos y subtotales.
+     */
     private DefaultTableModel modeloTabla;
 
+    /**
+     * Campo de texto para el criterio de búsqueda del cliente.
+     */
     private JTextField txtBuscarCliente;
 
+    /**
+     * Etiquetas informativas de estado y montos.
+     */
     private JLabel lblTotal;
+    /**
+     * Etiquetas informativas de estado y montos.
+     */
     private JLabel lblClienteSeleccionado;
 
+    /**
+     * Fuentes de datos para el resumen.
+     */
     private List<DetallePedidoDTO> listaDetalles;
+    /**
+     * Fuentes de datos para el resumen.
+     */
     private List<ClienteFrecuenteDTO> listaClientes;
+
+    /**
+     * Almacena el cliente que recibirá los beneficios de la comanda actual.
+     */
     private ClienteFrecuenteDTO clienteSeleccionado;
 
+    /**
+     * Acumulador del costo total de los productos en el carrito.
+     */
     private Double total = 0.0;
 
+    /**
+     * Constructor que inicializa el resumen de pedido cargando datos del
+     * carrito actual.
+     *
+     * @param coordinador El coordinador general del sistema.
+     */
     public FrmResumenPedido(Coordinador coordinador) {
         this.coordinador = coordinador;
         this.listaDetalles = coordinador.getCarrito() != null ? coordinador.getCarrito() : new ArrayList<>();
@@ -66,6 +129,10 @@ public class FrmResumenPedido extends JFrame {
         actualizarClienteSeleccionado();
     }
 
+    /**
+     * Establece las propiedades físicas de la ventana (tamaño, posición,
+     * cierre).
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 700);
@@ -75,6 +142,13 @@ public class FrmResumenPedido extends JFrame {
         setResizable(false);
     }
 
+    /**
+     * Crea y organiza los componentes visuales siguiendo la línea estética del
+     * sistema.
+     * <p>
+     * Incluye una franja roja con la información del mesero activo y el diseño
+     * de la tabla de detalles.</p>
+     */
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorRojo = new Color(216, 84, 78);
@@ -238,8 +312,7 @@ public class FrmResumenPedido extends JFrame {
                 BorderFactory.createEmptyBorder(5, 12, 5, 12)
         ));
 
-       // ponerPlaceholder();
-
+        // ponerPlaceholder();
         btnBuscarCliente = new JButton("Buscar");
         btnBuscarCliente.setFont(new Font("SansSerif", Font.PLAIN, 14));
         btnBuscarCliente.setFocusPainted(false);
@@ -309,6 +382,12 @@ public class FrmResumenPedido extends JFrame {
         eventos();
     }
 
+    /**
+     * Define las acciones para los botones de búsqueda, regreso y finalización.
+     * <p>
+     * Gestiona la transferencia de datos hacia el objeto Comanda en el
+     * coordinador.</p>
+     */
     private void eventos() {
         btnSalir.addActionListener(e -> {
             coordinador.mostrarInicioSesionMesero();
@@ -343,6 +422,10 @@ public class FrmResumenPedido extends JFrame {
         });
     }
 
+    /**
+     * Pobla la tabla con los productos actuales en el carrito y calcula el
+     * total de la venta.
+     */
     private void cargarTablaDetalles() {
         modeloTabla.setRowCount(0);
         double total = 0;
@@ -363,6 +446,10 @@ public class FrmResumenPedido extends JFrame {
         lblTotal.setText("Total: $" + total);
     }
 
+    /**
+     * Actualiza la interfaz gráfica para mostrar los datos del cliente asociado
+     * o un mensaje de "Sin cliente" si el espacio está vacío.
+     */
     private void actualizarClienteSeleccionado() {
         if (clienteSeleccionado == null) {
             lblClienteSeleccionado.setText("Sin cliente asociado");
@@ -377,11 +464,21 @@ public class FrmResumenPedido extends JFrame {
         }
     }
 
+    /**
+     * Método público para recibir el cliente seleccionado desde una ventana
+     * externa (Buscador).
+     *
+     * @param cliente El DTO del cliente frecuente elegido.
+     */
     public void recibirClienteSeleccionado(ClienteFrecuenteDTO cliente) {
         this.clienteSeleccionado = cliente;
         actualizarClienteSeleccionado();
     }
 
+    /**
+     * Agrega un texto de sugerencia al campo de búsqueda de cliente para
+     * mejorar la experiencia de usuario.
+     */
     private void ponerPlaceholder() {
         txtBuscarCliente.setText("Buscar por nombre, teléfono o correo");
         txtBuscarCliente.setForeground(Color.GRAY);

@@ -34,30 +34,72 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * Pantalla para la gestion de ingredientes y seleccion de insumos.
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmIngredientes extends JFrame {
 
+    /**
+     * Indica si se seleccionan ingredientes para una receta.
+     */
     private boolean modoSeleccion = false;
+    /**
+     * Etiqueta de ayuda visual.
+     */
     private JLabel lblNota;
-
+    /**
+     * Listener para la seleccion de datos.
+     */
     private SeleccionIngredienteListener listener;
+    /**
+     * Controlador principal.
+     */
+    private final Coordinador coordinador;
+    /**
+     * Componentes de la tabla.
+     */
+    private JTable tblIngredientes;
+    /**
+     * Componentes de la tabla.
+     */
+    private DefaultTableModel modeloTabla;
+    /**
+     * Campo de busqueda.
+     */
+    private JTextField txtBuscar;
+    /**
+     * Botones de accion.
+     */
+    private BotonRegresar btnRegresar;
+    /**
+     * Botones de accion.
+     */
+    private BotonEstilizado btnRegistrar, btnEliminar;
+    /**
+     * Lista de datos.
+     */
+    private List<IngredienteDTO> listaOriginal;
 
+    /**
+     * Interface para el manejo de seleccion de ingredientes.
+     */
     public interface SeleccionIngredienteListener {
 
+        /**
+         * Evento disparado al elegir ingredientes.
+         *
+         * @param ingredientes Lista de ingredientes elegidos.
+         * @return true si se proceso con exito.
+         */
         boolean onIngredientesSeleccionados(List<IngredienteDTO> ingredientes);
     }
 
-    private final Coordinador coordinador;
-    private JTable tblIngredientes;
-    private DefaultTableModel modeloTabla;
-    private JTextField txtBuscar;
-    private BotonRegresar btnRegresar;
-    private BotonEstilizado btnRegistrar;
-    private BotonEstilizado btnEliminar;
-    private List<IngredienteDTO> listaOriginal;
-
+    /**
+     * Constructor para gestion de inventario general.
+     *
+     * @param coordinador El coordinador del sistema.
+     */
     public FrmIngredientes(Coordinador coordinador) {
         this.coordinador = coordinador;
         this.listaOriginal = this.coordinador.obtenerIngredientes();
@@ -66,6 +108,13 @@ public class FrmIngredientes extends JFrame {
         cargarDatosTabla(this.listaOriginal);
     }
 
+    /**
+     * Constructor para flujo de seleccion de insumos.
+     *
+     * @param coordinador El coordinador del sistema.
+     * @param modoSeleccion true para habilitar seleccion, false para gestion.
+     * @param listener Callback para la seleccion.
+     */
     public FrmIngredientes(Coordinador coordinador, boolean modoSeleccion, SeleccionIngredienteListener listener) {
         this.coordinador = coordinador;
         this.modoSeleccion = modoSeleccion;
@@ -76,6 +125,9 @@ public class FrmIngredientes extends JFrame {
         cargarDatosTabla(this.listaOriginal);
     }
 
+    /**
+     * Define las dimensiones y comportamiento del frame.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 650);
@@ -85,6 +137,16 @@ public class FrmIngredientes extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Construye la estructura visual de la pantalla.
+     * <p>
+     * Configura:
+     * <ul>
+     * <li>Panel de busqueda superior.</li>
+     * <li>Tabla central de ingredientes.</li>
+     * <li>Botones de accion inferiores.</li>
+     * </ul></p>
+     */
     private void inicializarComponentes() {
 
         Color colorMostaza = new Color(229, 171, 75);
@@ -238,6 +300,9 @@ public class FrmIngredientes extends JFrame {
         registrarEventos();
     }
 
+    /**
+     * Asigna los escuchas de eventos a los componentes.
+     */
     private void registrarEventos() {
 
         txtBuscar.addKeyListener(new KeyAdapter() {
@@ -295,6 +360,11 @@ public class FrmIngredientes extends JFrame {
                 -> eliminarIngredienteSeleccionado());
     }
 
+    /**
+     * Actualiza el contenido de la tabla visual.
+     *
+     * @param lista Lista de ingredientes a mostrar.
+     */
     private void cargarDatosTabla(List<IngredienteDTO> lista) {
         modeloTabla.setRowCount(0);
 
@@ -310,6 +380,9 @@ public class FrmIngredientes extends JFrame {
         }
     }
 
+    /**
+     * Filtra la tabla basandose en el texto del buscador.
+     */
     private void accionBuscar() {
         String texto = txtBuscar.getText().trim();
 
@@ -322,6 +395,9 @@ public class FrmIngredientes extends JFrame {
         cargarDatosTabla(filtrados);
     }
 
+    /**
+     * Configura el texto de sugerencia en el buscador.
+     */
     private void ponerPlaceholder() {
         txtBuscar.setText("Buscar ingrediente");
         txtBuscar.setForeground(Color.GRAY);
@@ -345,11 +421,19 @@ public class FrmIngredientes extends JFrame {
         });
     }
 
+    /**
+     * Refresca los datos de la tabla con una nueva lista.
+     *
+     * @param ingredientes Nueva lista de ingredientes.
+     */
     public void actualizarTablaIngredientes(List<IngredienteDTO> ingredientes) {
         this.listaOriginal = ingredientes;
         cargarDatosTabla(this.listaOriginal);
     }
 
+    /**
+     * Elimina el registro seleccionado tras confirmar con el usuario.
+     */
     private void eliminarIngredienteSeleccionado() {
         int fila = tblIngredientes.getSelectedRow();
         if (fila == -1) {

@@ -26,23 +26,76 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * Ventana de confirmación que muestra el resumen detallado de una comanda
+ * finalizada.
+ * <p>
+ * Exhibe información general como el folio, mesa, cliente y el desglose de
+ * productos solicitados con sus respectivos subtotales y notas especiales.</p>
+ *
+ * * @author Paulina Guevara, Ernesto Cisneros
+ */
 public class FrmConfirmacionComanda extends JFrame {
 
+    /**
+     * Enlace con el coordinador para la gestión de navegación y datos de
+     * sesión.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Botón para cerrar la sesión actual del mesero y salir del sistema.
+     */
     private JButton btnSalir;
+    /**
+     * Botón para confirmar la lectura del resumen y regresar al mapa de mesas.
+     */
     private JButton btnAceptar;
 
+    /**
+     * Tabla que despliega el desglose de productos, cantidades y notas del
+     * pedido.
+     */
     private JTable tblDetalles;
+    /**
+     * Modelo de datos para gestionar el contenido de la tabla de detalles.
+     */
     private DefaultTableModel modeloTabla;
 
+    /**
+     * Etiqueta que muestra el número de folio único de la comanda.
+     */
     private JLabel lblFolio;
+    /**
+     * Etiqueta que indica el número de mesa asignado.
+     */
     private JLabel lblMesa;
+    /**
+     * Etiqueta que muestra la fecha y hora de creación de la comanda.
+     */
     private JLabel lblFecha;
+    /**
+     * Etiqueta que indica el estado actual del pedido (ej. PAGADO).
+     */
     private JLabel lblEstado;
+    /**
+     * Etiqueta que muestra el monto total acumulado de la cuenta.
+     */
     private JLabel lblTotal;
+    /**
+     * Etiqueta que muestra el nombre del cliente vinculado a la comanda.
+     */
     private JLabel lblClienteAsociado;
 
+    /**
+     * Construye la ventana de confirmación de comanda.
+     * <p>
+     * Inicializa los componentes visuales y carga automáticamente los datos de
+     * la comanda almacenada en la sesión del coordinador.</p>
+     *
+     * * @param coordinador El coordinador del sistema que provee el contexto
+     * de la aplicación.
+     */
     public FrmConfirmacionComanda(Coordinador coordinador) {
         this.coordinador = coordinador;
         configurarVentana();
@@ -50,6 +103,9 @@ public class FrmConfirmacionComanda extends JFrame {
         cargarDatosComanda();
     }
 
+    /**
+     * Establece las dimensiones, título y centrado de la ventana principal.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 700);
@@ -58,6 +114,10 @@ public class FrmConfirmacionComanda extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Crea y organiza la jerarquía de paneles, etiquetas, tablas y botones de
+     * la interfaz.
+     */
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorFondo = new Color(239, 239, 239);
@@ -209,6 +269,13 @@ public class FrmConfirmacionComanda extends JFrame {
         eventos();
     }
 
+    /**
+     * Crea un componente JLabel con un estilo de fuente y color predeterminado.
+     *
+     * @param texto El texto inicial que mostrará el label.
+     * @return Un nuevo JLabel configurado para mostrar información de la
+     * comanda.
+     */
     private JLabel crearLabelInfo(String texto) {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -216,6 +283,10 @@ public class FrmConfirmacionComanda extends JFrame {
         return label;
     }
 
+    /**
+     * Configura los escuchadores de acciones para la navegación de salida y
+     * aceptación.
+     */
     private void eventos() {
         btnSalir.addActionListener(e -> {
             coordinador.limpiarSesionComanda();
@@ -230,6 +301,13 @@ public class FrmConfirmacionComanda extends JFrame {
         });
     }
 
+    /**
+     * * Recupera la comanda actual del coordinador y puebla todos los campos de
+     * texto y la tabla.
+     * <p>
+     * Realiza formateo de fechas y validación de nulidad para los datos del
+     * cliente y mesa.</p>
+     */
     private void cargarDatosComanda() {
         ComandaDTO comanda = coordinador.getComanda();
 

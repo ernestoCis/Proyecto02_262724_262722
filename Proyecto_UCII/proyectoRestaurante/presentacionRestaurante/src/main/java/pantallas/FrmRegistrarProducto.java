@@ -19,39 +19,81 @@ import javax.swing.table.DefaultTableModel;
 import utilerias.Validacion;
 
 /**
+ * Pantalla para el registro de nuevos productos en el sistema del restaurante.
+ * <p>
+ * Permite definir datos generales del producto, asociar una imagen y construir
+ * la receta seleccionando ingredientes y cantidades específicas.</p>
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmRegistrarProducto extends JFrame {
 
+    /**
+     * Controlador principal para la gestión de flujos de navegación y
+     * persistencia.
+     */
     private final Coordinador coordinador;
 
-    private JTextField txtNombre;
-    private JTextField txtPrecio;
-    private JTextField txtDescripcion;
+    /**
+     * Campos de texto para la información básica del producto.
+     */
+    private JTextField txtNombre, txtPrecio, txtDescripcion;
+    /**
+     * Selector para la categoría del producto (Platillo, Bebida, Postre).
+     */
     private JComboBox<String> comboTipo;
 
+    /**
+     * Tabla para la gestión visual de los ingredientes de la receta.
+     */
     private JTable tablaIngredientes;
+    /**
+     * Modelo para la gestión visual de los ingredientes de la receta.
+     */
     private DefaultTableModel modeloTabla;
 
+    /**
+     * Etiqueta para previsualizar la imagen del producto.
+     */
     private JLabel lblImagen;
+    /**
+     * Ruta absoluta del archivo de imagen seleccionado en el equipo.
+     */
     private String rutaImagen;
 
-    private BotonEstilizado btnRegistrar;
-    private BotonEstilizado btnAgregarIngrediente;
-    private BotonEstilizado btnEliminarIngrediente;
-    private BotonEstilizado btnSeleccionarImagen;
+    /**
+     * Botones para acciones de registro, gestión de imagen y navegación.
+     */
+    private BotonEstilizado btnRegistrar, btnAgregarIngrediente, btnEliminarIngrediente, btnSeleccionarImagen;
+    /**
+     * Boton para navegación.
+     */
     private BotonRegresar btnRegresar;
+    /**
+     * Boton para gestión de imagen.
+     */
     private JButton btnQuitarImagen;
 
+    /**
+     * Lista de objetos DTO que conforman la receta del producto actual.
+     */
     private List<RecetaDTO> recetas = new ArrayList<>();
 
+    /**
+     * Constructor que inicializa la interfaz de registro de productos.
+     *
+     * @param coordinador El coordinador del sistema para la comunicación entre
+     * capas.
+     */
     public FrmRegistrarProducto(Coordinador coordinador) {
         this.coordinador = coordinador;
         configurarVentana();
         inicializarComponentes();
     }
 
+    /**
+     * Establece las propiedades de la ventana (tamaño, título, posición).
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 650);
@@ -60,6 +102,13 @@ public class FrmRegistrarProducto extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Inicializa los componentes gráficos y define la estructura del
+     * formulario.
+     * <p>
+     * Organiza los campos en tres secciones: datos generales, imagen e
+     * ingredientes.</p>
+     */
     private void inicializarComponentes() {
 
         Color colorMostaza = new Color(229, 171, 75);
@@ -256,6 +305,9 @@ public class FrmRegistrarProducto extends JFrame {
         eventos();
     }
 
+    /**
+     * Restablece el icono por defecto cuando no hay una imagen seleccionada.
+     */
     private void ponerImagenDefault() {
         ImageIcon icono = new ImageIcon("src\\main\\resources\\imagenes\\icono_sin_imagen.png");
         Dimension size = lblImagen.getSize();
@@ -275,6 +327,14 @@ public class FrmRegistrarProducto extends JFrame {
         rutaImagen = null;
     }
 
+    /**
+     * Crea un panel con una etiqueta y un campo de texto alineados
+     * verticalmente.
+     *
+     * @param texto Etiqueta descriptiva.
+     * @param campo Componente de entrada de texto.
+     * @return <code>JPanel</code> configurado.
+     */
     private JPanel crearCampo(String texto, JTextField campo) {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -294,6 +354,13 @@ public class FrmRegistrarProducto extends JFrame {
         return contenedor;
     }
 
+    /**
+     * Crea un panel con una etiqueta y un selector alineados verticalmente.
+     *
+     * @param texto Etiqueta descriptiva.
+     * @param combo Componente de selección.
+     * @return <code>JPanel</code> configurado.
+     */
     private JPanel crearCombo(String texto, JComboBox<String> combo) {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -319,6 +386,13 @@ public class FrmRegistrarProducto extends JFrame {
         return contenedor;
     }
 
+    /**
+     * Configura los escuchas de eventos (ActionListeners y MouseListeners) de
+     * la pantalla.
+     * <p>
+     * Incluye la lógica para editar cantidades de ingredientes mediante doble
+     * clic en la tabla.</p>
+     */
     private void eventos() {
 
         btnRegresar.addActionListener(e -> {
@@ -406,6 +480,13 @@ public class FrmRegistrarProducto extends JFrame {
         });
     }
 
+    /**
+     * Valida los datos del formulario y solicita al coordinador el registro del
+     * producto.
+     * <p>
+     * Asigna por defecto la disponibilidad como "DISPONIBLE" al crear un
+     * producto nuevo.</p>
+     */
     private void registrarProducto() {
 
         String nombre = txtNombre.getText().trim();
@@ -460,6 +541,9 @@ public class FrmRegistrarProducto extends JFrame {
         }
     }
 
+    /**
+     * Abre un selector de archivos para cargar una imagen local al sistema.
+     */
     private void seleccionarImagen() {
         JFileChooser fileChooser = new JFileChooser();
         int resultado = fileChooser.showOpenDialog(this);
@@ -482,6 +566,15 @@ public class FrmRegistrarProducto extends JFrame {
         }
     }
 
+    /**
+     * Agrega un ingrediente a la tabla visual y a la lista de recetas del
+     * producto.
+     *
+     * @param ingrediente El objeto DTO del ingrediente seleccionado.
+     * @param cantidad La cantidad necesaria para la receta.
+     * @return <code>true</code> si se agregó con éxito, <code>false</code> si
+     * el ingrediente ya existía en la receta.
+     */
     public boolean agregarIngredienteATabla(IngredienteDTO ingrediente, Double cantidad) {
 
         // validar duplicados
@@ -508,7 +601,17 @@ public class FrmRegistrarProducto extends JFrame {
 
         return true;
     }
-    
+
+    /**
+     * Procesa una lista de ingredientes seleccionados desde un buscador
+     * externo.
+     * <p>
+     * Solicita mediante diálogos la cantidad requerida para cada ingrediente
+     * recibido.</p>
+     *
+     * @param ingredientesSeleccionados Lista de ingredientes provenientes del
+     * buscador.
+     */
     public void recibirIngredientesSeleccionados(List<IngredienteDTO> ingredientesSeleccionados) {
         for (IngredienteDTO ingrediente : ingredientesSeleccionados) {
 

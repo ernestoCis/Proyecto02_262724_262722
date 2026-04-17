@@ -37,24 +37,76 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.swing.JRViewer;
 
+/**
+ * Pantalla para la generación y consulta de reportes de comandas en un rango de
+ * fechas.
+ * <p>
+ * Esta interfaz permite filtrar ventas históricas, visualizar el total
+ * acumulado y generar documentos PDF mediante JasperReports.</p>
+ *
+ * @author Paulina Guevara, Ernesto Cisneros
+ */
 public class FrmReporteComandas extends JFrame {
 
+    /**
+     * Controlador principal para la comunicación con la lógica de negocio.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Botón para regresar al menú de opciones de reportes.
+     */
     private JButton btnRegresar;
+
+    /**
+     * Botón para procesar el filtro por el rango de fechas seleccionado.
+     */
     private JButton btnAceptarRango;
+
+    /**
+     * Botón para exportar el reporte actual a un archivo físico PDF.
+     */
     private JButton btnGenerarPdf;
 
+    /**
+     * * Selector de fecha inicial del periodo. Utiliza la librería
+     * LGoodDatePicker.
+     */
     private DatePicker dpFechaInicio;
+
+    /**
+     * * Selector de fecha final del periodo. Utiliza la librería
+     * LGoodDatePicker.
+     */
     private DatePicker dpFechaFin;
 
+    /**
+     * Panel dinámico donde se incrusta el visor de JasperReports (JRViewer).
+     */
     private JPanel panelResultados;
+
+    /**
+     * Etiqueta que muestra la sumatoria monetaria de las comandas filtradas.
+     */
     private JLabel lblTotalAcumulado;
 
+    /**
+     * * Lista que almacena los resultados de la consulta actual. Se utiliza
+     * como fuente de datos para el reporte.
+     */
     private List<ReporteComandaDTO> comandasFiltradas;
 
+    /**
+     * * Objeto que contiene el reporte ya procesado y listo para ser
+     * visualizado o exportado.
+     */
     private JasperPrint jasperPrintActual;
 
+    /**
+     * Constructor que inicializa la vista de reportes de comandas.
+     *
+     * @param coordinador El coordinador general del sistema.
+     */
     public FrmReporteComandas(Coordinador coordinador) {
         this.coordinador = coordinador;
         this.comandasFiltradas = new ArrayList<>();
@@ -63,6 +115,9 @@ public class FrmReporteComandas extends JFrame {
         inicializarComponentes();
     }
 
+    /**
+     * Configura las propiedades de la ventana como dimensiones y cierre.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 700);
@@ -71,6 +126,13 @@ public class FrmReporteComandas extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Inicializa los componentes visuales, colores y la disposición de los
+     * paneles.
+     * <p>
+     * Configura un panel izquierdo para filtros de fecha y un panel central
+     * para el visor de resultados.</p>
+     */
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorFondo = new Color(239, 239, 239);
@@ -244,6 +306,13 @@ public class FrmReporteComandas extends JFrame {
         eventos();
     }
 
+    /**
+     * Define los escuchas de eventos para la navegación, el filtrado y la
+     * exportación de archivos.
+     * <p>
+     * Incluye la lógica de <code>JFileChooser</code> para seleccionar la ruta
+     * de guardado del PDF.</p>
+     */
     private void eventos() {
         btnRegresar.addActionListener(e -> {
             coordinador.mostrarOpcionesReporte();
@@ -284,7 +353,6 @@ public class FrmReporteComandas extends JFrame {
                 try {
                     net.sf.jasperreports.engine.JasperExportManager.exportReportToPdfFile(jasperPrintActual, ruta);
 
-
                 } catch (Exception ex) {
                     ex.printStackTrace();
                     JOptionPane.showMessageDialog(this, "Error al guardar el PDF: " + ex.getMessage());
@@ -293,6 +361,15 @@ public class FrmReporteComandas extends JFrame {
         });
     }
 
+    /**
+     * Obtiene las comandas desde la base de datos según el rango de fechas
+     * seleccionado.
+     * <p>
+     * Realiza validaciones de consistencia cronológica (fecha inicio anterior a
+     * fin) y actualiza el visor de JasperReports con los datos obtenidos.</p>
+     * <p>
+     * Calcula automáticamente el total acumulado de ventas en el periodo.</p>
+     */
     private void cargarComandasPorRango() {
         panelResultados.removeAll();
         panelResultados.revalidate();

@@ -12,29 +12,75 @@ import javax.swing.*;
 import utilerias.Validacion;
 
 /**
+ * Pantalla para el registro de nuevos ingredientes en el inventario del
+ * restaurante.
+ * <p>
+ * Permite capturar el nombre, la unidad de medida, la cantidad inicial y
+ * asociar una imagen representativa al ingrediente.</p>
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmRegistrarIngrediente extends JFrame {
 
+    /**
+     * Controlador principal para la gestion de flujos y persistencia.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Campo para el nombre comercial del ingrediente.
+     */
     private JTextField txtNombre;
+    /**
+     * Campo para la existencia fisica inicial.
+     */
     private JTextField txtCantidad;
+    /**
+     * Selector de unidades (Piezas, Gramos, Mililitros).
+     */
     private JComboBox<String> comboUnidad;
+
+    /**
+     * Boton de navegacion.
+     */
     private BotonRegresar btnRegresar;
+    /**
+     * Boton de accion.
+     */
     private BotonEstilizado btnRegistrar;
+
+    /**
+     * Components para la previsualizacion de archivos de imagen.
+     */
     private JLabel lblImagen;
+    /**
+     * Componentes para la previsualizacion y seleccion de archivos de imagen.
+     */
     private BotonEstilizado btnSeleccionarImagen;
+    /**
+     * Componentes para la seleccion de archivos de imagen.
+     */
     private BotonX btnQuitarImagen;
+
+    /**
+     * Almacena la direccion absoluta de la imagen seleccionada en disco.
+     */
     private String rutaImagen;
 
+    /**
+     * Constructor que inicializa la vista de registro de ingredientes.
+     *
+     * @param coordinador El coordinador general del sistema.
+     */
     public FrmRegistrarIngrediente(Coordinador coordinador) {
         this.coordinador = coordinador;
         configurarVentana();
         inicializarComponentes();
     }
 
+    /**
+     * Configura las propiedades basicas de la ventana como tamaño y titulo.
+     */
     private void configurarVentana() {
         setTitle("Ingredientes");
         setSize(1000, 650);
@@ -43,6 +89,13 @@ public class FrmRegistrarIngrediente extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Inicializa los componentes graficos, colores y distribucion del
+     * formulario.
+     * <p>
+     * Organiza los campos de texto a la izquierda y el area de imagen a la
+     * derecha.</p>
+     */
     private void inicializarComponentes() {
 
         Color colorMostaza = new Color(229, 171, 75);
@@ -105,7 +158,6 @@ public class FrmRegistrarIngrediente extends JFrame {
         panelContenido.setLayout(new BoxLayout(panelContenido, BoxLayout.X_AXIS));
         panelContenido.setOpaque(false);
 
-// ================= CAMPOS =================
         JPanel panelCampos = new JPanel();
         panelCampos.setLayout(new BoxLayout(panelCampos, BoxLayout.Y_AXIS));
         panelCampos.setOpaque(false);
@@ -124,7 +176,6 @@ public class FrmRegistrarIngrediente extends JFrame {
         panelCampos.add(Box.createVerticalStrut(15));
         panelCampos.add(crearCampo("Cantidad actual en inventario", txtCantidad));
 
-// ================= IMAGEN =================
         JPanel panelImagen = new JPanel();
         panelImagen.setLayout(new BoxLayout(panelImagen, BoxLayout.Y_AXIS));
         panelImagen.setOpaque(false);
@@ -149,7 +200,7 @@ public class FrmRegistrarIngrediente extends JFrame {
 
         panelBotonesImagen.add(btnSeleccionarImagen);
         panelBotonesImagen.add(btnQuitarImagen);
-        
+
         lblImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
         panelBotonesImagen.setAlignmentX(Component.CENTER_ALIGNMENT);
 
@@ -158,7 +209,7 @@ public class FrmRegistrarIngrediente extends JFrame {
         panelImagen.add(panelBotonesImagen);
 
         panelContenido.add(panelCampos);
-        panelContenido.add(Box.createHorizontalStrut(60)); 
+        panelContenido.add(Box.createHorizontalStrut(60));
         panelContenido.add(panelImagen);
 
         btnQuitarImagen.addActionListener(e -> quitarImagen());
@@ -187,12 +238,18 @@ public class FrmRegistrarIngrediente extends JFrame {
         eventos();
     }
 
+    /**
+     * Elimina la imagen seleccionada y restablece el icono por defecto.
+     */
     private void quitarImagen() {
         rutaImagen = null;
         ponerImagenDefault();
         btnQuitarImagen.setVisible(false);
     }
 
+    /**
+     * Carga el icono representativo de "sin imagen" en el contenedor visual.
+     */
     private void ponerImagenDefault() {
         ImageIcon icono = new ImageIcon("src\\main\\resources\\imagenes\\icono_sin_imagen.png");
 
@@ -208,6 +265,13 @@ public class FrmRegistrarIngrediente extends JFrame {
         lblImagen.setText("");
     }
 
+    /**
+     * Crea un panel contenedor con una etiqueta y un campo de texto alineados.
+     *
+     * @param texto Descripcion del campo.
+     * @param campo Componente de entrada de texto asociado.
+     * @return <code>JPanel</code> configurado con BoxLayout.
+     */
     private JPanel crearCampo(String texto, JTextField campo) {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -228,6 +292,13 @@ public class FrmRegistrarIngrediente extends JFrame {
         return contenedor;
     }
 
+    /**
+     * Crea un panel contenedor con una etiqueta y un selector alineados.
+     *
+     * @param texto Descripcion del combo.
+     * @param combo Componente JComboBox asociado.
+     * @return <code>JPanel</code> configurado con BoxLayout.
+     */
     private JPanel crearCombo(String texto, JComboBox combo) {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -248,6 +319,9 @@ public class FrmRegistrarIngrediente extends JFrame {
         return contenedor;
     }
 
+    /**
+     * Registra los escuchas de accion para botones y controles.
+     */
     private void eventos() {
         btnRegresar.addActionListener(e -> {
             dispose();
@@ -259,6 +333,12 @@ public class FrmRegistrarIngrediente extends JFrame {
         btnSeleccionarImagen.addActionListener(e -> seleccionarImagen());
     }
 
+    /**
+     * Abre un selector de archivos (JFileChooser) para que el usuario elija una
+     * imagen.
+     * <p>
+     * Escala la imagen seleccionada para ajustarla al tamaño del JLabel.</p>
+     */
     private void seleccionarImagen() {
         JFileChooser fileChooser = new JFileChooser();
         fileChooser.setDialogTitle("Seleccionar imagen");
@@ -285,6 +365,13 @@ public class FrmRegistrarIngrediente extends JFrame {
         }
     }
 
+    /**
+     * Valida los datos del formulario y solicita al coordinador el registro del
+     * ingrediente.
+     * <p>
+     * Verifica que el nombre no este vacio y que la cantidad sea congruente con
+     * la unidad de medida mediante la clase <code>Validacion</code>.</p>
+     */
     private void registrarIngrediente() {
 
         String nombre = txtNombre.getText().trim();

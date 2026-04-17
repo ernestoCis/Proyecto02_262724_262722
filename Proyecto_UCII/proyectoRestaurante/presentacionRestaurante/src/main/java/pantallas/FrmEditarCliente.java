@@ -25,20 +25,68 @@ import javax.swing.JTextField;
 import javax.swing.SwingConstants;
 import utilerias.Validacion;
 
+/**
+ * Ventana para la modificación de datos de clientes frecuentes existentes.
+ * <p>
+ * Proporciona un formulario validado para actualizar información personal como
+ * nombre, apellidos, teléfono y correo electrónico, manteniendo la integridad
+ * de los datos estadísticos del cliente (visitas, puntos, total gastado).</p>
+ *
+ * * @author Paulina Guevara, Ernesto Cisneros
+ */
 public class FrmEditarCliente extends JFrame {
 
+    /**
+     * Enlace con el coordinador para la gestión de la lógica de negocio y
+     * navegación.
+     */
     private final Coordinador coordinador;
+    /**
+     * Objeto DTO que contiene la información original del cliente que se está
+     * editando.
+     */
     private final ClienteFrecuenteDTO clienteEditar;
 
+    /**
+     * Campo de texto para el nombre del cliente.
+     */
     private JTextField txtNombre;
+    /**
+     * Campo de texto para el primer apellido del cliente.
+     */
     private JTextField txtApellidoPaterno;
+    /**
+     * Campo de texto para el segundo apellido del cliente (opcional).
+     */
     private JTextField txtApellidoMaterno;
+    /**
+     * Campo de texto para el número telefónico del cliente.
+     */
     private JTextField txtTelefono;
+    /**
+     * Campo de texto para la dirección de correo electrónico del cliente.
+     */
     private JTextField txtCorreo;
 
+    /**
+     * Botón para cancelar la edición y volver al listado de clientes.
+     */
     private JButton btnRegresar;
+    /**
+     * Botón para procesar y guardar los cambios realizados en el formulario.
+     */
     private JButton btnEditar;
 
+    /**
+     * Construye la ventana de edición de clientes.
+     * <p>
+     * Recupera automáticamente el cliente seleccionado desde el coordinador,
+     * configura la interfaz gráfica y rellena los campos con la información
+     * actual.</p>
+     *
+     * * @param coordinador El coordinador del sistema que provee el contexto y
+     * acceso a datos.
+     */
     public FrmEditarCliente(Coordinador coordinador) {
         this.coordinador = coordinador;
         this.clienteEditar = coordinador.getClienteSeleccionado();
@@ -48,6 +96,10 @@ public class FrmEditarCliente extends JFrame {
         cargarDatosCliente();
     }
 
+    /**
+     * Define las propiedades básicas del marco como dimensiones, título y
+     * centrado.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 650);
@@ -57,6 +109,11 @@ public class FrmEditarCliente extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * * Crea y organiza los paneles, etiquetas y campos de texto de la
+     * interfaz. Aplica el diseño visual mediante GridBagLayout y estilos
+     * personalizados.
+     */
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorFondo = new Color(239, 239, 239);
@@ -144,7 +201,7 @@ public class FrmEditarCliente extends JFrame {
         JPanel panelBotonInferior = new JPanel(new BorderLayout());
         panelBotonInferior.setOpaque(false);
         panelBotonInferior.setBorder(BorderFactory.createEmptyBorder(20, 0, 0, 0));
-        
+
         btnEditar = new BotonEstilizado("Editar");
 
         JPanel panelBtnDerecha = new JPanel();
@@ -168,6 +225,17 @@ public class FrmEditarCliente extends JFrame {
         eventos();
     }
 
+    /**
+     * Agrega un conjunto de etiqueta y campo de texto al panel del formulario.
+     *
+     * * @param panel El panel contenedor donde se insertará el campo.
+     * @param gbc Las restricciones de GridBagConstraints para el
+     * posicionamiento.
+     * @param x La columna dentro de la cuadrícula.
+     * @param y La fila dentro de la cuadrícula.
+     * @param textoLabel El texto descriptivo que aparecerá sobre el campo.
+     * @param textField El componente de entrada de texto asociado.
+     */
     private void agregarCampo(JPanel panel, GridBagConstraints gbc, int x, int y, String textoLabel, JTextField textField) {
         JLabel label = new JLabel(textoLabel);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -190,6 +258,10 @@ public class FrmEditarCliente extends JFrame {
         panel.add(contenedor, gbc);
     }
 
+    /**
+     * Define los escuchadores de acciones para los botones de navegación y
+     * guardado.
+     */
     private void eventos() {
         btnRegresar.addActionListener(e -> {
             dispose();
@@ -198,11 +270,15 @@ public class FrmEditarCliente extends JFrame {
         btnEditar.addActionListener(e -> editarCliente());
     }
 
+    /**
+     * Rellena los campos de texto del formulario con la información del cliente
+     * cargado en memoria.
+     */
     private void cargarDatosCliente() {
         if (clienteEditar == null) {
             return;
         }
-        
+
         txtNombre.setText(clienteEditar.getNombres() != null ? clienteEditar.getNombres() : "");
         txtApellidoPaterno.setText(clienteEditar.getApellidoPaterno() != null ? clienteEditar.getApellidoPaterno() : "");
         txtApellidoMaterno.setText(clienteEditar.getApellidoMaterno() != null ? clienteEditar.getApellidoMaterno() : "");
@@ -210,13 +286,18 @@ public class FrmEditarCliente extends JFrame {
         txtCorreo.setText(clienteEditar.getEmail() != null ? clienteEditar.getEmail() : "");
     }
 
+    /**
+     * * Ejecuta el proceso de edición: limpia los datos, realiza validaciones
+     * de formato y envía el objeto actualizado al coordinador para su
+     * persistencia.
+     */
     private void editarCliente() {
         String nombre = Validacion.limpiarCadena(txtNombre.getText());
         String apellidoPaterno = Validacion.limpiarCadena(txtApellidoPaterno.getText());
         String apellidoMaterno = Validacion.limpiarCadena(txtApellidoMaterno.getText());
         String telefono = Validacion.limpiarCadena(txtTelefono.getText());
         String correo = Validacion.limpiarCadena(txtCorreo.getText());
-        
+
         if (!Validacion.esNombreValido(nombre)) {
             JOptionPane.showMessageDialog(null, "Nombre inválido");
             return;
@@ -246,7 +327,6 @@ public class FrmEditarCliente extends JFrame {
             JOptionPane.showMessageDialog(this, "Completa al menos nombre, apellido paterno y teléfono.");
             return;
         }
-
 
         ClienteFrecuenteDTO clienteActualizado = new ClienteFrecuenteDTO(
                 clienteEditar.getIdCliente(),

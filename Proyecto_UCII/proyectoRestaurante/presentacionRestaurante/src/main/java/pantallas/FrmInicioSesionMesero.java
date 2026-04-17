@@ -26,22 +26,46 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 
 /**
+ * Pantalla de inicio de sesion para el personal de servicio (meseros).
+ * <p>
+ * Esta ventana permite validar el acceso del mesero mediante su nombre de
+ * usuario.</p>
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmInicioSesionMesero extends JFrame {
 
+    /**
+     * Boton para volver a la pantalla de inicio del sistema.
+     */
     private JButton btnRegresar;
+    /**
+     * Boton para confirmar el intento de inicio de sesion.
+     */
     private JButton btnAceptar;
+    /**
+     * Campo de entrada de texto para el nombre del mesero.
+     */
     private JTextField txtUsuario;
+    /**
+     * Controlador principal para la gestion de flujos y datos.
+     */
     private Coordinador coordinador;
 
+    /**
+     * Constructor que inicializa la vista de inicio de sesion.
+     *
+     * @param coordinador El coordinador general del sistema.
+     */
     public FrmInicioSesionMesero(Coordinador coordinador) {
         this.coordinador = coordinador;
         configurarVentana();
         inicializarComponentes();
     }
 
+    /**
+     * Establece las propiedades basicas del marco de la ventana.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 650);
@@ -50,6 +74,12 @@ public class FrmInicioSesionMesero extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Inicializa los componentes visuales y organiza el diseño de la pantalla.
+     * <p>
+     * Configura el panel superior con el logo y el formulario de acceso
+     * central.</p>
+     */
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorRojo = new Color(216, 84, 78);
@@ -151,6 +181,12 @@ public class FrmInicioSesionMesero extends JFrame {
         eventos();
     }
 
+    /**
+     * Asigna las acciones a los botones de la interfaz.
+     * <p>
+     * El boton aceptar valida que el campo de usuario no este vacio y consulta
+     * la existencia del mesero en el sistema.</p>
+     */
     private void eventos() {
         btnRegresar.addActionListener(e -> {
             dispose();
@@ -171,6 +207,13 @@ public class FrmInicioSesionMesero extends JFrame {
         });
     }
 
+    /**
+     * Metodo de fabrica para crear botones con un estilo redondeado y efectos
+     * de hover.
+     *
+     * @param texto El texto que se mostrara dentro del boton.
+     * @return Un objeto <code>JButton</code> con diseño personalizado.
+     */
     private JButton crearBoton(String texto) {
 
         JButton boton = new JButton(texto) {

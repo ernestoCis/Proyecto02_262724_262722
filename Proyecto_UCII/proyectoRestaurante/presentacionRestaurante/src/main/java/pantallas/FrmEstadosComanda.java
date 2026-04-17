@@ -30,27 +30,65 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * Ventana encargada de visualizar el resumen detallado y gestionar el flujo de
+ * estados de una comanda.
+ * <p>
+ * Esta interfaz permite al personal del restaurante:
+ * <ul>
+ * <li>Consultar información general (folio, mesa, fecha, total y cliente).</li>
+ * <li>Visualizar el listado de productos solicitados con sus respectivas
+ * notas.</li>
+ * <li>Realizar transiciones de estado (Entregar o Cancelar comanda).</li>
+ * <li>Acceder al módulo de edición de productos.</li>
+ * </ul>
+ * </p>
+ *
+ * @author Paulina Guevara, Ernesto Cisneros
+ */
 public class FrmEstadosComanda extends JFrame {
 
+    /**
+     * Instancia del coordinador para gestionar la comunicación entre pantallas.
+     */
     private final Coordinador coordinador;
 
-    private JButton btnSalir;
-    private JButton btnRegresar;
-    private JButton btnEditar;
-    private JButton btnEntregada;
-    private JButton btnCancelar;
+    /**
+     * Botones de control para la navegación y acciones de la sesión.
+     */
+    private JButton btnSalir, btnRegresar;
 
+    /**
+     * Botones para modificar el estado de la comanda actual.
+     */
+    private JButton btnEditar, btnEntregada, btnCancelar;
+
+    /**
+     * Tabla y modelo para la visualización de los productos solicitados.
+     */
     private JTable tblDetalles;
     private DefaultTableModel modeloTabla;
 
-    private JLabel lblFolio;
-    private JLabel lblMesa;
-    private JLabel lblFecha;
-    private JLabel lblEstado;
-    private JLabel lblTotal;
-    private JLabel lblClienteAsociado;
-    private JLabel lblNombreMesero;
+    /**
+     * Etiquetas para mostrar la información detallada de la comanda y el
+     * cliente.
+     */
+    private JLabel lblFolio, lblMesa, lblFecha, lblEstado, lblTotal, lblClienteAsociado, lblNombreMesero;
 
+    /**
+     * Constructor que inicializa la pantalla de estados de comanda.
+     * <p>
+     * Realiza las siguientes acciones:
+     * <ul>
+     * <li>Asigna el coordinador general.</li>
+     * <li>Configura las propiedades del frame.</li>
+     * <li>Inicializa los componentes visuales.</li>
+     * <li>Carga la información de la comanda desde la base de datos.</li>
+     * </ul>
+     * </p>
+     *
+     * @param coordinador Instancia del controlador principal de la aplicación.
+     */
     public FrmEstadosComanda(Coordinador coordinador) {
         this.coordinador = coordinador;
         configurarVentana();
@@ -58,6 +96,12 @@ public class FrmEstadosComanda extends JFrame {
         cargarDatosComanda();
     }
 
+    /**
+     * Establece la configuración base del marco de la ventana.
+     * <p>
+     * Define el título "Restaurante", dimensiones de 1000x700 píxeles,
+     * posicionamiento centrado y el comportamiento de salida al cerrar.</p>
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 700);
@@ -66,6 +110,20 @@ public class FrmEstadosComanda extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Construye y organiza la jerarquía visual de la pantalla.
+     * <p>
+     * Utiliza una combinación de <code>BorderLayout</code> y
+     * <code>BoxLayout</code> para seccionar la interfaz en:
+     * <ol>
+     * <li><b>Encabezado:</b> Información del mesero y navegación.</li>
+     * <li><b>Cuerpo:</b> Tarjeta de información con etiquetas dinámicas y tabla
+     * de detalles.</li>
+     * <li><b>Pie:</b> Panel de acciones rápidas (Editar, Entregar,
+     * Cancelar).</li>
+     * </ol>
+     * </p>
+     */
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorRojo = new Color(216, 84, 78);
@@ -291,6 +349,12 @@ public class FrmEstadosComanda extends JFrame {
         eventos();
     }
 
+    /**
+     * Crea etiquetas personalizadas para la sección de información general.
+     *
+     * @param texto El texto descriptivo inicial de la etiqueta.
+     * @return Un objeto <code>JLabel</code> con fuente SansSerif en negritas.
+     */
     private JLabel crearLabelInfo(String texto) {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 14));
@@ -298,6 +362,22 @@ public class FrmEstadosComanda extends JFrame {
         return label;
     }
 
+    /**
+     * Configura los escuchadores (Listeners) para la interactividad de la
+     * ventana.
+     * <p>
+     * Gestiona procesos críticos como:
+     * <ul>
+     * <li><b>Finalización de servicio:</b> Actualiza simultáneamente el estado
+     * de la comanda a <code>ENTREGADA</code> y la disponibilidad de la mesa a
+     * <code>DISPONIBLE</code>.</li>
+     * <li><b>Cancelación:</b> Solicita confirmación antes de invalidar el
+     * pedido y liberar la mesa.</li>
+     * <li><b>Navegación:</b> Redirección al editor de productos o al panel de
+     * mesas.</li>
+     * </ul>
+     * </p>
+     */
     private void eventos() {
         btnSalir.addActionListener(e -> {
             coordinador.limpiarSesionComanda();
@@ -375,6 +455,22 @@ public class FrmEstadosComanda extends JFrame {
         });
     }
 
+    /**
+     * Recupera y muestra la información actualizada de la comanda en los
+     * componentes visuales.
+     * <p>
+     * Este método realiza las siguientes tareas:
+     * <ol>
+     * <li>Busca la comanda abierta vinculada al número de mesa
+     * seleccionado.</li>
+     * <li>Formatea la fecha de apertura
+     * (<code>dd/MM/yyyy HH:mm:ss</code>).</li>
+     * <li>Calcula y muestra el total monetario.</li>
+     * <li>Puebla el <code>DefaultTableModel</code> con los productos,
+     * cantidades y subtotales.</li>
+     * </ol>
+     * </p>
+     */
     private void cargarDatosComanda() {
         ComandaDTO comanda = coordinador.buscarComandaAbiertaPorMesa(coordinador.getMesaSeleccionada().getNumero());
 

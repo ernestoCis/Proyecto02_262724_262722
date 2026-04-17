@@ -27,25 +27,64 @@ import javax.swing.SwingConstants;
 import utilerias.Validacion;
 
 /**
+ * Pantalla para el registro de nuevos clientes frecuentes en el sistema.
+ * <p>
+ * Proporciona un formulario validado para capturar datos personales y de
+ * contacto.</p>
  *
  * @author Paulina Guevera, Ernesto Cisneros
  */
 public class FrmRegistrarCliente extends JFrame {
 
+    /**
+     * Referencia al controlador principal para la comunicacion con la logica.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Referencia a la pantalla de clientes para actualizaciones.
+     */
     private FrmClientes frmClientes;
+    /**
+     * Lista local de clientes para validaciones de ID o duplicados.
+     */
     private List<ClienteFrecuenteDTO> listaClientes;
 
+    /**
+     * Campo de texto para la captura de informacion del cliente.
+     */
     private JTextField txtNombre;
+    /**
+     * Campo de texto para la captura de informacion del cliente.
+     */
     private JTextField txtApellidoPaterno;
+    /**
+     * Campo de texto para la captura de informacion del cliente.
+     */
     private JTextField txtApellidoMaterno;
+    /**
+     * Campo de texto para la captura de informacion del cliente.
+     */
     private JTextField txtTelefono;
+    /**
+     * Campo de texto para la captura de informacion del cliente.
+     */
     private JTextField txtCorreo;
 
+    /**
+     * Boton para el control de navegacion.
+     */
     private JButton btnRegresar;
+    /**
+     * Boton para el control de confirmacion.
+     */
     private JButton btnRegistrar;
 
+    /**
+     * Constructor que inicializa el formulario de registro.
+     *
+     * @param coordinador El coordinador general del sistema.
+     */
     public FrmRegistrarCliente(Coordinador coordinador) {
         this.coordinador = coordinador;
         this.listaClientes = coordinador.getListaClientesActual();
@@ -54,6 +93,9 @@ public class FrmRegistrarCliente extends JFrame {
         inicializarComponentes();
     }
 
+    /**
+     * Define las propiedades visuales y de cierre del frame.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 650);
@@ -63,6 +105,12 @@ public class FrmRegistrarCliente extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Crea y organiza los componentes del formulario.
+     * <p>
+     * Utiliza un <code>PanelRedondeado</code> para agrupar los campos de
+     * entrada.</p>
+     */
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorFondo = new Color(239, 239, 239);
@@ -174,6 +222,16 @@ public class FrmRegistrarCliente extends JFrame {
         eventos();
     }
 
+    /**
+     * Metodo auxiliar para agregar campos de texto etiquetados al panel.
+     *
+     * @param panel El panel destino (GridBagLayout).
+     * @param gbc Las restricciones de diseño.
+     * @param x Posicion en columna.
+     * @param y Posicion en fila.
+     * @param textoLabel Texto descriptivo del campo.
+     * @param textField El componente de entrada de texto.
+     */
     private void agregarCampo(JPanel panel, GridBagConstraints gbc, int x, int y, String textoLabel, JTextField textField) {
         JLabel label = new JLabel(textoLabel);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -196,6 +254,9 @@ public class FrmRegistrarCliente extends JFrame {
         panel.add(contenedor, gbc);
     }
 
+    /**
+     * Asigna los escuchas de eventos a los botones.
+     */
     private void eventos() {
         btnRegresar.addActionListener(e -> {
             dispose();
@@ -205,6 +266,12 @@ public class FrmRegistrarCliente extends JFrame {
         btnRegistrar.addActionListener(e -> registrarCliente());
     }
 
+    /**
+     * Procesa el registro del cliente previa validacion de los campos.
+     * <p>
+     * Utiliza la clase <code>Validacion</code> para asegurar la integridad de
+     * los datos.</p>
+     */
     private void registrarCliente() {
         String nombre = Validacion.limpiarCadena(txtNombre.getText());
         String apellidoPaterno = Validacion.limpiarCadena(txtApellidoPaterno.getText());
@@ -256,6 +323,11 @@ public class FrmRegistrarCliente extends JFrame {
         dispose();
     }
 
+    /**
+     * Calcula el siguiente ID disponible basado en la lista actual de clientes.
+     *
+     * @return Un nuevo ID de tipo <code>Long</code> incrementado.
+     */
     private Long generarNuevoId() {
         Long mayor = 0L;
 

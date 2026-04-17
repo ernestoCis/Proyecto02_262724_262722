@@ -24,25 +24,39 @@ import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
- /**
-  * 
-  * @author Paulina Guevara, Ernesto Cisneros
-  */
+
+
+/**
+ * Pantalla principal de visualizacion y seleccion de mesas.
+ * <p>Muestra el mapa de mesas del restaurante y su estado de disponibilidad actual.</p>
+ * @author Paulina Guevara, Ernesto Cisneros
+ */
 public class FrmMesas extends JFrame {
     
+    /** Referencia al controlador para gestionar flujos de datos. */
     private final Coordinador coordinador;
 
+    /** Boton para cerrar sesion y volver al login. */
     private JButton btnSalir;
+    /** Boton para generar mesas de forma masiva en el sistema. */
     private JButton btnInsercionMasiva;
 
+    /** Panel contenedor que organiza las mesas en una cuadricula. */
     private JPanel panelMesas;
 
+    /**
+     * Constructor que inicializa la vista de mesas.
+     * @param coordinador El coordinador general de la aplicacion.
+     */
     public FrmMesas(Coordinador coordinador) {
         this.coordinador = coordinador;
         configurarVentana();
         inicializarComponentes();
     }
 
+    /**
+     * Establece las propiedades de tamaño, titulo y cierre del frame.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 700);
@@ -51,6 +65,15 @@ public class FrmMesas extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Inicializa la interfaz grafica.
+     * <p>Crea:
+     * <ul>
+     * <li>Encabezado con logo y nombre del mesero.</li>
+     * <li>Contenedor con scroll para las mesas.</li>
+     * <li>Panel inferior de herramientas.</li>
+     * </ul></p>
+     */
     private void inicializarComponentes() {
         
         Color colorMostaza = new Color(229, 171, 75);
@@ -182,6 +205,9 @@ public class FrmMesas extends JFrame {
         cargarMesas(coordinador.obtenerMesas());
     }
 
+    /**
+     * Define las acciones para los botones de la pantalla.
+     */
     private void eventos() {
         btnSalir.addActionListener(e -> {
             coordinador.mostrarInicioSesionMesero();
@@ -193,6 +219,11 @@ public class FrmMesas extends JFrame {
         });
     }
 
+    /**
+     * Renderiza la lista de mesas en el panel central.
+     * <p>Limpia el contenedor actual y añade un panel por cada mesa obtenida.</p>
+     * @param listaMesas Coleccion de objetos <code>MesaDTO</code> a mostrar.
+     */
     public void cargarMesas(List<MesaDTO> listaMesas) {
         panelMesas.removeAll();
 
@@ -206,6 +237,17 @@ public class FrmMesas extends JFrame {
         panelMesas.repaint();
     }
 
+    /**
+     * Crea el componente visual individual para una mesa.
+     * <p>Configura colores segun disponibilidad:
+     * <ul>
+     * <li>Verde: Disponible.</li>
+     * <li>Rojo: Ocupada (No disponible).</li>
+     * <li>Gris: Otros estados.</li>
+     * </ul></p>
+     * @param mesa Datos de la mesa a dibujar.
+     * @return Un objeto <code>JPanel</code> con el boton de la mesa y su estado.
+     */
     private JPanel crearPanelMesa(MesaDTO mesa) {
         JPanel panel = new JPanel();
         panel.setOpaque(false);

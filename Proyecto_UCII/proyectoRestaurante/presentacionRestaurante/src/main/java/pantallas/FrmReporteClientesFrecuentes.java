@@ -9,23 +9,63 @@ import javax.swing.*;
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.swing.JRViewer;
 
+/**
+ * Pantalla para la generación y visualización de reportes de clientes
+ * frecuentes.
+ * <p>
+ * Esta ventana permite aplicar filtros por nombre y cantidad mínima de visitas,
+ * ofreciendo una vista previa embebida del reporte y la opción de exportar a
+ * PDF.</p>
+ *
+ * * @author Paulina Guevara, Ernesto Cisneros
+ */
 public class FrmReporteClientesFrecuentes extends JFrame {
 
+    /**
+     * Controlador principal para la gestión de lógica de reportes y navegación.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Campo de texto para los criterios de filtrado del reporte.
+     */
     private JTextField txtNombre;
+    /**
+     * Campo de texto para los criterios de filtrado del reporte.
+     */
     private JTextField txtVisitas;
+
+    /**
+     * Selector para habilitar o deshabilitar los filtros de búsqueda.
+     */
     private JCheckBox chkNombre;
+    /**
+     * Selector para habilitar o deshabilitar los filtros de búsqueda.
+     */
     private JCheckBox chkVisitas;
 
-    // Panel donde se mostrará el PDF
+    /**
+     * Contenedor destinado a albergar el visor de JasperReports (JRViewer).
+     */
     private JPanel panelVista;
 
+    /**
+     * Constructor que inicializa la interfaz de reportes.
+     *
+     * @param coordinador El coordinador general del sistema.
+     */
     public FrmReporteClientesFrecuentes(Coordinador coordinador) {
         this.coordinador = coordinador;
         initComponents();
     }
 
+    /**
+     * Inicializa y organiza todos los componentes visuales de la pantalla.
+     * <p>
+     * Configura el diseño de filtros en el lateral izquierdo y el área de
+     * visualización en el centro, utilizando una estética basada en tarjetas
+     * (cards).</p>
+     */
     private void initComponents() {
 
         setTitle("Restaurante");
@@ -79,7 +119,7 @@ public class FrmReporteClientesFrecuentes extends JFrame {
         panelRegresar.setOpaque(false);
         panelRegresar.setPreferredSize(new Dimension(1000, 60));
 
-        btnRegresar.setBounds(20, 20, 40, 40); 
+        btnRegresar.setBounds(20, 20, 40, 40);
         panelRegresar.add(btnRegresar);
 
         btnRegresar.addActionListener(e -> {
@@ -176,6 +216,15 @@ public class FrmReporteClientesFrecuentes extends JFrame {
         add(fondo);
     }
 
+    /**
+     * Genera la vista previa del reporte basado en los filtros seleccionados.
+     * <p>
+     * Utiliza <code>JasperPrint</code> obtenido del coordinador para renderizar
+     * un <code>JRViewer</code> dentro del panel de vista previa.</p>
+     *
+     * * @throws NumberFormatException Si el campo de visitas seleccionado no
+     * contiene un entero válido.
+     */
     private void vistaPreviaPDF() {
         try {
             String nombre = null;
@@ -203,6 +252,14 @@ public class FrmReporteClientesFrecuentes extends JFrame {
         }
     }
 
+    /**
+     * Solicita al coordinador la generación y guardado físico del reporte en
+     * formato PDF.
+     * <p>
+     * Recupera los valores de los filtros actuales y dispara el proceso de
+     * exportación mediante una ventana de selección de archivos gestionada por
+     * el controlador.</p>
+     */
     private void descargarPDF() {
 
         String nombre = null;

@@ -6,17 +6,54 @@ import controlador.Coordinador;
 import java.awt.*;
 import javax.swing.*;
 
+/**
+ * Pantalla de menú para la selección del tipo de reporte a generar.
+ * <p>
+ * Esta ventana centraliza el acceso a los reportes de actividad del
+ * restaurante, permitiendo al usuario administrativo elegir entre informes de
+ * comandas o estadísticas de clientes frecuentes.</p>
+ *
+ * * @author Paulina Guevara, Ernesto Cisneros
+ */
 public class FrmSeleccionReporte extends JFrame {
 
+    /**
+     * Controlador encargado de la navegación y la lógica de negocio de
+     * reportes.
+     */
     private final Coordinador coordinador;
+
+    /**
+     * Botón para acceder al módulo de reportes históricos de comandas.
+     */
     private JButton btnReporteComandas;
+
+    /**
+     * Botón para acceder al módulo de reportes de clientes frecuentes.
+     */
     private JButton btnReporteClientesF;
 
+    /**
+     * Constructor que inicializa la interfaz de selección de reportes.
+     *
+     * @param coordinador El coordinador general del sistema que gestiona el
+     * flujo de navegación.
+     */
     public FrmSeleccionReporte(Coordinador coordinador) {
         this.coordinador = coordinador;
         initComponents();
     }
 
+    /**
+     * Inicializa y configura todos los componentes visuales de la ventana.
+     * <p>
+     * Utiliza una combinación de {@link BorderLayout} para la estructura
+     * general y {@link GridBagLayout} para centrar los botones de selección en
+     * el área de contenido.</p>
+     * <p>
+     * Incluye la personalización estética con colores mostaza y fondos grises
+     * consistentes con el resto de la aplicación.</p>
+     */
     private void initComponents() {
 
         setTitle("Restaurante");
@@ -70,7 +107,7 @@ public class FrmSeleccionReporte extends JFrame {
         panelRegresar.setOpaque(false);
         panelRegresar.setPreferredSize(new Dimension(1000, 60));
 
-        btnRegresar.setBounds(20, 20, 40, 40); 
+        btnRegresar.setBounds(20, 20, 40, 40);
         panelRegresar.add(btnRegresar);
 
         JPanel centro = new JPanel(new GridBagLayout());
@@ -100,8 +137,8 @@ public class FrmSeleccionReporte extends JFrame {
         GridBagConstraints gbc = new GridBagConstraints();
         gbc.gridx = 0;
         gbc.gridy = 0;
-        gbc.anchor = GridBagConstraints.NORTH; 
-        gbc.insets = new Insets(70, 0, 0, 0);  
+        gbc.anchor = GridBagConstraints.NORTH;
+        gbc.insets = new Insets(70, 0, 0, 0);
         gbc.weightx = 1.0;
         gbc.weighty = 1.0;
 

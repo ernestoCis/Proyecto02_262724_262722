@@ -10,17 +10,46 @@ import java.util.List;
 import javax.swing.table.DefaultTableCellRenderer;
 
 /**
+ * Ventana de visualización detallada para un producto específico del menú.
+ * <p>
+ * Muestra la información general del producto (imagen, precio, descripción) y
+ * el desglose de su receta, listando los ingredientes necesarios junto con sus
+ * cantidades y unidades de medida.</p>
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmDetalleProducto extends JFrame {
 
+    /**
+     * Enlace con el coordinador para la gestión de navegación y flujo de datos.
+     */
     private final Coordinador coordinador;
+    /**
+     * Objeto de transferencia que contiene la información del producto a
+     * visualizar.
+     */
     private ProductoDTO producto;
+    /**
+     * Tabla que despliega la lista de ingredientes asociados al producto.
+     */
     private JTable tablaIngredientes;
+    /**
+     * Modelo de datos para gestionar el contenido de la tabla de ingredientes.
+     */
     private DefaultTableModel modeloTabla;
+    /**
+     * Etiqueta que actúa como contenedor para mostrar la imagen del producto.
+     */
     private JLabel lblImagen;
 
+    /**
+     * Construye la ventana de detalle del producto.
+     * <p>
+     * Recupera el producto seleccionado actualmente desde el coordinador e
+     * inicializa la carga de datos visuales y la tabla de recetas.</p>
+     *
+     * * @param coordinador El coordinador del sistema que provee el contexto.
+     */
     public FrmDetalleProducto(Coordinador coordinador) {
         this.coordinador = coordinador;
         this.producto = coordinador.getProductoSeleccionado();
@@ -29,6 +58,9 @@ public class FrmDetalleProducto extends JFrame {
         cargarDatos();
     }
 
+    /**
+     * Define las dimensiones, posición y estilo decorativo del marco principal.
+     */
     private void configurarVentana() {
         setTitle("Detalle Producto");
         setSize(500, 600);
@@ -37,6 +69,10 @@ public class FrmDetalleProducto extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * * Construye la estructura visual de la ventana, incluyendo el encabezado,
+     * el área de descripción y la configuración de la tabla de ingredientes.
+     */
     private void inicializarComponentes() {
 
         Color fondo = Color.decode("#FFFFFF");
@@ -143,6 +179,14 @@ public class FrmDetalleProducto extends JFrame {
         String[] columnas = {"Nombre", "Unidad", "Cantidad"};
 
         modeloTabla = new DefaultTableModel(columnas, 0) {
+            /**
+             * Desactiva la edición directa de las celdas en la tabla de
+             * detalle.
+             *
+             * @param row Índice de la fila.
+             * @param col Índice de la columna.
+             * @return false para mantener la tabla en modo solo lectura.
+             */
             @Override
             public boolean isCellEditable(int row, int col) {
                 return false;
@@ -174,6 +218,10 @@ public class FrmDetalleProducto extends JFrame {
         add(panelPrincipal);
     }
 
+    /**
+     * Carga el icono de sistema predeterminado para productos que carecen de
+     * imagen.
+     */
     private void ponerImagenDefault() {
         ImageIcon icono = new ImageIcon("src\\main\\resources\\imagenes\\icono_sin_imagen.png");
 
@@ -189,6 +237,12 @@ public class FrmDetalleProducto extends JFrame {
         lblImagen.setText("");
     }
 
+    /**
+     * * Puebla la interfaz con la información del producto.
+     * <p>
+     * Carga la imagen desde la ruta especificada (si existe) y llena el modelo
+     * de la tabla con los ingredientes definidos en la receta.</p>
+     */
     private void cargarDatos() {
 
         if (producto == null) {
