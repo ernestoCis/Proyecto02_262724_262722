@@ -43,74 +43,209 @@ import java.util.Map;
 import javax.swing.JFileChooser;
 
 /**
+ * Clase principal que implementa el patrón Mediador para la aplicación del
+ * Restaurante.
+ * <p>
+ * El Coordinador centraliza la comunicación entre las pantallas (Capa de
+ * Presentación) y los Objetos de Negocio (Capa Lógica). Mantiene el estado
+ * global de la sesión, gestionando el flujo de datos sin que las pantallas se
+ * acoplen entre sí.</p>
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class Coordinador implements ICoordinador {
 
     // FRAMES PRINCIPALES
+    /**
+     * Formulario principal de inicio de la aplicación.
+     */
     private FrmInicio frmInicio;
+    /**
+     * Formulario de menú principal con las acciones del sistema.
+     */
     private FrmAcciones frmAcciones;
 
     // CLIENTES
+    /**
+     * Objeto de negocio para gestionar las operaciones de Clientes Frecuentes
+     * en la base de datos.
+     */
     private final ClienteFrecuenteBO clienteFrecuenteBO;
 
+    /**
+     * Formulario para el catálogo general de clientes frecuentes.
+     */
     private FrmClientes frmClientes;
+    /**
+     * Formulario utilizado para registrar un nuevo cliente en el sistema.
+     */
     private FrmRegistrarCliente frmRegistrarCliente;
+    /**
+     * Formulario utilizado para editar los datos de un cliente existente.
+     */
     private FrmEditarCliente frmEditarCliente;
 
+    /**
+     * Lista temporal que almacena los clientes mostrados en la sesión o tabla
+     * actual.
+     */
     private List<ClienteFrecuenteDTO> listaClientesActual;
+    /**
+     * Cliente que se encuentra actualmente seleccionado por el usuario en el
+     * sistema.
+     */
     private ClienteFrecuenteDTO clienteSeleccionado;
 
     // MESEROS
+    /**
+     * Objeto de negocio para gestionar las operaciones de Meseros en la base de
+     * datos.
+     */
     private final MeseroBO meseroBO;
-
+    /**
+     * Formulario para el inicio de sesión exclusivo de los meseros.
+     */
     private FrmInicioSesionMesero frmInicioSesionMesero;
 
+    /**
+     * Objeto de negocio para gestionar las operaciones de Mesas en la base de
+     * datos.
+     */
     private final MesaBO mesaBO;
-
+    /**
+     * Mesero que ha iniciado sesión y se encuentra activo en el sistema.
+     */
     private MeseroDTO meseroActual;
 
     // MESAS
+    /**
+     * Formulario para la gestión y visualización del mapa de mesas.
+     */
     private FrmMesas frmMesas;
-
+    /**
+     * Mesa que se encuentra actualmente seleccionada para abrir o editar una
+     * comanda.
+     */
     private MesaDTO mesaSeleccionada;
 
     // SELECCION DE PRODUCTOS
+    /**
+     * Formulario para que el mesero seleccione productos al armar una comanda.
+     */
     private FrmSeleccionProductos frmSeleccionProductos;
+    /**
+     * Formulario para mostrar el resumen de un pedido nuevo antes de enviarlo a
+     * cocina.
+     */
     private FrmResumenPedido frmResumenPedido;
+    /**
+     * Formulario para mostrar el resumen de un pedido que está siendo
+     * modificado.
+     */
     private FrmResumenPedidoEditado frmResumenPedidoEditado;
-
+    /**
+     * Lista de detalles de pedido que conforman el carrito de compras de la
+     * comanda actual.
+     */
     private List<DetallePedidoDTO> carrito;
 
     // INGREDIENTES
+    /**
+     * Objeto de negocio para gestionar las operaciones de Ingredientes en la
+     * base de datos.
+     */
     private final IngredienteBO ingredienteBO;
 
+    /**
+     * Formulario para el catálogo y control de inventario de ingredientes.
+     */
     private FrmIngredientes frmIngredientes;
+    /**
+     * Formulario para dar de alta un nuevo ingrediente en el inventario.
+     */
     private FrmRegistrarIngrediente frmRegistrarIngrediente;
+    /**
+     * Formulario para realizar ajustes manuales (mermas o ingresos) al stock de
+     * ingredientes.
+     */
     private FrmAjustarStock frmAjustarStock;
 
+    /**
+     * Lista temporal que almacena los ingredientes mostrados en la tabla
+     * activa.
+     */
     private List<IngredienteDTO> listaIngredientesActual;
+    /**
+     * Ingrediente que se encuentra actualmente seleccionado para su edición o
+     * ajuste.
+     */
     private IngredienteDTO ingredienteSeleccionado;
 
     // PRODUCTOS
+    /**
+     * Objeto de negocio para gestionar las operaciones de Productos en la base
+     * de datos.
+     */
     private final ProductoBO productoBO;
 
+    /**
+     * Formulario para la administración del catálogo completo de
+     * productos/platillos.
+     */
     private FrmProductos frmProductos;
+    /**
+     * Formulario para registrar un nuevo producto y su receta en el sistema.
+     */
     private FrmRegistrarProducto frmRegistrarProducto;
+    /**
+     * Formulario que muestra los detalles, precio y receta de un producto
+     * específico.
+     */
     private FrmDetalleProducto frmDetalleProducto;
+    /**
+     * Formulario utilizado para editar la información de un producto existente.
+     */
     private FrmEditarProducto frmEditarProducto;
 
+    /**
+     * Lista temporal que almacena los productos mostrados en la sesión actual.
+     */
     private List<ProductoDTO> listaProductosActual;
+    /**
+     * Producto que se encuentra actualmente seleccionado por el usuario
+     * administrador.
+     */
     private ProductoDTO productoSeleccionado;
+    /**
+     * Lista que almacena el estado en tiempo real de todas las mesas del
+     * restaurante.
+     */
     private List<MesaDTO> mesas;
 
     // REPORTES 
+    /**
+     * Formulario de menú que presenta las diferentes opciones de reportes
+     * gerenciales.
+     */
     private FrmSeleccionReporte frmSeleccionReporte;
+    /**
+     * Formulario para configurar y generar el reporte analítico de clientes
+     * frecuentes.
+     */
     private FrmReporteClientesFrecuentes frmReporteClientesFrecuentes;
+    /**
+     * Formulario para configurar y generar el reporte histórico de ventas y
+     * comandas.
+     */
     private FrmReporteComandas frmReporteComandas;
 
     //Limpiar todo
+    /**
+     * Limpia completamente el estado de la sesión actual de ventas.
+     * <p>
+     * Restablece a nulo las mesas, clientes, carrito y comanda en curso para
+     * preparar el sistema para un nuevo pedido y evitar fugas de memoria.</p>
+     */
     public void limpiarSesionComanda() {
         this.mesaSeleccionada = null;
         this.mesas = null;
@@ -123,25 +258,71 @@ public class Coordinador implements ICoordinador {
     }
 
     //COMANDAS
+    /**
+     * Objeto de negocio para gestionar las operaciones de Comandas en la base
+     * de datos.
+     */
     private final ComandaBO comandaBO;
 
+    /**
+     * Formulario emergente para confirmar el guardado final de una comanda.
+     */
     FrmConfirmacionComanda frmConfirmacionComanda;
 
+    /**
+     * Formulario monitor para visualizar los estados actuales (ej. Preparando,
+     * Entregado) de las comandas.
+     */
     FrmEstadosComanda frmEstadosComanda;
 
+    /**
+     * Formulario para la interfaz de edición de productos en una comanda que ya
+     * estaba abierta.
+     */
     FrmEditarProductosComanda frmEditarProductosComanda;
 
+    /**
+     * Referencia temporal a la pantalla de selección de productos de la comanda
+     * activa.
+     */
     private FrmSeleccionProductos frmComandaActual;
 
+    /**
+     * Enumeración que define los posibles orígenes al abrir el buscador de
+     * productos, permitiendo al sistema saber a qué pantalla debe retornar los
+     * datos.
+     */
     public enum OrigenBusquedaProductos {
+        /**
+         * Indica que el buscador se abrió durante la creación de una comanda
+         * nueva.
+         */
         NUEVA_COMANDA,
+        /**
+         * Indica que el buscador se abrió durante la edición de una comanda
+         * existente.
+         */
         EDICION_COMANDA
     }
 
+    /**
+     * Almacena el origen actual desde donde se invocó el buscador de productos.
+     */
     private OrigenBusquedaProductos origenActualBusquedaProductos;
 
+    /**
+     * Objeto que representa la comanda que se encuentra actualmente en curso o
+     * en edición.
+     */
     private ComandaDTO comanda;
 
+    /**
+     * Constructor principal del Coordinador.
+     * <p>
+     * Inicializa todas las instancias de los Objetos de Negocio (BO) necesarios
+     * para interactuar con la base de datos a lo largo de la ejecución del
+     * sistema.</p>
+     */
     public Coordinador() {
         this.clienteFrecuenteBO = ClienteFrecuenteBO.getInstance();
         this.meseroBO = MeseroBO.getInstance();
@@ -152,6 +333,10 @@ public class Coordinador implements ICoordinador {
     }
 
     //----- MOSTRAR FRAMES -----
+    /**
+     * Inicializa el flujo visual del sistema mostrando la pantalla de
+     * bienvenida.
+     */
     @Override
     public void iniciarSistema() {
 
@@ -161,6 +346,10 @@ public class Coordinador implements ICoordinador {
         frmInicio.setVisible(true);
     }
 
+    /**
+     * Despliega el menú principal de acciones (módulos administrativos y
+     * operativos).
+     */
     @Override
     public void mostrarAcciones() {
         if (frmAcciones == null) {
@@ -171,6 +360,12 @@ public class Coordinador implements ICoordinador {
     }
 
     //----- CLIENTES -----
+    /**
+     * Consulta clientes en la base de datos aplicando un filtro de texto.
+     *
+     * @param filtro Cadena a buscar (nombre, teléfono, etc.).
+     * @return Lista de clientes encontrados.
+     */
     @Override
     public List<ClienteFrecuenteDTO> buscarClientes(String filtro) {
         try {
@@ -181,6 +376,10 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Abre la pantalla del catálogo de clientes y carga la información inicial
+     * en la tabla.
+     */
     @Override
     public void mostrarClientes() {
         try {
@@ -193,6 +392,9 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Muestra el formulario vacío para registrar un nuevo cliente frecuente.
+     */
     @Override
     public void mostrarRegistrarCliente() {
         try {
@@ -207,6 +409,12 @@ public class Coordinador implements ICoordinador {
         frmRegistrarCliente.toFront();
     }
 
+    /**
+     * Procesa la inserción de un nuevo cliente, actualiza la vista y notifica
+     * al usuario.
+     *
+     * @param clienteDTO El objeto con los datos del nuevo cliente a persistir.
+     */
     @Override
     public void registrarCliente(ClienteFrecuenteDTO clienteDTO) {
         try {
@@ -226,6 +434,9 @@ public class Coordinador implements ICoordinador {
         frmClientes.setVisible(true);
     }
 
+    /**
+     * Refresca el modelo de la tabla de clientes en la pantalla activa.
+     */
     @Override
     public void actualizarTablaClientes() {
         try {
@@ -239,6 +450,10 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Valida que exista un cliente seleccionado y abre su pantalla de edición
+     * con los datos cargados.
+     */
     @Override
     public void mostrarEditarCliente() {
         if (clienteSeleccionado == null) {
@@ -258,6 +473,11 @@ public class Coordinador implements ICoordinador {
         frmEditarCliente.toFront();
     }
 
+    /**
+     * Actualiza la información del cliente seleccionado en la base de datos.
+     *
+     * @param clienteDTO DTO con los datos modificados.
+     */
     @Override
     public void editarCliente(ClienteFrecuenteDTO clienteDTO) {
         try {
@@ -275,6 +495,15 @@ public class Coordinador implements ICoordinador {
         mostrarClientes();
     }
 
+    /**
+     * Establece el cliente que el usuario ha seleccionado en la tabla o
+     * buscador.
+     * <p>
+     * Si se está en medio de la creación/edición de un pedido, envía el cliente
+     * seleccionado directamente al formulario del resumen del pedido.</p>
+     *
+     * @param cliente El cliente seleccionado.
+     */
     @Override
     public void setClienteSeleccionado(ClienteFrecuenteDTO cliente) {
         this.clienteSeleccionado = cliente;
@@ -296,16 +525,29 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * @return El cliente actualmente seleccionado en memoria.
+     */
     @Override
     public ClienteFrecuenteDTO getClienteSeleccionado() {
         return this.clienteSeleccionado;
     }
 
+    /**
+     * @return La lista de clientes que se está mostrando actualmente en la
+     * vista.
+     */
     @Override
     public List<ClienteFrecuenteDTO> getListaClientesActual() {
         return this.listaClientesActual;
     }
 
+    /**
+     * Elimina el cliente especificado si no tiene historial de comandas
+     * asociadas.
+     *
+     * @param cliente El cliente a eliminar.
+     */
     @Override
     public void eliminarCliente() {
         try {
@@ -326,6 +568,9 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * @return La lista total de clientes registrados para consultas generales.
+     */
     @Override
     public List<ClienteFrecuenteDTO> consultarClientes() {
         try {
@@ -337,6 +582,11 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Busca o registra automáticamente el perfil genérico "Cliente general".
+     *
+     * @return El DTO correspondiente al mostrador/público general.
+     */
     @Override
     public ClienteFrecuenteDTO getClienteGeneral() {
         try {
@@ -349,6 +599,10 @@ public class Coordinador implements ICoordinador {
     }
 
     //----- MESEROS -----
+    /**
+     * Cierra cualquier sesión previa, precarga los meseros si es necesario, y
+     * muestra la pantalla de inicio de sesión.
+     */
     @Override
     public void mostrarInicioSesionMesero() {
         limpiarSesionComanda();
@@ -360,16 +614,28 @@ public class Coordinador implements ICoordinador {
         frmInicioSesionMesero.setVisible(true);
     }
 
+    /**
+     * @return El mesero que actualmente ha iniciado sesión en el sistema.
+     */
     @Override
     public MeseroDTO getMeseroActual() {
         return meseroActual;
     }
 
+    /**
+     * @param mesero Establece el mesero activo en la sesión del sistema.
+     */
     @Override
     public void setMeseroActual(MeseroDTO mesero) {
         meseroActual = mesero;
     }
 
+    /**
+     * Verifica el usuario contra la base de datos para el inicio de sesión.
+     *
+     * @param usuario Nombre de usuario del mesero.
+     * @return DTO del mesero si existe, null en caso contrario.
+     */
     @Override
     public MeseroDTO buscarMeseroPorUsuario(String usuario) {
         try {
@@ -386,6 +652,10 @@ public class Coordinador implements ICoordinador {
 
     }
 
+    /**
+     * Inserta meseros por defecto en la base de datos si esta se encuentra
+     * vacía.
+     */
     @Override
     //DATOS PRECARGADOS
     public void precargarMeseros() {
@@ -414,6 +684,10 @@ public class Coordinador implements ICoordinador {
     }
 
     // INGREDIENTES 
+    /**
+     * Muestra la interfaz de gestión de ingredientes, cargando el catálogo
+     * completo.
+     */
     @Override
     public void mostrarIngredientes() {
         try {
@@ -428,6 +702,9 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * @return Lista de todos los ingredientes registrados en la base de datos.
+     */
     @Override
     public List<IngredienteDTO> obtenerIngredientes() {
         try {
@@ -438,15 +715,26 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * @param ingrediente Guarda en memoria el ingrediente seleccionado por el
+     * usuario.
+     */
     public void setIngredienteSeleccionado(IngredienteDTO ingrediente) {
         this.ingredienteSeleccionado = ingrediente;
     }
 
+    /**
+     * @return El ingrediente que se encuentra actualmente seleccionado.
+     */
     @Override
     public IngredienteDTO getIngredienteSeleccionado() {
         return this.ingredienteSeleccionado;
     }
 
+    /**
+     * @return La lista temporal de ingredientes que se muestra en la pantalla
+     * activa.
+     */
     @Override
     public List<IngredienteDTO> getListaIngredientesActual() {
         try {
@@ -458,6 +746,9 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Muestra el formulario vacío para dar de alta un nuevo insumo/ingrediente.
+     */
     @Override
     public void mostrarRegistrarIngrediente() {
         try {
@@ -472,6 +763,11 @@ public class Coordinador implements ICoordinador {
         frmRegistrarIngrediente.toFront();
     }
 
+    /**
+     * Procesa y guarda un nuevo ingrediente en el inventario.
+     *
+     * @param ingredienteDTO Objeto con los datos del ingrediente.
+     */
     @Override
     public void registrarIngrediente(IngredienteDTO ingredienteDTO) {
         try {
@@ -491,6 +787,10 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Actualiza la tabla visual de ingredientes consultando los datos más
+     * recientes.
+     */
     @Override
     public void actualizarTablaIngredientes() {
         try {
@@ -504,6 +804,10 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Valida que exista un ingrediente seleccionado y abre la pantalla para
+     * modificar su stock.
+     */
     public void mostrarAjustarStock() {
         if (ingredienteSeleccionado == null) {
             JOptionPane.showMessageDialog(null, "Seleccione un ingrediente");
@@ -520,6 +824,13 @@ public class Coordinador implements ICoordinador {
         frmAjustarStock.toFront();
     }
 
+    /**
+     * Realiza un ajuste manual al inventario sumando o restando existencias.
+     *
+     * @param idIngrediente Identificador único del insumo.
+     * @param cantidad Valor numérico a modificar.
+     * @param agregar true para sumar stock, false para restar.
+     */
     public void ajustarStock(Long idIngrediente, double cantidad, boolean agregar) {
         try {
             IngredienteDTO ingrediente = this.ingredienteSeleccionado;
@@ -555,6 +866,9 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Elimina de manera lógica/física el ingrediente seleccionado actualmente.
+     */
     @Override
     public void eliminarIngrediente() {
         try {
@@ -570,6 +884,12 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Busca ingredientes cuyo nombre coincida con la cadena ingresada.
+     *
+     * @param filtro Texto a buscar.
+     * @return Lista de ingredientes filtrados.
+     */
     @Override
     public List<IngredienteDTO> buscarIngredientes(String filtro) {
         try {
@@ -581,6 +901,9 @@ public class Coordinador implements ICoordinador {
     }
 
     // PRODUCTOS 
+    /**
+     * Abre el catálogo de productos con privilegios completos de administrador.
+     */
     @Override
     public void mostrarProductosAdmin() {
         frmProductos = new FrmProductos(this, FrmProductos.Modo.ADMINISTRAR);
@@ -589,6 +912,12 @@ public class Coordinador implements ICoordinador {
 
     }
 
+    /**
+     * Filtra la base de datos de productos según un criterio de búsqueda.
+     *
+     * @param filtro Texto a buscar en el nombre del producto.
+     * @return Lista de coincidencias.
+     */
     @Override
     public List<ProductoDTO> consultarProductosFiltro(String filtro) {
         try {
@@ -599,6 +928,9 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Despliega la pantalla vacía para la creación de un nuevo platillo/bebida.
+     */
     @Override
     public void mostrarRegistrarProducto() {
         try {
@@ -615,6 +947,12 @@ public class Coordinador implements ICoordinador {
         frmRegistrarProducto.toFront();
     }
 
+    /**
+     * Guarda un nuevo producto, notifica el éxito y recarga el panel de
+     * administración.
+     *
+     * @param productoDTO Datos consolidados del nuevo platillo o bebida.
+     */
     @Override
     public void registrarProducto(ProductoDTO productoDTO) {
         try {
@@ -636,6 +974,10 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Valida selección y muestra la vista de solo-lectura con la receta y datos
+     * del producto.
+     */
     @Override
     public void mostrarDetalleProducto() {
         if (productoSeleccionado == null) {
@@ -652,6 +994,10 @@ public class Coordinador implements ICoordinador {
         frmDetalleProducto.toFront();
     }
 
+    /**
+     * Valida selección y abre el formulario para modificar la información de un
+     * producto existente.
+     */
     @Override
     public void mostrarEditarProducto() {
         if (productoSeleccionado == null) {
@@ -668,6 +1014,11 @@ public class Coordinador implements ICoordinador {
         frmEditarProducto.toFront();
     }
 
+    /**
+     * Actualiza los datos de un producto en la base de datos.
+     *
+     * @param productoDTO DTO con la información modificada.
+     */
     @Override
     public void actualizarProducto(ProductoDTO productoDTO) {
         try {
@@ -689,6 +1040,10 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Elimina el producto seleccionado o lo desactiva lógicamente si tiene
+     * comandas históricas ligadas.
+     */
     @Override
     public void eliminarProducto() {
         try {
@@ -702,6 +1057,13 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Guarda el producto seleccionado en memoria. Si se está en medio de la
+     * selección de una comanda, retorna el producto automáticamente a dicha
+     * pantalla.
+     *
+     * @param producto El producto a almacenar en sesión.
+     */
     @Override
     public void setProductoSeleccionado(ProductoDTO producto) {
         this.productoSeleccionado = producto;
@@ -713,11 +1075,17 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * @return El producto actualmente seleccionado en el sistema.
+     */
     @Override
     public ProductoDTO getProductoSeleccionado() {
         return this.productoSeleccionado;
     }
 
+    /**
+     * @return La lista de productos que está cargada actualmente en la vista.
+     */
     @Override
     public List<ProductoDTO> getListaProductosActual() {
         try {
@@ -730,6 +1098,10 @@ public class Coordinador implements ICoordinador {
     }
 
     //----- MESAS -----
+    /**
+     * Carga el estado actual de las mesas y despliega el mapa visual para el
+     * mesero.
+     */
     @Override
     public void mostrarMesas() {
 //        if (frmMesas == null) {
@@ -740,6 +1112,9 @@ public class Coordinador implements ICoordinador {
         frmMesas.setVisible(true);
     }
 
+    /**
+     * @return Consulta y retorna la lista completa de mesas del restaurante.
+     */
     @Override
     public List<MesaDTO> obtenerMesas() {
         try {
@@ -756,6 +1131,12 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Genera automáticamente un lote inicial de mesas si la base de datos está
+     * vacía.
+     *
+     * @return Lista de las mesas inicializadas.
+     */
     @Override
     public List<MesaDTO> cargaMasivaMesas() {
         if (mesas == null || mesas.isEmpty()) {
@@ -783,16 +1164,29 @@ public class Coordinador implements ICoordinador {
         return mesas;
     }
 
+    /**
+     * @param mesa Establece la mesa en la que se va a operar (abrir/editar
+     * comanda).
+     */
     @Override
     public void setMesaSeleccionada(MesaDTO mesa) {
         mesaSeleccionada = mesa;
     }
 
+    /**
+     * @return La mesa activa en el contexto de la sesión.
+     */
     @Override
     public MesaDTO getMesaSeleccionada() {
         return mesaSeleccionada;
     }
 
+    /**
+     * Actualiza el estado (Ej. Ocupada a Libre) o características de una mesa.
+     *
+     * @param mesa DTO con la nueva información.
+     * @return La mesa actualizada.
+     */
     @Override
     public MesaDTO actualizarMesa(MesaDTO mesa) {
         try {
@@ -804,6 +1198,10 @@ public class Coordinador implements ICoordinador {
     }
 
     //----- PANTALLA DE PRODUCTOS -----
+    /**
+     * Muestra la interfaz de carrito donde el mesero añade productos a la mesa
+     * seleccionada.
+     */
     @Override
     public void mostrarSeleccionProductos() {
         if (frmSeleccionProductos == null) {
@@ -812,6 +1210,10 @@ public class Coordinador implements ICoordinador {
         frmSeleccionProductos.setVisible(true);
     }
 
+    /**
+     * @return Consulta todos los productos registrados en la base de datos sin
+     * restricciones.
+     */
     @Override
     public List<ProductoDTO> obtenerProductos() {
         try {
@@ -823,6 +1225,10 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * @return Consulta únicamente los productos que se encuentran marcados como
+     * 'DISPONIBLE'.
+     */
     @Override
     public List<ProductoDTO> obtenerProductosDisponibles() {
         try {
@@ -835,6 +1241,13 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Cambia el estado (Disponible/No Disponible) de un platillo en el
+     * catálogo.
+     *
+     * @param idProducto Identificador del producto.
+     * @param estado Nuevo estado de disponibilidad.
+     */
     public void cambiarDisponibilidadProducto(Long idProducto, DisponibilidadProductoDTO estado) {
         try {
             productoBO.cambiarDisponibilidad(idProducto, estado);
@@ -846,21 +1259,37 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * @param productos Sobrescribe la lista temporal de productos mostrada al
+     * usuario.
+     */
     @Override
     public void setListaProductosAtual(List<ProductoDTO> productos) {
         listaProductosActual = productos;
     }
 
+    /**
+     * @return Los detalles (productos y cantidades) que conforman el pedido en
+     * curso.
+     */
     @Override
     public List<DetallePedidoDTO> getCarrito() {
         return carrito;
     }
 
+    /**
+     * @param carrito Actualiza los elementos seleccionados para la comanda
+     * actual.
+     */
     @Override
     public void setCarrito(List<DetallePedidoDTO> carrito) {
         this.carrito = carrito;
     }
 
+    /**
+     * Abre la pantalla con el resumen del pedido para ser validado antes de
+     * enviar a cocina.
+     */
     @Override
     public void mostrarResumenPedido() {
         if (frmResumenPedido != null) {
@@ -871,6 +1300,9 @@ public class Coordinador implements ICoordinador {
     }
 
     //----- COMANDAS -----
+    /**
+     * @return Retorna la entidad ComandaDTO que se está procesando en memoria.
+     */
     @Override
     public ComandaDTO getComanda() {
         if (comanda == null) {
@@ -879,11 +1311,18 @@ public class Coordinador implements ICoordinador {
         return this.comanda;
     }
 
+    /**
+     * @param comanda Establece o reemplaza la comanda activa en la sesión.
+     */
     @Override
     public void setComanda(ComandaDTO comanda) {
         this.comanda = comanda;
     }
 
+    /**
+     * Finaliza la creación de la comanda: asigna fecha, estado, bloquea la
+     * mesa, persiste la transacción y muestra la confirmación.
+     */
     @Override
     public void mostrarConfirmacionComanda() {
         try {
@@ -922,6 +1361,12 @@ public class Coordinador implements ICoordinador {
 
     }
 
+    /**
+     * Recupera una orden en progreso vinculada a una mesa específica.
+     *
+     * @param numeroMesa Identificador de la mesa.
+     * @return DTO de la comanda si está abierta, o null si está libre.
+     */
     @Override
     public ComandaDTO buscarComandaAbiertaPorMesa(Integer numeroMesa) {
         try {
@@ -941,12 +1386,23 @@ public class Coordinador implements ICoordinador {
 
     }
 
+    /**
+     * Muestra el panel monitor de estados para que cocina/meseros actualicen el
+     * flujo del pedido (Preparando, Listo, Entregado).
+     */
     @Override
     public void mostrarEstadosComanda() {
         frmEstadosComanda = new FrmEstadosComanda(this);
         frmEstadosComanda.setVisible(true);
     }
 
+    /**
+     * Guarda los cambios aplicados (productos añadidos o estado modificado) a
+     * una comanda existente.
+     *
+     * @param comanda El DTO de la comanda con sus alteraciones.
+     * @return La comanda resultante de la persistencia.
+     */
     @Override
     public ComandaDTO actualizarComanda(ComandaDTO comanda) {
         try {
@@ -959,6 +1415,9 @@ public class Coordinador implements ICoordinador {
     }
 
     // REPORTES
+    /**
+     * Despliega la pantalla de opciones/menú de reportes gerenciales.
+     */
     @Override
     public void mostrarOpcionesReporte() {
         if (frmSeleccionReporte == null) {
@@ -968,6 +1427,10 @@ public class Coordinador implements ICoordinador {
         frmSeleccionReporte.toFront();
     }
 
+    /**
+     * Abre la interfaz para configurar los filtros del reporte de clientes
+     * frecuentes.
+     */
     @Override
     public void mostrarReporteClientesFrecuentes() {
 
@@ -980,6 +1443,14 @@ public class Coordinador implements ICoordinador {
         frmReporteClientesFrecuentes.toFront();
     }
 
+    /**
+     * Consulta el historial de comandas para encontrar los clientes más leales
+     * según criterios.
+     *
+     * @param nombre Filtro por aproximación de nombre.
+     * @param minimoVisitas Número mínimo de comandas pagadas por el cliente.
+     * @return Lista de clientes que cumplen la condición.
+     */
     public List<ClienteFrecuenteDTO> consultarReporteClientesFrecuentes(String nombre, Integer minimoVisitas) {
 
         try {
@@ -990,6 +1461,15 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Compila y rellena el archivo Jasper para generar estadísticas de
+     * clientes.
+     *
+     * @param nombre Filtro opcional por nombre de cliente.
+     * @param visitas Filtro opcional por cantidad mínima de consumos.
+     * @return Documento JasperPrint procesado.
+     * @throws Exception Si ocurre un error de lectura o llenado.
+     */
     @Override
     public JasperPrint generarReporteClientes(String nombre, Integer visitas) throws Exception {
 
@@ -1032,6 +1512,14 @@ public class Coordinador implements ICoordinador {
                 dataSource);
     }
 
+    /**
+     * Abre un cuadro de diálogo para que el usuario guarde el reporte generado
+     * como un archivo PDF en su PC.
+     *
+     * @param jasperPrint El reporte procesado en memoria.
+     * @param nombre Filtro utilizado.
+     * @param visitas Filtro utilizado.
+     */
     public void descargarPDFClientesFrecuentes(String nombre, Integer visitas) {
         try {
             JasperPrint jasperPrint = generarReporteClientes(nombre, visitas);
@@ -1055,6 +1543,10 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Abre la interfaz para añadir o remover productos de una comanda que ya
+     * había sido enviada a cocina.
+     */
     @Override
     public void mostrarEditarProductosComanda() {
         frmEditarProductosComanda = new FrmEditarProductosComanda(this);
@@ -1062,18 +1554,34 @@ public class Coordinador implements ICoordinador {
         frmEditarProductosComanda.setVisible(true);
     }
 
+    /**
+     * Muestra el resumen del pedido reflejando los cambios hechos durante una
+     * edición posterior.
+     */
     @Override
     public void mostrarResumenPedidoEditado() {
         frmResumenPedidoEditado = new FrmResumenPedidoEditado(this);
         frmResumenPedidoEditado.setVisible(true);
     }
 
+    /**
+     * Muestra la ventana de configuración de filtros por fecha para el reporte
+     * histórico de ventas.
+     */
     @Override
     public void mostrarReportesComandas() {
         frmReporteComandas = new FrmReporteComandas(this);
         frmReporteComandas.setVisible(true);
     }
 
+    /**
+     * Obtiene una lista plana y formateada de comandas en un rango de fechas
+     * para el reporte de Jasper.
+     *
+     * @param inicio Fecha inicial del filtro.
+     * @param fin Fecha final del corte.
+     * @return Datos de las comandas formateados para el reporte.
+     */
     @Override
     public List<ReporteComandaDTO> obetnerComandasPorRangoFechas(LocalDate inicio, LocalDate fin) {
         try {
@@ -1085,6 +1593,15 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Genera el reporte histórico de ventas basado en un rango de fechas.
+     *
+     * @param lista Resultados de la consulta a la base de datos.
+     * @param inicio Fecha inicial del periodo analizado.
+     * @param fin Fecha de corte del periodo analizado.
+     * @return JasperPrint listo para su visualización.
+     * @throws Exception Si falla la compilación del reporte.
+     */
     @Override
     public JasperPrint generarJasperComandas(List<ReporteComandaDTO> lista, LocalDate inicio, LocalDate fin) throws Exception {
         List<Map<String, Object>> data = new ArrayList<>();
@@ -1113,11 +1630,25 @@ public class Coordinador implements ICoordinador {
         return JasperFillManager.fillReport(report, parametros, dataSource);
     }
 
+    /**
+     * Evalúa si los ingredientes actuales cubren la cantidad solicitada de un
+     * producto.
+     *
+     * @param producto Producto a evaluar.
+     * @param proximaCantidad Unidades que se desean preparar.
+     * @return true si el inventario es suficiente.
+     */
     @Override
     public boolean verificarStock(ProductoDTO producto, int proximaCantidad) {
         return productoBO.hayStockSuficiente(producto, proximaCantidad);
     }
 
+    /**
+     * Crea un perfil en la base de datos para ventas rápidas que no requieran
+     * registro (Cliente General).
+     *
+     * @return El perfil general persistido.
+     */
     @Override
     public ClienteFrecuenteDTO registrarClienteGeneral() {
         try {
@@ -1134,6 +1665,13 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Filtra únicamente los productos marcados como 'DISPONIBLES' en base a un
+     * texto.
+     *
+     * @param filtro Nombre del producto.
+     * @return Coincidencias en inventario activo.
+     */
     @Override
     public List<ProductoDTO> consultarProductosDisponiblesFiltro(String filtro) {
         try {
@@ -1144,6 +1682,12 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Abre el catálogo de productos en Modo SELECCIONAR para agregar a un
+     * pedido en edición.
+     *
+     * @param frmOrigen Formulario que solicita la apertura del catálogo.
+     */
     @Override
     public void mostrarProductosSelec(FrmEditarProductosComanda frmOrigen) {
         frmProductos = new FrmProductos(this, FrmProductos.Modo.SELECCIONAR);
@@ -1152,6 +1696,12 @@ public class Coordinador implements ICoordinador {
         frmOrigen.setVisible(false);
     }
 
+    /**
+     * Inicializa el flujo de búsqueda de productos pasando el contexto de la
+     * comanda actual.
+     *
+     * @param frmActual Pantalla de selección base.
+     */
     public void abrirBuscadorParaComanda(FrmSeleccionProductos frmActual) {
         this.frmComandaActual = frmActual;
         frmActual.setVisible(false);
@@ -1160,6 +1710,14 @@ public class Coordinador implements ICoordinador {
         buscador.setVisible(true);
     }
 
+    /**
+     * Oculta temporalmente la interfaz de la comanda y despliega el buscador de
+     * productos. Mantiene un estado (`OrigenBusquedaProductos`) para saber a
+     * qué pantalla devolver el dato elegido.
+     *
+     * @param origen Contexto desde el que se llama (NUEVA_COMANDA o
+     * EDICION_COMANDA).
+     */
     public void abrirBuscadorProductos(OrigenBusquedaProductos origen) {
         this.origenActualBusquedaProductos = origen;
 
@@ -1175,6 +1733,10 @@ public class Coordinador implements ICoordinador {
         frmBuscador.setVisible(true);
     }
 
+    /**
+     * Cierra el buscador de productos y restaura la visibilidad del formulario
+     * de comanda original.
+     */
     public void volverDeBusquedaProductos() {
         if (origenActualBusquedaProductos == OrigenBusquedaProductos.EDICION_COMANDA) {
             if (frmEditarProductosComanda != null) {
@@ -1187,11 +1749,21 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Metodo que muestra productos en seleccion
+     */
     @Override
     public void mostrarProductosSelec() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+    /**
+     * Abre un buscador emergente de clientes para asociarlo a una nueva comanda
+     * antes de enviarla.
+     *
+     * @param frmActual Referencia a la pantalla del resumen del pedido que
+     * quedará a la espera.
+     */
     @Override
     public void abrirBuscadorClientesParaComanda(FrmResumenPedido frmActual) {
         this.frmResumenPedido = frmActual;
@@ -1207,6 +1779,12 @@ public class Coordinador implements ICoordinador {
         frmClientes.setVisible(true);
     }
 
+    /**
+     * Abre el buscador de clientes para cambiar o asociar un cliente a una
+     * comanda que se está editando.
+     *
+     * @param frmActual Referencia al resumen del pedido en modo edición.
+     */
     @Override
     public void abrirBuscadorClientesParaComanda(FrmResumenPedidoEditado frmActual) {
         this.frmResumenPedidoEditado = frmActual;
@@ -1222,6 +1800,13 @@ public class Coordinador implements ICoordinador {
         frmClientes.setVisible(true);
     }
 
+    /**
+     * Oculta temporalmente la pantalla actual y abre el catálogo de
+     * ingredientes para seleccionar los elementos de la receta. Recibe un
+     * callback para retornar los datos.
+     *
+     * @param frmActual Referencia a la pantalla de registro de producto.
+     */
     public void abrirBuscadorIngredientesParaProducto(FrmRegistrarProducto frmActual) {
         this.frmRegistrarProducto = frmActual;
         frmActual.setVisible(false);
@@ -1243,6 +1828,12 @@ public class Coordinador implements ICoordinador {
         frmIngredientes.setVisible(true);
     }
 
+    /**
+     * Abre el catálogo de ingredientes para agregar/editar insumos nuevos a la
+     * receta de un producto en edición.
+     *
+     * @param frmActual Pantalla de edición a la espera de los ingredientes.
+     */
     public void abrirBuscadorIngredientesParaEditarProducto(FrmEditarProducto frmActual) {
         this.frmEditarProducto = frmActual;
         frmActual.setVisible(false);
@@ -1263,6 +1854,10 @@ public class Coordinador implements ICoordinador {
         frmIngredientes.setVisible(true);
     }
 
+    /**
+     * Restaura la visibilidad del formulario de producto (Registro o Edición)
+     * después de haber cerrado el buscador de ingredientes.
+     */
     public void volverDeBusquedaIngredientes() {
         if (frmRegistrarProducto != null) {
             frmRegistrarProducto.setVisible(true);
@@ -1271,6 +1866,10 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Restaura la visibilidad de la pantalla de resumen de pedido tras haber
+     * utilizado el buscador de clientes.
+     */
     public void volverDeBusquedaClientes() {
         if (frmResumenPedido != null) {
             frmResumenPedido.setVisible(true);
@@ -1279,6 +1878,12 @@ public class Coordinador implements ICoordinador {
         }
     }
 
+    /**
+     * Método sobrecargado para eliminar un cliente pasándolo por parámetro
+     * explícitamente, validando que no tenga comandas en su historial.
+     *
+     * @param cliente El cliente exacto a eliminar.
+     */
     @Override
     public void eliminarCliente(ClienteFrecuenteDTO cliente) {
         try {
