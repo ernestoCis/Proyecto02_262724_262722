@@ -8,6 +8,7 @@ import javax.swing.*;
 
 import net.sf.jasperreports.engine.JasperPrint;
 import net.sf.jasperreports.swing.JRViewer;
+import utilerias.Validacion;
 
 /**
  * Pantalla para la generación y visualización de reportes de clientes
@@ -234,8 +235,17 @@ public class FrmReporteClientesFrecuentes extends JFrame {
                 nombre = txtNombre.getText();
             }
 
-            if (chkVisitas.isSelected() && !txtVisitas.getText().isBlank()) {
-                visitas = Integer.valueOf(txtVisitas.getText());
+            if (chkVisitas.isSelected()) {
+                String texto = txtVisitas.getText().trim();
+                if (!texto.isEmpty()) {
+                    if (!Validacion.esEnteroValido(texto)) {
+                        JOptionPane.showMessageDialog(this,
+                                "El campo visitas solo acepta números enteros");
+                        txtVisitas.requestFocus();
+                        return;
+                    }
+                    visitas = Integer.valueOf(texto);
+                }
             }
 
             JasperPrint print = coordinador.generarReporteClientes(nombre, visitas);
@@ -269,10 +279,18 @@ public class FrmReporteClientesFrecuentes extends JFrame {
             nombre = txtNombre.getText();
         }
 
-        if (chkVisitas.isSelected() && !txtVisitas.getText().isBlank()) {
-            visitas = Integer.valueOf(txtVisitas.getText());
+        if (chkVisitas.isSelected()) {
+            String texto = txtVisitas.getText().trim();
+            if (!texto.isEmpty()) {
+                if (!Validacion.esEnteroValido(texto)) {
+                    JOptionPane.showMessageDialog(this,
+                            "El campo visitas solo acepta números enteros");
+                    txtVisitas.requestFocus();
+                    return;
+                }
+                visitas = Integer.valueOf(texto);
+            }
         }
-
         coordinador.descargarPDFClientesFrecuentes(nombre, visitas);
     }
 }
