@@ -178,5 +178,7 @@ public interface ICoordinador {
     void abrirBuscadorClientesParaComanda(FrmResumenPedido frmActual);
 
     void abrirBuscadorClientesParaComanda(FrmResumenPedidoEditado frmActual);
+    
+    void eliminarCliente(ClienteFrecuenteDTO cliente);
 
 }

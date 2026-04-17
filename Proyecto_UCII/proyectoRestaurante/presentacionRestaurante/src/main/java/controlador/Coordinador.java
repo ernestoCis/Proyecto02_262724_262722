@@ -1278,4 +1278,20 @@ public class Coordinador implements ICoordinador {
             frmResumenPedidoEditado.setVisible(true);
         }
     }
+
+    @Override
+    public void eliminarCliente(ClienteFrecuenteDTO cliente) {
+        try {
+            if (clienteFrecuenteBO.clienteConComandas(cliente.getIdCliente())) {
+                JOptionPane.showMessageDialog(null, "No se pueden eliminar clientes con comandas");
+            } else {
+                clienteFrecuenteBO.eliminarCliente(cliente);
+                JOptionPane.showMessageDialog(null, "Cliente eliminado con exito");
+                listaClientesActual = clienteFrecuenteBO.consultarTodos();
+                actualizarTablaClientes();
+            }
+        } catch (NegocioException ex) {
+            JOptionPane.showMessageDialog(null, ex.getMessage());
+        }
+    }
 }

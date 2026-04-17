@@ -56,7 +56,7 @@ public class Producto implements Serializable {
     /** * Lista de ingredientes y cantidades que conforman el producto.
      * <p>Relación de uno a muchos con {@link Receta} con persistencia en cascada.</p>
      */
-    @OneToMany(mappedBy = "producto",  cascade = {CascadeType.PERSIST, CascadeType.MERGE})
+    @OneToMany(mappedBy = "producto",  cascade = {CascadeType.PERSIST, CascadeType.MERGE}, orphanRemoval = true)
     private List<Receta> recetas = new ArrayList<>();
 
     /**

@@ -466,8 +466,7 @@ public class FrmClientes extends JFrame {
         );
 
         if (confirmacion == JOptionPane.YES_OPTION) {
-            coordinador.setClienteSeleccionado(clienteSeleccionado);
-            coordinador.eliminarCliente();
+            coordinador.eliminarCliente(clienteSeleccionado);
         }
     }
 }
