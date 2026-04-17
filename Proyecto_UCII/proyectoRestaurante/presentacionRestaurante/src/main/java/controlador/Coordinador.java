@@ -660,6 +660,14 @@ public class Coordinador implements ICoordinador {
     //DATOS PRECARGADOS
     public void precargarMeseros() {
         try {
+            if(!meseroBO.consultarTodos().isEmpty()){
+                String usuarios = "";
+                for(MeseroDTO mesero : meseroBO.consultarTodos()){
+                    usuarios += mesero.getUsuario() + ", ";
+                }
+                JOptionPane.showMessageDialog(null, "Usuarios pre-cargados: " + usuarios);
+            }
+            
             if (meseroBO.consultarTodos().isEmpty()) {
                 MeseroDTO m = new MeseroDTO();
                 m.setRfc("CIVJ061128V25");
@@ -676,7 +684,14 @@ public class Coordinador implements ICoordinador {
                 m2.setNombre("Paulina");
                 m2.setUsuario("m2");
                 meseroBO.registrarMesero(m2);
+                
+                String usuarios = "";
+                for(MeseroDTO mesero : meseroBO.consultarTodos()){
+                    usuarios += mesero.getUsuario() + ", ";
+                }
+                JOptionPane.showMessageDialog(null, "Usuarios pre-cargados: " + usuarios);
             }
+            
         } catch (NegocioException e) {
             e.printStackTrace();
             JOptionPane.showMessageDialog(null, "error al precargar los datos");
