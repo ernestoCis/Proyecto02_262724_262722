@@ -10,11 +10,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Clase adaptadora encargada de la transformación de datos entre objetos de
+ * dominio (ClienteFrecuente) y objetos de transferencia de datos
+ * (ClienteFrecuenteDTO). * Este adaptador permite desacoplar la capa de
+ * persistencia de la capa de vista, asegurando que la lógica de negocio no
+ * exponga directamente las entidades de la base de datos.
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ClienteFrecuenteAdapter {
 
+    /**
+     * Convierte una entidad de tipo {@link ClienteFrecuente} a su equivalente
+     * {@link ClienteFrecuenteDTO}. Incluye una lógica de limpieza (trim) para
+     * asegurar que las cadenas de texto no contengan espacios innecesarios.
+     *
+     * * @param c La entidad de persistencia.
+     * @return Un objeto DTO con la información del cliente, o null si la
+     * entidad es nula.
+     */
     public static ClienteFrecuenteDTO entidadADTO(ClienteFrecuente c) {
         if (c == null) {
             return null;
@@ -44,6 +58,12 @@ public class ClienteFrecuenteAdapter {
         return dto;
     }
 
+    /**
+     * Transforma una lista de entidades en una lista de DTOs.
+     *
+     * * @param entidades Lista de objetos {@link ClienteFrecuente}.
+     * @return Una lista de objetos {@link ClienteFrecuenteDTO}.
+     */
     public static List<ClienteFrecuenteDTO> listaEntidadADTO(List<ClienteFrecuente> entidades) {
 
         List<ClienteFrecuenteDTO> lista = new ArrayList<>();
@@ -55,6 +75,14 @@ public class ClienteFrecuenteAdapter {
         return lista;
     }
 
+    /**
+     * Convierte un {@link ClienteFrecuenteDTO} a una entidad JPA existente. Se
+     * utiliza principalmente para operaciones de actualización (update) donde
+     * el ID del cliente ya está definido.
+     *
+     * * @param dto El objeto de transferencia de datos.
+     * @return Una entidad {@link ClienteFrecuente} con el ID mapeado.
+     */
     public static ClienteFrecuente dtoAEntidadExistente(ClienteFrecuenteDTO dto) {
         if (dto == null) {
             return null;
@@ -75,6 +103,15 @@ public class ClienteFrecuenteAdapter {
         return cliente;
     }
 
+    /**
+     * Convierte un {@link ClienteFrecuenteDTO} a una nueva entidad JPA. Se
+     * utiliza para operaciones de inserción (insert), omitiendo el ID para que
+     * la base de datos lo genere automáticamente.
+     *
+     * * @param dto El objeto de transferencia de datos con la información del
+     * nuevo cliente.
+     * @return Una entidad {@link ClienteFrecuente} lista para persistirse.
+     */
     public static ClienteFrecuente dtoAEntidadNuevo(ClienteFrecuenteDTO dto) {
         if (dto == null) {
             return null;

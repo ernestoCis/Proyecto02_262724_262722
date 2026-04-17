@@ -143,4 +143,11 @@ public class Validacion {
 
         return precio.matches("^\\d+(\\.\\d{1,3})?$");
     }
+
+    public static boolean esEnteroValido(String texto) {
+        if (texto == null || texto.trim().isEmpty()) {
+            return false;
+        }
+        return texto.matches("^\\d+$");
+    }
 }

@@ -15,11 +15,25 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Clase adaptadora para la entidad Comanda. Centraliza la lógica de conversión
+ * entre el modelo de persistencia y los objetos de transferencia de datos,
+ * gestionando la integridad de las relaciones con Mesas, Meseros, Clientes y la
+ * lista detallada de productos solicitados.
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ComandaAdapter {
 
+    /**
+     * Transforma un objeto {@link ComandaDTO} a una entidad {@link Comanda}.
+     * Este método asegura la integridad referencial al establecer la relación
+     * bidireccional entre la comanda y cada uno de sus detalles de pedido,
+     * evitando valores nulos en la base de datos.
+     *
+     * * @param dto El DTO proveniente de la capa de vista o servicio.
+     * @return Una entidad de persistencia lista para JPA, o null si el DTO es
+     * nulo.
+     */
     public static Comanda dtoAEntidad(ComandaDTO dto) {
         if (dto == null) {
             return null;
@@ -64,6 +78,14 @@ public class ComandaAdapter {
         return entidad;
     }
 
+    /**
+     * Convierte una entidad {@link Comanda} de la base de datos a un
+     * {@link ComandaDTO}. Útil para mostrar la información completa de un
+     * pedido en la interfaz de usuario.
+     *
+     * * @param entidad La entidad recuperada por el EntityManager.
+     * @return Un objeto DTO con la información jerárquica del pedido.
+     */
     public static ComandaDTO entidadADto(Comanda entidad) {
         if (entidad == null) {
             return null;
@@ -101,17 +123,27 @@ public class ComandaAdapter {
         return dto;
     }
 
+    /**
+     * Genera un objeto {@link ReporteComandaDTO} optimizado para vistas de
+     * resumen o reportes. A diferencia del DTO estándar, este simplifica el
+     * nombre del cliente en una sola cadena y maneja la distinción entre
+     * clientes registrados y público general.
+     *
+     * * @param entidad La comanda de la cual se extraerán los datos para el
+     * reporte.
+     * @return Un DTO simplificado para representación tabular.
+     */
     public static ReporteComandaDTO entidadAReporteDto(Comanda entidad) {
         ReporteComandaDTO dto = new ReporteComandaDTO();
         dto.setFolio(entidad.getFolio());
         dto.setFecha(entidad.getFecha());
         dto.setTotal(entidad.getTotal());
         dto.setNumeroMesa(entidad.getNumeroMesa());
-        if(entidad.getEstado() == EstadoComanda.ABIERTA){
+        if (entidad.getEstado() == EstadoComanda.ABIERTA) {
             dto.setEstado(EstadoComandaDTO.ABIERTA);
-        }else if(entidad.getEstado() == EstadoComanda.CANCELADA){
+        } else if (entidad.getEstado() == EstadoComanda.CANCELADA) {
             dto.setEstado(EstadoComandaDTO.CANCELADA);
-        }else if(entidad.getEstado() == EstadoComanda.ENTREGADA){
+        } else if (entidad.getEstado() == EstadoComanda.ENTREGADA) {
             dto.setEstado(EstadoComandaDTO.ENTREGADA);
         }
 
@@ -119,10 +151,10 @@ public class ComandaAdapter {
             String nombre = "";
             nombre += entidad.getCliente().getNombres() + " ";
             nombre += entidad.getCliente().getApellidoPaterno();
-            if(entidad.getCliente().getApellidoMaterno() != null){
+            if (entidad.getCliente().getApellidoMaterno() != null) {
                 nombre += " " + entidad.getCliente().getApellidoMaterno();
             }
-            
+
             dto.setNombreCliente(nombre);
         } else {
             dto.setNombreCliente("Cliente General");

@@ -121,7 +121,7 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
 
             ClienteFrecuente entidad = ClienteFrecuenteAdapter.dtoAEntidadNuevo(dto);
             entidad = clienteFrecuenteDAO.guardar(entidad);
-            
+
             return ClienteFrecuenteAdapter.entidadADTO(entidad);
 
         } catch (PersistenciaException e) {
@@ -181,45 +181,37 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
 
     @Override
     public ClienteFrecuenteDTO buscarClienteFrecuenteGeneral() throws NegocioException {
-        try{
+        try {
             return ClienteFrecuenteAdapter.entidadADTO(clienteFrecuenteDAO.buscarClienteFrecuenteGeneral());
-        }catch(PersistenciaException e){
+        } catch (PersistenciaException e) {
             throw new NegocioException("Error al consultar al cliente general", e);
         }
     }
-    
+
     public List<ClienteFrecuenteDTO> consultarReporte(String nombre, Integer minimoVisitas) throws NegocioException {
+        try {
+            List<ClienteFrecuente> entidades = clienteFrecuenteDAO.consultarReporte(nombre);
+            List<ClienteFrecuenteDTO> filtrada = new ArrayList<>();
 
-        List<ClienteFrecuenteDTO> lista = consultarTodos();
-        List<ClienteFrecuenteDTO> filtrada = new ArrayList<>();
+            for (ClienteFrecuente c : entidades) {
+                ClienteFrecuenteDTO dto = convertir_calcular_clientes(c);
 
-        for (ClienteFrecuenteDTO c : lista) {
-
-            boolean cumpleNombre = true;
-            boolean cumpleVisitas = true;
-
-            if (nombre != null && !nombre.isBlank()) { cumpleNombre = c.getNombres()
-                        .toLowerCase()
-                        .contains(nombre.toLowerCase());
+                if (minimoVisitas == null || dto.getNumeroVisitas() >= minimoVisitas) {
+                    filtrada.add(dto);
+                }
             }
+            return filtrada;
 
-            if (minimoVisitas != null) {
-                cumpleVisitas = c.getNumeroVisitas() >= minimoVisitas;
-            }
-
-            if (cumpleNombre && cumpleVisitas) {
-                filtrada.add(c);
-            }
+        } catch (PersistenciaException e) {
+            throw new NegocioException("Error al generar reporte", e);
         }
-
-        return filtrada;
     }
 
     @Override
     public boolean clienteConComandas(Long idCliente) throws NegocioException {
-        try{
+        try {
             return clienteFrecuenteDAO.tieneComandas(idCliente);
-        }catch(PersistenciaException e){
+        } catch (PersistenciaException e) {
             throw new NegocioException(e.getMessage(), e);
         }
     }

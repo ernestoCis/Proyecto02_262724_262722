@@ -275,4 +275,41 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
             em.close();
         }
     }
+
+    /**
+     * Realiza una consulta filtrada de clientes frecuentes para la generación
+     * de reportes. Utiliza consultas dinámicas (JPQL) para permitir búsquedas
+     * por nombre parcial, ignorando mayúsculas y minúsculas para mejorar la
+     * experiencia de usuario.
+     * * <p>
+     * Si el parámetro nombre es nulo o está vacío, el método retorna la lista
+     * completa de clientes registrados.</p>
+     *
+     * * @param nombre Cadena de texto para filtrar por el nombre del cliente
+     * (opcional).
+     * @return Una lista de objetos {@link ClienteFrecuente} que coinciden con
+     * el criterio.
+     * @throws PersistenciaException Si ocurre un error crítico al conectar con
+     * la base de datos o ejecutar la consulta.
+     */
+    public List<ClienteFrecuente> consultarReporte(String nombre) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            String jpql = "SELECT c FROM ClienteFrecuente c WHERE 1=1";
+
+            if (nombre != null && !nombre.isBlank()) {
+                jpql += " AND LOWER(c.nombres) LIKE :nombre";
+            }
+
+            TypedQuery<ClienteFrecuente> query = em.createQuery(jpql, ClienteFrecuente.class);
+
+            if (nombre != null && !nombre.isBlank()) {
+                query.setParameter("nombre", "%" + nombre.toLowerCase() + "%");
+            }
+
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }
