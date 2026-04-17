@@ -19,21 +19,42 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
+ * Implementación de la lógica de negocio para la gestión de Clientes
+ * Frecuentes. Coordina las operaciones entre la capa de presentación y la
+ * persistencia, aplicando reglas de negocio como el cálculo de puntos de
+ * fidelidad y validaciones de integridad.
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
 
+    /**
+     * Instancia única de la clase (Singleton).
+     */
     private static ClienteFrecuenteBO instance;
-
+    /**
+     * Acceso a los datos de clientes frecuentes.
+     */
     private ClienteFrecuenteDAO clienteFrecuenteDAO;
+    /**
+     * Acceso a los datos de comandas para cálculos de puntos y visitas.
+     */
     private ComandaDAO comandaDAO;
 
+    /**
+     * Constructor privado para implementar el patrón Singleton. Inicializa los
+     * DAOs necesarios para la operación.
+     */
     private ClienteFrecuenteBO() {
         clienteFrecuenteDAO = ClienteFrecuenteDAO.getInstance();
         comandaDAO = ComandaDAO.getInstance();
     }
 
+    /**
+     * Obtiene la instancia única de ClienteFrecuenteBO.
+     *
+     * * @return La instancia de la clase.
+     */
     public static ClienteFrecuenteBO getInstance() {
         if (instance == null) {
             instance = new ClienteFrecuenteBO();
@@ -41,6 +62,14 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         return instance;
     }
 
+    /**
+     * Consulta todos los clientes frecuentes registrados y calcula sus
+     * métricas.
+     *
+     * * @return Una lista de {@link ClienteFrecuenteDTO} con la información
+     * procesada.
+     * @throws NegocioException Si ocurre un error en la capa de persistencia.
+     */
     @Override
     public List<ClienteFrecuenteDTO> consultarTodos() throws NegocioException {
         try {
@@ -59,11 +88,12 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
     }
 
     /**
-     * Convierte una entidad ClienteFrecuente a su dtoy calcula los valores
-     * faltantes del cliente frecuente
+     * Convierte una entidad ClienteFrecuente a su DTO y calcula los valores
+     * dinámicos como visitas, total gastado y puntos acumulados.
      *
-     * @param c
-     * @return
+     * @param c La entidad del cliente a procesar.
+     * @return El DTO con los cálculos de fidelidad integrados.
+     * @throws NegocioException Si hay errores al consultar datos de comandas.
      */
     private ClienteFrecuenteDTO convertir_calcular_clientes(ClienteFrecuente c) throws NegocioException {
 
@@ -87,6 +117,14 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         }
     }
 
+    /**
+     * Busca clientes frecuentes aplicando un filtro de texto.
+     *
+     * * @param filtro Cadena de texto para filtrar la búsqueda (nombre o
+     * teléfono).
+     * @return Lista de DTOs que coinciden con el criterio.
+     * @throws NegocioException Si ocurre un error al realizar la búsqueda.
+     */
     @Override
     public List<ClienteFrecuenteDTO> consultarClientesPorFiltro(String filtro) throws NegocioException {
         try {
@@ -107,6 +145,15 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         }
     }
 
+    /**
+     * Registra un nuevo cliente frecuente previa validación de datos. Verifica
+     * que el teléfono no esté duplicado en el sistema.
+     *
+     * * @param dto El objeto con los datos del cliente a registrar.
+     * @return El DTO del cliente registrado con su ID generado.
+     * @throws NegocioException Si el teléfono ya existe o los datos son
+     * inválidos.
+     */
     @Override
     public ClienteFrecuenteDTO registrarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
 
@@ -132,6 +179,9 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
     /**
      * Valida que los campos obligatorios y numéricos cumplan con las reglas de
      * negocio.
+     *
+     * * @param dto DTO del cliente a validar.
+     * @throws NegocioException Si el teléfono es nulo o está vacío.
      */
     private void validarDatos(ClienteFrecuenteDTO dto) throws NegocioException {
         if (dto.getTelefono() == null || dto.getTelefono().isBlank()) {
@@ -139,6 +189,13 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         }
     }
 
+    /**
+     * Actualiza la información de un cliente existente.
+     *
+     * * @param dto El DTO con los nuevos datos del cliente.
+     * @throws NegocioException Si el ID es nulo o si el nuevo teléfono ya
+     * pertenece a otro cliente.
+     */
     @Override
     public void actualizarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
         try {
@@ -165,6 +222,13 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         }
     }
 
+    /**
+     * Elimina un cliente del sistema.
+     *
+     * * @param dto DTO del cliente que contiene el ID a eliminar.
+     * @throws NegocioException Si el ID es nulo o ocurre un error en
+     * persistencia.
+     */
     @Override
     public void eliminarCliente(ClienteFrecuenteDTO dto) throws NegocioException {
         if (dto.getIdCliente() == null) {
@@ -179,6 +243,12 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         }
     }
 
+    /**
+     * Busca los datos del cliente general (público en general).
+     *
+     * * @return DTO del cliente general.
+     * @throws NegocioException Si no se encuentra el registro base.
+     */
     @Override
     public ClienteFrecuenteDTO buscarClienteFrecuenteGeneral() throws NegocioException {
         try {
@@ -188,25 +258,38 @@ public class ClienteFrecuenteBO implements IClienteFrecuenteBO {
         }
     }
 
+    /**
+     * Genera un reporte de clientes filtrado por nombre y/o mínimo de visitas.
+     *
+     * * @param nombre Nombre del cliente (opcional).
+     * @param minimoVisitas Número mínimo de visitas para filtrar (opcional).
+     * @return Lista de clientes que cumplen con el criterio del reporte.
+     * @throws NegocioException Si ocurre un error al procesar el reporte.
+     */
     public List<ClienteFrecuenteDTO> consultarReporte(String nombre, Integer minimoVisitas) throws NegocioException {
         try {
-            List<ClienteFrecuente> entidades = clienteFrecuenteDAO.consultarReporte(nombre);
-            List<ClienteFrecuenteDTO> filtrada = new ArrayList<>();
+            List<ClienteFrecuente> entidades = clienteFrecuenteDAO.consultarReporte(nombre, minimoVisitas);
+
+            List<ClienteFrecuenteDTO> dtos = new ArrayList<>();
 
             for (ClienteFrecuente c : entidades) {
-                ClienteFrecuenteDTO dto = convertir_calcular_clientes(c);
-
-                if (minimoVisitas == null || dto.getNumeroVisitas() >= minimoVisitas) {
-                    filtrada.add(dto);
-                }
+                dtos.add(convertir_calcular_clientes(c));
             }
-            return filtrada;
 
+            return dtos;
         } catch (PersistenciaException e) {
             throw new NegocioException("Error al generar reporte", e);
         }
     }
 
+    /**
+     * Verifica si un cliente tiene comandas asociadas antes de permitir ciertas
+     * acciones.
+     *
+     * * @param idCliente ID del cliente a consultar.
+     * @return true si tiene comandas, false en caso contrario.
+     * @throws NegocioException Si ocurre un error en la base de datos.
+     */
     @Override
     public boolean clienteConComandas(Long idCliente) throws NegocioException {
         try {

@@ -135,7 +135,7 @@ public class FrmResumenPedido extends JFrame {
      */
     private void configurarVentana() {
         setTitle("Restaurante");
-        setSize(1000, 700);
+        setSize(1000, 650);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());

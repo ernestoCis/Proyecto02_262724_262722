@@ -73,6 +73,7 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
     public List<ClienteFrecuente> buscarPorFiltro(String filtro) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
+            filtro = filtro == null ? "" : filtro.trim().toLowerCase();
             return em.createQuery(
                     "SELECT c FROM ClienteFrecuente c "
                     + "WHERE LOWER(c.nombres) LIKE :filtro "
@@ -277,34 +278,51 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
     }
 
     /**
-     * Realiza una consulta filtrada de clientes frecuentes para la generación
-     * de reportes. Utiliza consultas dinámicas (JPQL) para permitir búsquedas
-     * por nombre parcial, ignorando mayúsculas y minúsculas para mejorar la
-     * experiencia de usuario.
+     * Realiza una consulta avanzada para reportes de fidelidad, permitiendo
+     * filtrar por nombre del cliente y un umbral mínimo de visitas (comandas
+     * realizadas).
      * * <p>
-     * Si el parámetro nombre es nulo o está vacío, el método retorna la lista
-     * completa de clientes registrados.</p>
+     * Esta implementación utiliza <b>agregación en base de datos</b> (GROUP BY
+     * y HAVING) para optimizar el rendimiento, evitando traer registros
+     * innecesarios a la memoria de la aplicación.</p>
      *
-     * * @param nombre Cadena de texto para filtrar por el nombre del cliente
-     * (opcional).
-     * @return Una lista de objetos {@link ClienteFrecuente} que coinciden con
-     * el criterio.
-     * @throws PersistenciaException Si ocurre un error crítico al conectar con
-     * la base de datos o ejecutar la consulta.
+     * * @param nombre Filtro opcional para búsqueda por nombre (parcial y sin
+     * distinción de mayúsculas).
+     * @param minimoVisitas Cantidad mínima de comandas que el cliente debe
+     * tener para ser incluido.
+     * @return Una lista de {@link ClienteFrecuente} que cumplen con ambos
+     * criterios.
+     * @throws PersistenciaException Si ocurre un fallo en la ejecución de la
+     * consulta JPQL.
      */
-    public List<ClienteFrecuente> consultarReporte(String nombre) throws PersistenciaException {
+    public List<ClienteFrecuente> consultarReporte(String nombre, Integer minimoVisitas) throws PersistenciaException {
         EntityManager em = ConexionBD.crearConexion();
         try {
-            String jpql = "SELECT c FROM ClienteFrecuente c WHERE 1=1";
+            String jpql = """
+            SELECT c
+            FROM ClienteFrecuente c
+            LEFT JOIN c.comandas co
+            WHERE 1=1
+        """;
 
             if (nombre != null && !nombre.isBlank()) {
                 jpql += " AND LOWER(c.nombres) LIKE :nombre";
+            }
+
+            jpql += " GROUP BY c";
+
+            if (minimoVisitas != null) {
+                jpql += " HAVING COUNT(co) >= :minVisitas";
             }
 
             TypedQuery<ClienteFrecuente> query = em.createQuery(jpql, ClienteFrecuente.class);
 
             if (nombre != null && !nombre.isBlank()) {
                 query.setParameter("nombre", "%" + nombre.toLowerCase() + "%");
+            }
+
+            if (minimoVisitas != null) {
+                query.setParameter("minVisitas", minimoVisitas);
             }
 
             return query.getResultList();

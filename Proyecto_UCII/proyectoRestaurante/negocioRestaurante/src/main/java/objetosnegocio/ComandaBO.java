@@ -28,23 +28,47 @@ import java.util.List;
 import javax.swing.JOptionPane;
 
 /**
+ * Implementación de la lógica de negocio para la gestión de Comandas. Esta
+ * clase centraliza las reglas para registrar, actualizar y consultar pedidos,
+ * incluyendo la gestión automática de inventario (descuento de ingredientes) y
+ * la generación de folios únicos.
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class ComandaBO implements IComandaBO {
 
+    /**
+     * Instancia única de la clase (Patrón Singleton).
+     */
     private static ComandaBO instance;
-
+    /**
+     * Acceso a datos para persistencia de comandas.
+     */
     private ComandaDAO comandaDAO;
+    /**
+     * Acceso a datos para la gestión de stock de ingredientes.
+     */
+
     private IngredienteDAO ingredienteDAO;
+    /**
+     * Acceso a datos para actualizar la disponibilidad de productos.
+     */
     private ProductoDAO productoDAO;
 
+    /**
+     * Constructor privado que inicializa los DAOs necesarios.
+     */
     private ComandaBO() {
         comandaDAO = ComandaDAO.getInstance();
         ingredienteDAO = IngredienteDAO.getInstance();
         productoDAO = ProductoDAO.getInstance();
     }
 
+    /**
+     * Obtiene la instancia única de ComandaBO.
+     *
+     * @return La instancia de la clase.
+     */
     public static ComandaBO getInstance() {
         if (instance == null) {
             instance = new ComandaBO();
@@ -52,6 +76,16 @@ public class ComandaBO implements IComandaBO {
         return instance;
     }
 
+    /**
+     * Registra una nueva comanda en el sistema. Realiza el cálculo automático
+     * del descuento de ingredientes en el inventario basándose en las recetas
+     * de los productos incluidos.
+     *
+     * * @param comanda El DTO con la información de la comanda y sus detalles.
+     * @return El DTO de la comanda registrada con ID y folio asignado.
+     * @throws NegocioException Si la comanda no tiene productos o si hay error
+     * en persistencia.
+     */
     @Override
     public ComandaDTO registrarComanda(ComandaDTO comanda) throws NegocioException {
         if (comanda.getDetalles() == null || comanda.getDetalles().isEmpty()) {
@@ -97,6 +131,15 @@ public class ComandaBO implements IComandaBO {
         }
     }
 
+    /**
+     * Actualiza una comanda existente y ajusta el inventario. La lógica de
+     * inventario solo resta la diferencia de ingredientes si se agregaron más
+     * unidades de un producto a una comanda ya abierta.
+     *
+     * * @param comandaDTO El DTO con los datos actualizados.
+     * @return El DTO de la comanda tras ser persistida.
+     * @throws NegocioException Si la comanda no existe o el ID es nulo.
+     */
     @Override
     public ComandaDTO actualizarComanda(ComandaDTO comandaDTO) throws NegocioException {
         try {
@@ -157,23 +200,14 @@ public class ComandaBO implements IComandaBO {
         }
     }
 
-//    @Override
-//    public ComandaDTO actualizarComanda(ComandaDTO comanda) throws NegocioException {
-//        try {
-//            if (comanda.getIdComanda() == null) {
-//                throw new NegocioException("No se puede actualizar una comanda sin ID");
-//            }
-//
-//            Comanda entidad = ComandaAdapter.dtoAEntidad(comanda);
-//
-//            Comanda actualizada = comandaDAO.actualizarComanda(entidad);
-//
-//            return ComandaAdapter.entidadADto(actualizada);
-//
-//        } catch (PersistenciaException e) {
-//            throw new NegocioException("Error al intentar actualizar la comanda", e);
-//        }
-//    }
+    /**
+     * Elimina una comanda del sistema.
+     *
+     * * @param comanda DTO de la comanda a eliminar (requiere ID).
+     * @return El DTO de la comanda que ha sido eliminada.
+     * @throws NegocioException Si el ID es nulo o hay falla en la base de
+     * datos.
+     */
     @Override
     public ComandaDTO eliminarComanda(ComandaDTO comanda) throws NegocioException {
         try {
@@ -192,6 +226,13 @@ public class ComandaBO implements IComandaBO {
         }
     }
 
+    /**
+     * Busca una comanda específica por su identificador único.
+     *
+     * * @param comanda DTO que contiene el ID a buscar.
+     * @return El DTO con toda la información de la comanda encontrada.
+     * @throws NegocioException Si no se encuentra la comanda.
+     */
     @Override
     public ComandaDTO buscarComanda(ComandaDTO comanda) throws NegocioException {
         try {
@@ -208,6 +249,12 @@ public class ComandaBO implements IComandaBO {
         }
     }
 
+    /**
+     * Genera un folio único para la comanda siguiendo el patrón OB-YYYYMMDD-ID.
+     *
+     * * @return Una cadena de texto que representa el folio único.
+     * @throws NegocioException Si hay errores al consultar el último ID.
+     */
     @Override
     public String generarFolio() throws NegocioException {
         LocalDate hoy = LocalDate.now();
@@ -219,6 +266,14 @@ public class ComandaBO implements IComandaBO {
         return String.format("OB-%s-%d", fechaParte, siguienteId);
     }
 
+    /**
+     * Recupera una comanda que aún no ha sido cerrada para una mesa específica.
+     *
+     * * @param numeroMesa El número de la mesa a consultar.
+     * @return DTO de la comanda abierta o {@code null} si no hay ninguna.
+     * @throws NegocioException Si el número de mesa es nulo o hay error de
+     * persistencia.
+     */
     @Override
     public ComandaDTO obtenerComandaAbiertaPorMesa(Integer numeroMesa) throws NegocioException {
         try {
@@ -239,6 +294,15 @@ public class ComandaBO implements IComandaBO {
         }
     }
 
+    /**
+     * Obtiene una lista de comandas para fines de reporteo dentro de un rango
+     * de fechas.
+     *
+     * * @param inicio Fecha inicial del rango.
+     * @param fin Fecha final del rango.
+     * @return Lista de {@link ReporteComandaDTO} dentro del periodo.
+     * @throws NegocioException Si las fechas son nulas o el rango es inválido.
+     */
     @Override
     public List<ReporteComandaDTO> obtenerComandasPorRango(LocalDate inicio, LocalDate fin) throws NegocioException {
         if (inicio == null || fin == null) {

@@ -16,20 +16,41 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
+ * Clase que implementa la lógica de negocio para la gestión de ingredientes. Se
+ * encarga de validar reglas de integridad, evitar duplicados por nombre y
+ * unidad, y coordinar la actualización de disponibilidad de productos cuando el
+ * stock cambia.
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class IngredienteBO implements IIngredienteBO {
 
+    /**
+     * Instancia única de la clase para el patrón Singleton.
+     */
     private static IngredienteBO instance;
+    /**
+     * Acceso a los datos de ingredientes en la base de datos.
+     */
     private IngredienteDAO ingredienteDAO;
+    /**
+     * Acceso a los datos de productos para actualizar disponibilidad por stock.
+     */
     private ProductoDAO productoDAO;
 
+    /**
+     * Constructor privado que inicializa los DAOs de persistencia.
+     */
     private IngredienteBO() {
         ingredienteDAO = IngredienteDAO.getInstance();
         productoDAO = ProductoDAO.getInstance();
     }
 
+    /**
+     * Obtiene la instancia única de la clase IngredienteBO.
+     *
+     * @return La instancia Singleton de esta clase.
+     */
     public static IngredienteBO getInstance() {
         if (instance == null) {
             instance = new IngredienteBO();
@@ -37,6 +58,15 @@ public class IngredienteBO implements IIngredienteBO {
         return instance;
     }
 
+    /**
+     * Registra un nuevo ingrediente en el sistema. Valida que no exista otro
+     * ingrediente con el mismo nombre y unidad de medida.
+     *
+     * * @param dto El objeto de transferencia con la información del nuevo
+     * ingrediente.
+     * @throws NegocioException Si los datos son inválidos, el ingrediente ya
+     * existe o hay un error en la persistencia.
+     */
     @Override
     public void registrarIngrediente(IngredienteDTO dto) throws NegocioException {
         validarDatos(dto);
@@ -59,6 +89,15 @@ public class IngredienteBO implements IIngredienteBO {
         }
     }
 
+    /**
+     * Actualiza la información de un ingrediente existente. Al actualizar, se
+     * verifica la integridad del nombre/unidad y se dispara la actualización de
+     * disponibilidad en los productos que lo utilizan.
+     *
+     * * @param dto DTO con los datos actualizados del ingrediente.
+     * @throws NegocioException Si el ID es nulo, los datos son inválidos o
+     * existe duplicidad.
+     */
     @Override
     public void actualizarIngrediente(IngredienteDTO dto) throws NegocioException {
         if (dto.getIdIngrediente() == null) {
@@ -87,6 +126,13 @@ public class IngredienteBO implements IIngredienteBO {
         }
     }
 
+    /**
+     * Consulta la lista completa de ingredientes registrados.
+     *
+     * @return Una lista de {@link IngredienteDTO} con todos los ingredientes.
+     * @throws NegocioException Si ocurre un error al cargar los datos desde la
+     * persistencia.
+     */
     @Override
     public List<IngredienteDTO> consultarTodos() throws NegocioException {
         try {
@@ -104,6 +150,14 @@ public class IngredienteBO implements IIngredienteBO {
         }
     }
 
+    /**
+     * Busca ingredientes que coincidan con un criterio de búsqueda (filtro).
+     *
+     * @param filtro Cadena de texto para filtrar los nombres de los
+     * ingredientes.
+     * @return Lista de DTOs que cumplen con el criterio.
+     * @throws NegocioException Si ocurre un error durante la búsqueda.
+     */
     @Override
     public List<IngredienteDTO> buscarPorFiltro(String filtro) throws NegocioException {
         try {
@@ -121,6 +175,14 @@ public class IngredienteBO implements IIngredienteBO {
         }
     }
 
+    /**
+     * Realiza las validaciones de negocio básicas para un ingrediente. Verifica
+     * que el nombre no esté vacío, la unidad esté presente y el stock no sea
+     * negativo.
+     *
+     * * @param dto El ingrediente a validar.
+     * @throws NegocioException Si alguna de las reglas de validación falla.
+     */
     private void validarDatos(IngredienteDTO dto) throws NegocioException {
 
         if (dto.getNombre() == null || dto.getNombre().isBlank()) {
@@ -137,6 +199,13 @@ public class IngredienteBO implements IIngredienteBO {
         }
     }
 
+    /**
+     * Busca un ingrediente específico mediante su identificador único.
+     *
+     * @param id El ID del ingrediente.
+     * @return El DTO del ingrediente encontrado.
+     * @throws NegocioException Si el ID es nulo o el ingrediente no existe.
+     */
     @Override
     public IngredienteDTO buscarPorId(Long id) throws NegocioException {
         if (id == null) {
@@ -157,6 +226,14 @@ public class IngredienteBO implements IIngredienteBO {
         }
     }
 
+    /**
+     * Elimina un ingrediente del sistema siempre y cuando no esté siendo
+     * utilizado en alguna receta de productos.
+     *
+     * * @param id El ID del ingrediente a eliminar.
+     * @throws NegocioException Si el ID es nulo, no se encuentra el ingrediente
+     * o si el ingrediente está en uso.
+     */
     @Override
     public void eliminarIngrediente(Long id) throws NegocioException {
         if (id == null) {

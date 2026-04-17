@@ -3,6 +3,7 @@ package daos;
 import conexion.ConexionBD;
 import entidades.Ingrediente;
 import entidades.Producto;
+import entidades.Receta;
 import enums.DisponibilidadProducto;
 import enums.EstadoComanda;
 import excepciones.PersistenciaException;
@@ -79,8 +80,27 @@ public class ProductoDAO implements IProductoDAO {
         EntityManager em = ConexionBD.crearConexion();
         try {
             em.getTransaction().begin();
-            em.merge(producto);
+
+            Producto existente = em.find(Producto.class, producto.getIdProducto());
+
+            // limpiar recetas actuales
+            existente.getRecetas().clear();
+            em.flush();
+
+            // agregar las nuevas
+            for (Receta r : producto.getRecetas()) {
+                r.setId(null);
+                r.setProducto(existente);
+                existente.getRecetas().add(r);
+            }
+            
+            existente.setPrecio(producto.getPrecio());
+            existente.setDescripcion(producto.getDescripcion());
+            existente.setRutaImg(producto.getRutaImg());
+
+            em.merge(existente);
             em.getTransaction().commit();
+
         } catch (Exception e) {
             if (em.getTransaction().isActive()) {
                 em.getTransaction().rollback();
