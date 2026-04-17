@@ -13,33 +13,80 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * Pantalla para el catalogo de productos del restaurante.
+ * <p>
+ * Funciona en dos modalidades: administracion total o seleccion para
+ * ventas.</p>
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmProductos extends JFrame {
 
+    /**
+     * Etiqueta de instrucciones dinamicas segun el modo.
+     */
     private JLabel lblNota;
 
+    /**
+     * Enumeracion para definir el comportamiento de la pantalla.
+     */
     public enum Modo {
-        ADMINISTRAR, SELECCIONAR
+        /**
+         * Permite editar, registrar y eliminar productos.
+         */
+        ADMINISTRAR,
+        /**
+         * Permite elegir un producto para agregarlo a una comanda.
+         */
+        SELECCIONAR
     }
-    private final Modo modoActual;
 
+    /**
+     * Almacena el modo en el que se abrio la ventana.
+     */
+    private final Modo modoActual;
+    /**
+     * Referencia al controlador de la aplicacion.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Componente para la visualizacion de datos.
+     */
     private JTable tblProductos;
+    /**
+     * Componente para la visualizacion de datos.
+     */
     private DefaultTableModel modeloTabla;
+    /**
+     * Componente para la visualizacion de datos.
+     */
     private JTextField txtBuscar;
 
+    /**
+     * Botones de navegacion y acciones CRUD.
+     */
     private BotonRegresar btnRegresar;
-    private BotonEstilizado btnRegistrar;
-    private BotonEstilizado btnEditar;
-    private BotonEstilizado btnEliminar;
-    private BotonEstilizado btnSeleccionar;
+    /**
+     * Botones de navegacion y acciones CRUD.
+     */
+    private BotonEstilizado btnRegistrar, btnEditar, btnEliminar, btnSeleccionar;
 
+    /**
+     * Listas para el manejo y filtrado de la informacion.
+     */
     private List<ProductoDTO> listaOriginal;
+    /**
+     * Listas para el manejo y filtrado de la informacion.
+     */
     private List<ProductoDTO> listaMostrada;
 
+    /**
+     * Constructor principal de la pantalla de productos.
+     *
+     * @param coordinador El coordinador del sistema.
+     * @param modo El modo de operacion (ADMINISTRAR o SELECCIONAR).
+     */
     public FrmProductos(Coordinador coordinador, Modo modo) {
         this.coordinador = coordinador;
         this.modoActual = modo;
@@ -52,6 +99,9 @@ public class FrmProductos extends JFrame {
         accionBuscar();
     }
 
+    /**
+     * Ajusta el titulo y propiedades basicas del frame.
+     */
     private void configurarVentana() {
         setTitle(modoActual == Modo.ADMINISTRAR ? "Gestión de Productos" : "Seleccionar Producto");
         setSize(1000, 650);
@@ -61,6 +111,9 @@ public class FrmProductos extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Inicializa y distribuye los componentes graficos.
+     */
     private void inicializarComponentes() {
 
         Color colorMostaza = new Color(229, 171, 75);
@@ -221,6 +274,9 @@ public class FrmProductos extends JFrame {
         registrarEventos();
     }
 
+    /**
+     * Muestra u oculta botones dependiendo del <code>modoActual</code>.
+     */
     private void configurarVisibilidadSegunModo() {
         boolean esAdmin = (modoActual == Modo.ADMINISTRAR);
 
@@ -231,6 +287,9 @@ public class FrmProductos extends JFrame {
         btnSeleccionar.setVisible(!esAdmin);
     }
 
+    /**
+     * Registra los escuchas para teclado, mouse y botones.
+     */
     private void registrarEventos() {
 
         txtBuscar.addKeyListener(new KeyAdapter() {
@@ -309,6 +368,11 @@ public class FrmProductos extends JFrame {
         });
     }
 
+    /**
+     * Llena la tabla con los datos de los productos.
+     *
+     * @param lista Coleccion de productos a cargar.
+     */
     private void cargarDatosTabla(List<ProductoDTO> lista) {
         modeloTabla.setRowCount(0);
 
@@ -327,6 +391,11 @@ public class FrmProductos extends JFrame {
         }
     }
 
+    /**
+     * Realiza la busqueda de productos filtrando por el texto ingresado.
+     * <p>
+     * Considera si el producto debe estar disponible o no segun el modo.</p>
+     */
     private void accionBuscar() {
         String texto = txtBuscar.getText().trim();
 
@@ -344,6 +413,9 @@ public class FrmProductos extends JFrame {
         cargarDatosTabla(filtrados);
     }
 
+    /**
+     * Controla el comportamiento del texto de sugerencia en el buscador.
+     */
     private void ponerPlaceholder() {
         txtBuscar.setText("Buscar producto");
         txtBuscar.setForeground(Color.GRAY);
@@ -367,12 +439,20 @@ public class FrmProductos extends JFrame {
         });
     }
 
+    /**
+     * Refresca la informacion de la tabla externamente.
+     *
+     * @param productos Nueva lista de productos.
+     */
     public void actualizarTablaProductos(List<ProductoDTO> productos) {
         this.listaOriginal = productos;
         cargarDatosTabla(productos);
         this.listaMostrada = productos;
     }
 
+    /**
+     * Proceso para dar de baja el producto seleccionado tras confirmacion.
+     */
     private void eliminarProductoSeleccionado() {
         int fila = tblProductos.getSelectedRow();
 

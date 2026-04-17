@@ -25,27 +25,47 @@ import javax.swing.JPanel;
 import javax.swing.SwingConstants;
 
 /**
- *
- * @author Paulina Guevara, Ernesto Cisneros
+ * Ventana principal de administración que centraliza el acceso a los módulos del sistema.
+ * <p>Esta pantalla permite al administrador navegar entre las gestiones de productos,
+ * ingredientes, clientes y la generación de reportes, además de permitir el cierre de sesión.</p>
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmAcciones extends JFrame {
 
+    /** Instancia del coordinador para gestionar la navegación entre pantallas. */
     private final Coordinador coordinador;
 
+    /** Etiqueta que muestra el icono o logotipo del restaurante. */
     private JLabel lblLogo;
+    /** Etiqueta que muestra el título principal de la aplicación. */
     private JLabel lblTitulo;
 
+    /** Botón para cerrar la sesión actual y regresar al inicio del sistema. */
     private JButton btnSalir;
+    /** Botón de acceso al módulo de gestión de productos del menú. */
     private JButton btnProductos;
+    /** Botón de acceso al módulo de control de inventario de ingredientes. */
     private JButton btnIngredientes;
+    /** Botón de acceso al módulo de administración de clientes. */
     private JButton btnClientes;
+    /** Botón de acceso al módulo de consulta y generación de reportes. */
     private JButton btnReportes;
 
+    /**
+     * Construye la ventana de acciones principales.
+     * * @param coordinador El coordinador del sistema que servirá como enlace de control.
+     */
     public FrmAcciones(Coordinador coordinador) {
         this.coordinador = coordinador;
         initComponents();
     }
 
+    /**
+     * Inicializa y configura todos los componentes de la interfaz gráfica.
+     * <p>Establece el diseño de los paneles, carga las imágenes de los iconos, 
+     * define los estilos de los botones y asigna los manejadores de eventos 
+     * para la navegación de los módulos.</p>
+     */
     private void initComponents() {
         setTitle("Restaurante");
         setSize(1000, 650);

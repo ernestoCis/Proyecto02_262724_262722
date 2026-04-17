@@ -13,51 +13,93 @@ import java.util.Map;
 import javax.swing.*;
 
 /**
+ * Ventana diseñada para la modificación de productos dentro de una comanda
+ * activa.
+ * <p>
+ * Permite a los meseros añadir nuevos productos, ajustar cantidades y editar
+ * notas específicas de cocina. Implementa una lógica de validación de
+ * inventario en tiempo real que considera tanto el stock físico como los
+ * productos ya apartados en la comanda original.</p>
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmEditarProductosComanda extends JFrame {
 
+    /**
+     * Enlace con el coordinador para gestionar la sesión de la comanda y
+     * navegación.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Botón para cerrar la sesión del mesero actual.
+     */
     private JButton btnSalir;
+    /**
+     * Botón para regresar a la visualización de estados de comanda.
+     */
     private JButton btnRegresar;
+    /**
+     * Botón para confirmar y guardar los cambios realizados en el pedido.
+     */
     private JButton btnTerminar;
+    /**
+     * Botón que invoca el buscador de productos del catálogo.
+     */
     private JButton btnBuscarProducto;
-    
+
+    /**
+     * Panel contenedor dinámico donde se renderizan las filas de productos
+     * elegidos.
+     */
     private JPanel panelCarrito;
 
+    /**
+     * Lista temporal que almacena los detalles del pedido durante la edición.
+     */
     private final List<DetallePedidoDTO> listaDetalles = new ArrayList<>();
 
+    /**
+     * Constructor que inicializa la interfaz y configura los escuchadores de
+     * refresco de productos.
+     */
     public FrmEditarProductosComanda(Coordinador coordinador) {
         this.coordinador = coordinador;
         configurarVentana();
         inicializarComponentes();
         precargarDetallesDeComanda();
-        
+
         this.addComponentListener(new java.awt.event.ComponentAdapter() {
             @Override
             public void componentShown(java.awt.event.ComponentEvent e) {
                 ProductoDTO producto = coordinador.getProductoSeleccionado();
-                
+
                 if (producto != null) {
                     agregarNuevoProductoAlCarrito(producto);
-                    
-                    coordinador.setProductoSeleccionado(null); 
+
+                    coordinador.setProductoSeleccionado(null);
                 }
             }
         });
-        
+
     }
 
+    /**
+     * Establece las propiedades del marco, dimensiones y comportamiento de
+     * cierre.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
-        setSize(1000, 750); 
+        setSize(1000, 750);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Construye la arquitectura visual de la ventana, incluyendo el encabezado,
+     * buscador y área de scroll.
+     */
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorRojo = new Color(216, 84, 78);
@@ -199,6 +241,10 @@ public class FrmEditarProductosComanda extends JFrame {
         eventos();
     }
 
+    /**
+     * Genera el componente visual superior que permite acceder al catálogo de
+     * productos. @return JPanel con el botón de búsqueda.
+     */
     private JPanel crearPanelBuscador() {
         JPanel panelBusqueda = new JPanel(new FlowLayout(FlowLayout.CENTER));
         panelBusqueda.setOpaque(false);
@@ -218,6 +264,10 @@ public class FrmEditarProductosComanda extends JFrame {
         return panelBusqueda;
     }
 
+    /**
+     * Define el comportamiento de los botones principales (Salir, Regresar,
+     * Guardar).
+     */
     private void eventos() {
         btnSalir.addActionListener(e -> {
             coordinador.limpiarSesionComanda();
@@ -245,6 +295,11 @@ public class FrmEditarProductosComanda extends JFrame {
         });
     }
 
+    /**
+     * * Crea una copia profunda de los detalles actuales de la comanda
+     * seleccionada. Esto permite realizar cambios sin afectar los datos
+     * originales hasta que se confirme la operación.
+     */
     private void precargarDetallesDeComanda() {
         ComandaDTO comanda = coordinador.getComanda();
         listaDetalles.clear();
@@ -263,15 +318,40 @@ public class FrmEditarProductosComanda extends JFrame {
         actualizarVistaCarrito();
     }
 
+    /**
+     * Recibe y procesa el producto seleccionado desde el buscador externo.
+     * <p>
+     * Este método actúa como un <b>callback</b>. Una vez que el usuario
+     * selecciona un producto en la interfaz de búsqueda, el
+     * <code>Coordinador</code> invoca esta función para:
+     * </p>
+     * <ul>
+     * <li>Verificar que el objeto recibido no sea <code>null</code>.</li>
+     * <li>Iniciar el flujo de inserción al carrito mediante el método
+     * <code>agregarNuevoProductoAlCarrito</code>.</li>
+     * </ul>
+     *
+     * * @param productoSeleccionado El objeto <code>ProductoDTO</code> que el
+     * usuario eligió para añadir a la comanda.
+     */
     public void recibirProductoSeleccionado(ProductoDTO productoSeleccionado) {
         if (productoSeleccionado != null) {
             agregarNuevoProductoAlCarrito(productoSeleccionado);
         }
     }
 
+    /**
+     * Gestiona el flujo de adición de un producto: solicita cantidad, valida
+     * stock disponible y permite añadir notas. Agrupa productos iguales con la
+     * misma nota.
+     *
+     * @param producto El DTO del producto a integrar al pedido.
+     */
     private void agregarNuevoProductoAlCarrito(ProductoDTO producto) {
         String inputCantidad = JOptionPane.showInputDialog(this, "¿Qué cantidad deseas agregar de " + producto.getNombre() + "?", "1");
-        if (inputCantidad == null || inputCantidad.trim().isEmpty()) return;
+        if (inputCantidad == null || inputCantidad.trim().isEmpty()) {
+            return;
+        }
 
         try {
             int cantSolicitada = Integer.parseInt(inputCantidad);
@@ -292,14 +372,16 @@ public class FrmEditarProductosComanda extends JFrame {
             }
 
             String nota = JOptionPane.showInputDialog(this, "Escribe una nota para este platillo (Opcional):", "");
-            if (nota == null) nota = "";
+            if (nota == null) {
+                nota = "";
+            }
             nota = nota.trim();
 
             boolean agrupado = false;
             for (DetallePedidoDTO detalleExistente : listaDetalles) {
                 if (detalleExistente.getProductoDTO().getIdProducto().equals(producto.getIdProducto())
                         && detalleExistente.getNota().equalsIgnoreCase(nota)) {
-                    
+
                     detalleExistente.setCantidad(detalleExistente.getCantidad() + cantSolicitada);
                     detalleExistente.setSubtotal(detalleExistente.getCantidad() * detalleExistente.getPrecioUnitario());
                     agrupado = true;
@@ -324,6 +406,16 @@ public class FrmEditarProductosComanda extends JFrame {
         }
     }
 
+    /**
+     * Calcula dinámicamente cuántas unidades de un producto pueden añadirse.
+     * <p>
+     * Considera el stock actual en BD, los ingredientes ya consumidos por otros
+     * productos en la pantalla de edición y devuelve el stock "virtual"
+     * disponible para esta transacción.</p>
+     *
+     * @param productoAñadir Producto a validar.
+     * @return Cantidad máxima entera permitida según la receta e insumos.
+     */
     private int calcularMaximoPosibleEdicion(ProductoDTO productoAñadir) {
         Map<Long, Double> consumoPantalla = new HashMap<>();
         for (DetallePedidoDTO detalle : listaDetalles) {
@@ -357,13 +449,15 @@ public class FrmEditarProductosComanda extends JFrame {
                 long idIng = r.getIngrediente().getIdIngrediente();
                 double stockRealBD = r.getIngrediente().getCantidadActual();
                 double yaApartadoEnBD = consumoOriginalComanda.getOrDefault(idIng, 0.0);
-                
+
                 double stockTotalParaEstaComanda = stockRealBD + yaApartadoEnBD;
                 double consumidoEnPantalla = consumoPantalla.getOrDefault(idIng, 0.0);
-                
+
                 double stockSobrante = stockTotalParaEstaComanda - consumidoEnPantalla;
 
-                if (stockSobrante <= 0) return 0;
+                if (stockSobrante <= 0) {
+                    return 0;
+                }
 
                 int maxPorEsteIngrediente = (int) (stockSobrante / r.getCantidad());
                 if (maxPorEsteIngrediente < maxPermitido) {
@@ -371,12 +465,16 @@ public class FrmEditarProductosComanda extends JFrame {
                 }
             }
         } else {
-            return 999; 
+            return 999;
         }
 
         return maxPermitido;
     }
 
+    /**
+     * Refresca el panel visual del carrito, eliminando los componentes
+     * anteriores y reconstruyendo la lista de detalles.
+     */
     private void actualizarVistaCarrito() {
         panelCarrito.removeAll();
 
@@ -390,7 +488,7 @@ public class FrmEditarProductosComanda extends JFrame {
         } else {
             for (DetallePedidoDTO detalle : listaDetalles) {
                 panelCarrito.add(crearFilaDetalle(detalle));
-                panelCarrito.add(Box.createVerticalStrut(5)); 
+                panelCarrito.add(Box.createVerticalStrut(5));
             }
         }
 
@@ -398,6 +496,14 @@ public class FrmEditarProductosComanda extends JFrame {
         panelCarrito.repaint();
     }
 
+    /**
+     * * Genera un componente visual individual para cada renglón del pedido.
+     * Incluye información de cantidad, nombre, notas y botones para editar o
+     * eliminar.
+     *
+     * @param detalle El objeto DetallePedidoDTO a representar.
+     * @return JPanel configurado como una fila de la lista.
+     */
     private JPanel crearFilaDetalle(DetallePedidoDTO detalle) {
         JPanel panelFila = new JPanel(new BorderLayout());
         panelFila.setBackground(Color.WHITE);

@@ -34,27 +34,73 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * Ventana de gestión de clientes que permite visualizar, buscar, registrar y
+ * eliminar registros.
+ * <p>
+ * Funciona en dos modalidades: administración (gestión total) y selección (para
+ * asignar un cliente a una comanda en curso).</p>
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmClientes extends JFrame {
 
+    /**
+     * Indica si la ventana se abrió para seleccionar un cliente (true) o para
+     * administración (false).
+     */
     private boolean modoSeleccion = false;
+    /**
+     * Etiqueta informativa que indica la acción a realizar al hacer doble clic.
+     */
     private JLabel lblNota;
 
+    /**
+     * Enlace con el coordinador para la comunicación entre capas.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Tabla que despliega la información de los clientes.
+     */
     private JTable tblClientes;
+    /**
+     * Modelo de datos que gestiona las filas y columnas de la tabla de
+     * clientes.
+     */
     private DefaultTableModel modeloTabla;
 
+    /**
+     * Campo de texto para filtrar clientes por nombre, teléfono o correo.
+     */
     private JTextField txtBuscar;
+    /**
+     * Botón para regresar a la pantalla anterior.
+     */
     private JButton btnRegresar;
+    /**
+     * Botón para abrir el formulario de registro de un nuevo cliente frecuente.
+     */
     private JButton btnRegistrar;
+    /**
+     * Botón para dar de baja al cliente seleccionado.
+     */
     private JButton btnEliminar;
+    /**
+     * Botón para registrar rápidamente un cliente genérico o de mostrador.
+     */
     private JButton btnRegistrarClienteGeneral;
 
+    /**
+     * Referencia a la lista completa de clientes cargada desde la base de
+     * datos.
+     */
     private List<ClienteFrecuenteDTO> listaOriginal;
 
+    /**
+     * Constructor por defecto para la administración de clientes.
+     *
+     * * @param coordinador Instancia del coordinador del sistema.
+     */
     public FrmClientes(Coordinador coordinador) {
         this.coordinador = coordinador;
         this.modoSeleccion = false;
@@ -64,6 +110,13 @@ public class FrmClientes extends JFrame {
         cargarDatosTabla(this.listaOriginal);
     }
 
+    /**
+     * Constructor que permite definir el modo de uso de la ventana.
+     *
+     * * @param coordinador Instancia del coordinador del sistema.
+     * @param modoSeleccion Determina si la ventana permitirá seleccionar un
+     * cliente para una comanda.
+     */
     public FrmClientes(Coordinador coordinador, boolean modoSeleccion) {
         this.coordinador = coordinador;
         this.modoSeleccion = modoSeleccion;
@@ -73,6 +126,10 @@ public class FrmClientes extends JFrame {
         cargarDatosTabla(this.listaOriginal);
     }
 
+    /**
+     * Establece las propiedades de diseño, tamaño y comportamiento de cierre
+     * del marco.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 650);
@@ -82,6 +139,10 @@ public class FrmClientes extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Construye la interfaz gráfica, configura estilos de tabla y organiza los
+     * paneles.
+     */
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorFondo = new Color(238, 238, 238);
@@ -251,6 +312,9 @@ public class FrmClientes extends JFrame {
         registrarEventos();
     }
 
+    /**
+     * Define los escuchadores de teclado, mouse y botones de la interfaz.
+     */
     private void registrarEventos() {
 
         txtBuscar.addKeyListener(new KeyAdapter() {
@@ -303,6 +367,11 @@ public class FrmClientes extends JFrame {
         });
     }
 
+    /**
+     * Actualiza el contenido visual de la tabla con la lista proporcionada.
+     *
+     * @param lista Colección de clientes a mostrar en la tabla.
+     */
     private void cargarDatosTabla(List<ClienteFrecuenteDTO> lista) {
         modeloTabla.setRowCount(0);
         this.listaOriginal = lista;
@@ -323,6 +392,10 @@ public class FrmClientes extends JFrame {
         }
     }
 
+    /**
+     * Filtra los registros de la tabla basándose en el texto ingresado en el
+     * buscador.
+     */
     private void accionBuscar() {
         String texto = txtBuscar.getText().trim();
 
@@ -335,6 +408,10 @@ public class FrmClientes extends JFrame {
         cargarDatosTabla(filtrados);
     }
 
+    /**
+     * Configura el texto de sugerencia inicial y el comportamiento del foco en
+     * el buscador.
+     */
     private void ponerPlaceholder() {
         txtBuscar.setText("Buscar por nombre, teléfono o correo");
         txtBuscar.setForeground(Color.GRAY);
@@ -358,11 +435,20 @@ public class FrmClientes extends JFrame {
         });
     }
 
+    /**
+     * Refresca la lista interna y la tabla desde una fuente externa.
+     *
+     * @param clientes Nueva lista de clientes a desplegar.
+     */
     public void actualizarTablaClientes(List<ClienteFrecuenteDTO> clientes) {
         this.listaOriginal = clientes;
         cargarDatosTabla(this.listaOriginal);
     }
 
+    /**
+     * Solicita confirmación y procesa la eliminación del cliente marcado en la
+     * tabla.
+     */
     private void eliminarClienteSeleccionado() {
         int fila = tblClientes.getSelectedRow();
 

@@ -14,24 +14,63 @@ import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * Pantalla de selección de productos que funciona como un carrito de compras
+ * para la comanda.
+ * <p>
+ * Permite añadir productos buscando en el catálogo, gestionar cantidades,
+ * agregar notas personalizadas por platillo y validar la disponibilidad de
+ * ingredientes mediante el análisis de recetas y existencias en inventario.</p>
  *
  * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmSeleccionProductos extends JFrame {
 
+    /**
+     * Controlador para la comunicación con el modelo y navegación entre
+     * pantallas.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Botones de control de flujo y navegación.
+     */
     private JButton btnSalir;
+    /**
+     * Botones de control de flujo y navegación.
+     */
     private JButton btnRegresar;
+    /**
+     * Botones de control de flujo y navegación.
+     */
     private JButton btnTerminar;
+    /**
+     * Botones de control de flujo y navegación.
+     */
     private JButton btnAnadirProducto;
 
+    /**
+     * Contenedor dinámico que muestra visualmente los productos agregados.
+     */
     private JPanel panelCarrito;
 
+    /**
+     * Lista de detalles (productos, cantidades, notas) que conforman la comanda
+     * actual.
+     */
     private final List<DetallePedidoDTO> listaDetalles = new ArrayList<>();
 
+    /**
+     * Copia local del catálogo de productos disponibles.
+     */
     private List<ProductoDTO> listaOriginalProductos;
 
+    /**
+     * Constructor que inicializa la interfaz y configura un Listener de
+     * componente para detectar cuándo se regresa del buscador con un producto
+     * seleccionado.
+     *
+     * @param coordinador El coordinador general del sistema.
+     */
     public FrmSeleccionProductos(Coordinador coordinador) {
         this.coordinador = coordinador;
         this.listaOriginalProductos = coordinador.getListaProductosActual();
@@ -55,6 +94,9 @@ public class FrmSeleccionProductos extends JFrame {
         });
     }
 
+    /**
+     * Configura el layout principal y dimensiones de la ventana (1000x700).
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 700);
@@ -63,6 +105,10 @@ public class FrmSeleccionProductos extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Crea la estructura visual, incluyendo el encabezado con datos del mesero,
+     * el área de scroll para el carrito y los botones de acción principal.
+     */
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorRojo = new Color(216, 84, 78);
@@ -209,6 +255,10 @@ public class FrmSeleccionProductos extends JFrame {
         actualizarVistaCarrito();
     }
 
+    /**
+     * Configura los disparadores de los botones principales, incluyendo la
+     * transferencia de la lista de detalles al Coordinador al terminar.
+     */
     private void eventos() {
         btnSalir.addActionListener(e -> {
             coordinador.mostrarInicioSesionMesero();
@@ -240,6 +290,15 @@ public class FrmSeleccionProductos extends JFrame {
         });
     }
 
+    /**
+     * Procesa la adición de un producto a la comanda.
+     * <p>
+     * Solicita cantidad y nota, valida que haya stock suficiente analizando la
+     * receta y agrupa el producto si ya existía uno igual con la misma
+     * nota.</p>
+     *
+     * @param producto El DTO del producto que se desea agregar.
+     */
     public void recibirProductoSeleccionado(ProductoDTO producto) {
         String inputCantidad = JOptionPane.showInputDialog(
                 this,
@@ -306,6 +365,14 @@ public class FrmSeleccionProductos extends JFrame {
         }
     }
 
+    /**
+     * Calcula la cantidad máxima que se puede preparar de un producto basándose
+     * en el stock actual de ingredientes y lo que ya se ha "reservado" en el
+     * carrito.
+     *
+     * @param productoAñadir Producto a evaluar.
+     * @return Cantidad máxima entera permitida; 999 si no requiere receta.
+     */
     private int calcularMaximoPosible(ProductoDTO productoAñadir) {
         Map<Long, Double> consumoCarrito = new HashMap<>();
 
@@ -348,6 +415,10 @@ public class FrmSeleccionProductos extends JFrame {
         return maxPermitido;
     }
 
+    /**
+     * Refresca el panel del carrito eliminando los componentes anteriores y
+     * generando nuevas filas para cada detalle en la lista.
+     */
     private void actualizarVistaCarrito() {
         panelCarrito.removeAll();
 
@@ -369,6 +440,15 @@ public class FrmSeleccionProductos extends JFrame {
         panelCarrito.repaint();
     }
 
+    /**
+     * Genera un componente JPanel que representa una fila dentro del carrito.
+     * <p>
+     * Incluye información de cantidad, nombre, notas y botones para editar o
+     * eliminar.</p>
+     *
+     * @param detalle El objeto DetallePedidoDTO a renderizar.
+     * @return Un panel configurado con la información del detalle.
+     */
     private JPanel crearFilaDetalle(DetallePedidoDTO detalle) {
         JPanel panelFila = new JPanel(new BorderLayout());
         panelFila.setBackground(Color.WHITE);

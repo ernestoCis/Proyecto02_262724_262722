@@ -30,29 +30,97 @@ import javax.swing.JTextField;
 import javax.swing.JOptionPane;
 import javax.swing.table.DefaultTableModel;
 
+/**
+ * Pantalla de resumen diseñada específicamente para el flujo de edición de
+ * comandas.
+ * <p>
+ * Permite visualizar los cambios realizados en una comanda existente,
+ * actualizar el cliente asociado y recalcular los totales antes de persistir la
+ * actualización en el sistema.</p>
+ *
+ * @author Paulina Guevara, Ernesto Cisneros
+ */
 public class FrmResumenPedidoEditado extends JFrame {
 
+    /**
+     * Controlador encargado de gestionar la actualización de la comanda
+     * editada.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Botones de acción para navegación, búsqueda y finalización de la edición.
+     */
     private JButton btnSalir;
+    /**
+     * Botones de acción para navegación, búsqueda y finalización de la edición.
+     */
     private JButton btnRegresar;
+    /**
+     * Botones de acción para navegación, búsqueda y finalización de la edición.
+     */
     private JButton btnBuscarCliente;
+    /**
+     * Botones de acción para navegación, búsqueda y finalización de la edición.
+     */
     private JButton btnQuitarCliente;
+    /**
+     * Botones de acción para navegación, búsqueda y finalización de la edición.
+     */
     private JButton btnTerminarComanda;
 
+    /**
+     * Componentes de visualización de datos en formato de tabla.
+     */
     private JTable tblDetalles;
+    /**
+     * Componentes de visualización de datos en formato de tabla.
+     */
     private DefaultTableModel modeloTabla;
 
+    /**
+     * Campo de entrada para realizar búsquedas rápidas de clientes.
+     */
     private JTextField txtBuscarCliente;
 
+    /**
+     * Etiquetas de interfaz para mostrar el mesero activo, total y cliente
+     * vinculado.
+     */
     private JLabel lblNombreMesero;
+    /**
+     * Etiquetas de interfaz para mostrar el mesero activo, total y cliente
+     * vinculado.
+     */
     private JLabel lblTotal;
+    /**
+     * Etiquetas de interfaz para mostrar el mesero activo, total y cliente
+     * vinculado.
+     */
     private JLabel lblClienteSeleccionado;
 
+    /**
+     * Listas de datos cargadas desde la comanda en edición y el catálogo de
+     * clientes.
+     */
     private List<DetallePedidoDTO> listaDetalles;
+    /**
+     * Listas de datos cargadas desde la comanda en edición y el catálogo de
+     * clientes.
+     */
     private List<ClienteFrecuenteDTO> listaClientes;
+
+    /**
+     * Cliente actualmente vinculado a la comanda editada.
+     */
     private ClienteFrecuenteDTO clienteSeleccionado;
 
+    /**
+     * Constructor que extrae la información de la comanda actual del
+     * coordinador para preparar el resumen de edición.
+     *
+     * @param coordinador El coordinador general del sistema.
+     */
     public FrmResumenPedidoEditado(Coordinador coordinador) {
         this.coordinador = coordinador;
 
@@ -75,6 +143,10 @@ public class FrmResumenPedidoEditado extends JFrame {
         actualizarClienteSeleccionado();
     }
 
+    /**
+     * Configura las dimensiones (1000x700), el título y el comportamiento de la
+     * ventana.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 700);
@@ -84,6 +156,10 @@ public class FrmResumenPedidoEditado extends JFrame {
         setResizable(false);
     }
 
+    /**
+     * Inicializa la interfaz gráfica, incluyendo la tabla de detalles con
+     * scroll vertical optimizado y los paneles de información del cliente.
+     */
     private void inicializarComponentes() {
         Color colorMostaza = new Color(229, 171, 75);
         Color colorRojo = new Color(216, 84, 78);
@@ -242,7 +318,6 @@ public class FrmResumenPedidoEditado extends JFrame {
         ));
 
         // ponerPlaceholder();
-
         btnBuscarCliente = new JButton("Buscar");
         btnBuscarCliente.setFont(new Font("SansSerif", Font.PLAIN, 14));
         btnBuscarCliente.setFocusPainted(false);
@@ -313,6 +388,11 @@ public class FrmResumenPedidoEditado extends JFrame {
         eventos();
     }
 
+    /**
+     * Establece los oyentes para procesar la búsqueda de clientes, la
+     * eliminación de asociaciones y la persistencia de la actualización de la
+     * comanda.
+     */
     private void eventos() {
         btnSalir.addActionListener(e -> {
             coordinador.mostrarInicioSesionMesero();
@@ -362,6 +442,13 @@ public class FrmResumenPedidoEditado extends JFrame {
         });
     }
 
+    /**
+     * Refresca la tabla con los productos de la comanda y recalcula el monto
+     * total.
+     * <p>
+     * Formatea el subtotal con el símbolo de moneda y muestra las notas
+     * opcionales.</p>
+     */
     private void cargarTablaDetalles() {
         modeloTabla.setRowCount(0);
         double total = 0;
@@ -380,6 +467,10 @@ public class FrmResumenPedidoEditado extends JFrame {
         lblTotal.setText("Total: $" + total);
     }
 
+    /**
+     * Realiza una búsqueda local en la lista de clientes cargada, filtrando por
+     * nombre, teléfono o correo electrónico.
+     */
     private void accionBuscarCliente() {
         String texto = txtBuscarCliente.getText().trim().toLowerCase();
 
@@ -410,6 +501,10 @@ public class FrmResumenPedidoEditado extends JFrame {
         JOptionPane.showMessageDialog(this, "No se encontró ningún cliente con ese criterio.");
     }
 
+    /**
+     * Actualiza el estado visual de la pantalla según exista o no un cliente
+     * seleccionado, habilitando o deshabilitando el botón de "Quitar".
+     */
     private void actualizarClienteSeleccionado() {
         if (clienteSeleccionado == null) {
             lblClienteSeleccionado.setText("Sin cliente asociado");
@@ -424,6 +519,10 @@ public class FrmResumenPedidoEditado extends JFrame {
         }
     }
 
+    /**
+     * Agrega un texto de sugerencia al campo de búsqueda de cliente para
+     * mejorar la experiencia de usuario.
+     */
     private void ponerPlaceholder() {
         txtBuscarCliente.setText("Buscar por nombre, teléfono o correo");
         txtBuscarCliente.setForeground(Color.GRAY);
@@ -447,6 +546,12 @@ public class FrmResumenPedidoEditado extends JFrame {
         });
     }
 
+    /**
+     * Implementación para recibir un cliente desde una ventana externa de
+     * búsqueda.
+     *
+     * @param cliente El DTO del cliente frecuente seleccionado.
+     */
     public void recibirClienteSeleccionado(ClienteFrecuenteDTO cliente) {
         this.clienteSeleccionado = cliente;
         actualizarClienteSeleccionado();

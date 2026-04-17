@@ -20,36 +20,105 @@ import javax.swing.table.DefaultTableModel;
 import utilerias.Validacion;
 
 /**
+ * Ventana de administración para la edición integral de productos del catálogo.
+ * <p>
+ * Permite modificar el precio, la descripción, la imagen representativa y la
+ * receta detallada del producto. Incluye funcionalidades para gestionar la
+ * disponibilidad del producto basada en el stock de sus ingredientes.</p>
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class FrmEditarProducto extends JFrame {
 
+    /**
+     * Enlace con el coordinador para la comunicación con la capa de negocio.
+     */
     private final Coordinador coordinador;
 
+    /**
+     * Campo de entrada para el nombre del producto (solo lectura).
+     */
     private JTextField txtNombre;
+    /**
+     * Campo de entrada para el precio de venta del producto.
+     */
     private JTextField txtPrecio;
+    /**
+     * Campo de entrada para la descripción detallada.
+     */
     private JTextField txtDescripcion;
+    /**
+     * Selector para la categoría del producto (PLATILLO, BEBIDA, POSTRE).
+     */
     private JComboBox<String> comboTipo;
 
+    /**
+     * Tabla que visualiza los ingredientes que componen la receta.
+     */
     private JTable tablaIngredientes;
+    /**
+     * Modelo de datos para la gestión de las filas de la tabla de ingredientes.
+     */
     private DefaultTableModel modeloTabla;
 
+    /**
+     * Contenedor visual para la imagen del producto.
+     */
     private JLabel lblImagen;
+    /**
+     * Almacena la ruta absoluta del archivo de imagen seleccionado en el
+     * sistema.
+     */
     private String rutaImagen;
 
+    /**
+     * Botón para persistir los cambios en la base de datos.
+     */
     private BotonEstilizado btnGuardar;
+    /**
+     * Botón para abrir el buscador de ingredientes y añadir nuevos elementos.
+     */
     private BotonEstilizado btnAgregarIngrediente;
+    /**
+     * Botón para remover el ingrediente seleccionado de la receta.
+     */
     private BotonEstilizado btnEliminarIngrediente;
+    /**
+     * Botón para abrir el selector de archivos de imagen.
+     */
     private BotonEstilizado btnSeleccionarImagen;
+    /**
+     * Botón para regresar a la pantalla anterior.
+     */
     private BotonRegresar btnRegresar;
+    /**
+     * Botón para conmutar entre disponibilidad DISPONIBLE y NO DISPONIBLE.
+     */
     private BotonEditar btnDisponibilidad;
+    /**
+     * Botón para eliminar la imagen actual y volver a la predeterminada.
+     */
     private JButton btnQuitarImagen;
 
+    /**
+     * DTO que representa el producto que se está editando.
+     */
     private ProductoDTO producto;
 
+    /**
+     * Lista local que mantiene el estado actual de la receta (ingredientes y
+     * cantidades).
+     */
     private List<RecetaDTO> recetas = new ArrayList<>();
 
+    /**
+     * Construye la interfaz de edición de producto.
+     * <p>
+     * Carga el producto seleccionado desde el coordinador y prepara los
+     * componentes visuales con la información actual del producto.</p>
+     *
+     * * @param coordinador El coordinador del sistema que provee el contexto.
+     */
     public FrmEditarProducto(Coordinador coordinador) {
         this.coordinador = coordinador;
         this.producto = coordinador.getProductoSeleccionado();
@@ -59,6 +128,9 @@ public class FrmEditarProducto extends JFrame {
         cargarDatos();
     }
 
+    /**
+     * Establece las propiedades de tamaño, ubicación y disposición del marco.
+     */
     private void configurarVentana() {
         setTitle("Restaurante");
         setSize(1000, 650);
@@ -67,6 +139,13 @@ public class FrmEditarProducto extends JFrame {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Inicializa y organiza todos los componentes visuales de la interfaz.
+     * <p>
+     * Configura los paneles de encabezado, los campos de edición, el área de
+     * previsualización de imagen y la tabla de gestión de ingredientes con sus
+     * respectivos botones de acción.</p>
+     */
     private void inicializarComponentes() {
 
         Color colorMostaza = new Color(229, 171, 75);
@@ -214,6 +293,14 @@ public class FrmEditarProducto extends JFrame {
         modeloTabla = new DefaultTableModel(
                 new String[]{"Nombre", "Unidad", "Cantidad"}, 0
         ) {
+            /**
+             * Define que las celdas de la tabla de ingredientes no son
+             * editables manualmente.
+             *
+             * @param row Fila.
+             * @param column Columna.
+             * @return false.
+             */
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
@@ -276,6 +363,10 @@ public class FrmEditarProducto extends JFrame {
         eventos();
     }
 
+    /**
+     * Actualiza el texto del botón de disponibilidad según el estado actual del
+     * producto.
+     */
     private void actualizarTextoDisponibilidad() {
         if (producto != null) {
             btnDisponibilidad.setText(
@@ -285,6 +376,10 @@ public class FrmEditarProducto extends JFrame {
     }
 
     // CARGAR DATOS
+    /**
+     * Extrae la información del objeto ProductoDTO y la despliega en los campos
+     * del formulario.
+     */
     private void cargarDatos() {
         if (producto == null) {
             return;
@@ -331,6 +426,13 @@ public class FrmEditarProducto extends JFrame {
         }
     }
 
+    /**
+     * Carga una imagen por defecto desde los recursos del sistema.
+     * <p>
+     * Se utiliza cuando el producto no tiene una ruta de imagen asignada o
+     * cuando el usuario decide eliminar la imagen actual. Asegura que el
+     * contenedor visual mantenga sus dimensiones estándar.</p>
+     */
     private void ponerImagenDefault() {
         ImageIcon icono = new ImageIcon("src\\main\\resources\\imagenes\\icono_sin_imagen.png");
         Dimension size = lblImagen.getSize();
@@ -350,6 +452,18 @@ public class FrmEditarProducto extends JFrame {
         rutaImagen = null;
     }
 
+    /**
+     * Crea un panel contenedor que agrupa una etiqueta descriptiva y un campo
+     * de texto.
+     * <p>
+     * Aplica un diseño de BoxLayout vertical para mantener la alineación de los
+     * formularios y estandariza las dimensiones de los campos de entrada.</p>
+     *
+     * * @param texto El nombre del campo que se mostrará en la etiqueta.
+     * @param campo El componente JTextField donde el usuario ingresará datos.
+     * @return Un JPanel configurado con la etiqueta y el campo de texto
+     * integrados.
+     */
     private JPanel crearCampo(String texto, JTextField campo) {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -369,6 +483,17 @@ public class FrmEditarProducto extends JFrame {
         return contenedor;
     }
 
+    /**
+     * Crea un panel contenedor para un selector de opciones (ComboBox).
+     * <p>
+     * Similar a {@link #crearCampo}, este método organiza verticalmente una
+     * etiqueta y el selector, asegurando que las dimensiones coincidan con el
+     * resto del formulario.</p>
+     *
+     * * @param texto El nombre descriptivo para el selector.
+     * @param combo El componente JComboBox con las opciones predefinidas.
+     * @return Un JPanel listo para ser añadido al formulario.
+     */
     private JPanel crearCombo(String texto, JComboBox<String> combo) {
         JLabel label = new JLabel(texto);
         label.setFont(new Font("SansSerif", Font.BOLD, 16));
@@ -394,6 +519,15 @@ public class FrmEditarProducto extends JFrame {
         return contenedor;
     }
 
+    /**
+     * Configura los escuchadores de eventos (Listeners) para todos los
+     * componentes interactivos.
+     * <p>
+     * Gestiona la lógica de navegación, la selección de archivos de imagen, la
+     * adición/eliminación de ingredientes en la tabla, el cambio de
+     * disponibilidad y el proceso de guardado final con validación de
+     * datos.</p>
+     */
     private void eventos() {
 
         btnRegresar.addActionListener(e -> {
@@ -553,6 +687,10 @@ public class FrmEditarProducto extends JFrame {
         });
     }
 
+    /**
+     * Abre un explorador de archivos para elegir una imagen y la escala para su
+     * visualización.
+     */
     private void seleccionarImagen() {
         JFileChooser fileChooser = new JFileChooser();
         int resultado = fileChooser.showOpenDialog(this);
@@ -579,6 +717,15 @@ public class FrmEditarProducto extends JFrame {
         }
     }
 
+    /**
+     * Valida y agrega un nuevo ingrediente a la tabla y a la lista de recetas
+     * local.
+     *
+     * * @param ingrediente El DTO del ingrediente a añadir.
+     * @param cantidad La proporción necesaria para el producto.
+     * @return true si se agregó con éxito; false si el ingrediente ya existía
+     * en la receta.
+     */
     public boolean agregarIngredienteATabla(IngredienteDTO ingrediente, Double cantidad) {
 
         for (RecetaDTO r : recetas) {
@@ -604,6 +751,14 @@ public class FrmEditarProducto extends JFrame {
         return true;
     }
 
+    /**
+     * Procesa una lista de ingredientes provenientes del buscador externo.
+     * <p>
+     * Solicita al usuario la cantidad para cada ingrediente antes de
+     * agregarlo.</p>
+     *
+     * * @param ingredientesSeleccionados Lista de ingredientes a procesar.
+     */
     public void recibirIngredientesSeleccionados(List<IngredienteDTO> ingredientesSeleccionados) {
         for (IngredienteDTO ingrediente : ingredientesSeleccionados) {
 

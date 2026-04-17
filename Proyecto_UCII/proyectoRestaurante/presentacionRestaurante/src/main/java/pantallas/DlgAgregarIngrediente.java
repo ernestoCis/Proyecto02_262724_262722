@@ -10,25 +10,64 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.DefaultTableModel;
 
 /**
+ * Ventana de diálogo para la selección y adición de ingredientes a un producto.
+ * <p>
+ * Permite buscar ingredientes en el inventario, especificar una cantidad válida
+ * según su unidad de medida y enviarlos a la pantalla de registro o
+ * edición.</p>
  *
- * @author Paulina Guevara, Ernesto Cisneros
+ * * @author Paulina Guevara, Ernesto Cisneros
  */
 public class DlgAgregarIngrediente extends JDialog {
 
+    /**
+     * Coordinador para la comunicación con la capa de negocio.
+     */
     private Coordinador coordinador;
 
+    /**
+     * Campo de texto para filtrar ingredientes por nombre.
+     */
     private JTextField txtBuscar;
+    /**
+     * Campo de texto para ingresar la cantidad del ingrediente a agregar.
+     */
     private JTextField txtCantidad;
+    /**
+     * Tabla que despliega la lista de ingredientes disponibles.
+     */
     private JTable tablaIngredientes;
+    /**
+     * Modelo de datos para la gestión del contenido de la tabla.
+     */
     private DefaultTableModel modeloTabla;
 
+    /**
+     * Botón para cerrar el diálogo sin realizar cambios.
+     */
     private BotonColor btnCancelar;
+    /**
+     * Botón para confirmar la adición del ingrediente seleccionado.
+     */
     private BotonColor btnAgregar;
 
+    /**
+     * Referencia al marco padre para la comunicación de datos.
+     */
     private JFrame parent;
-    
+
+    /**
+     * Lista de transferencia que contiene los objetos de ingredientes cargados.
+     */
     private List<IngredienteDTO> ingredientes;
 
+    /**
+     * Crea un nuevo diálogo para agregar ingredientes.
+     *
+     * * @param parent Marco principal desde donde se invoca el diálogo.
+     * @param coordinador Instancia del coordinador para realizar consultas de
+     * datos.
+     */
     public DlgAgregarIngrediente(JFrame parent, Coordinador coordinador) {
         super(parent, true);
         this.parent = parent;
@@ -38,6 +77,9 @@ public class DlgAgregarIngrediente extends JDialog {
         cargarIngredientes();
     }
 
+    /**
+     * Establece las propiedades básicas de la ventana como título y tamaño.
+     */
     private void configurarVentana() {
         setTitle("Ingredientes");
         setSize(700, 500);
@@ -45,6 +87,11 @@ public class DlgAgregarIngrediente extends JDialog {
         setLayout(new BorderLayout());
     }
 
+    /**
+     * Configura los escuchadores de eventos para los botones y controles.
+     *
+     * @param btnCerrar Botón de cierre rápido en la esquina superior.
+     */
     private void inicializarComponentes() {
 
         Color fondo = new Color(245, 245, 245);
@@ -85,12 +132,17 @@ public class DlgAgregarIngrediente extends JDialog {
         modeloTabla = new DefaultTableModel(
                 new String[]{"Nombre", "Unidad", "Cantidad Actual"}, 0
         ) {
+            /**
+             * Determina si una celda es editable.
+             *
+             * @return false para que la tabla sea de solo lectura.
+             */
             @Override
             public boolean isCellEditable(int row, int column) {
                 return false;
             }
         };
-        
+
         tablaIngredientes = new JTable(modeloTabla);
         tablaIngredientes.setRowHeight(30);
 
@@ -98,8 +150,8 @@ public class DlgAgregarIngrediente extends JDialog {
                 .getDefaultRenderer())
                 .setHorizontalAlignment(SwingConstants.CENTER);
 
-        tablaIngredientes.setSelectionBackground(Color.decode("#2A4E52")); 
-        
+        tablaIngredientes.setSelectionBackground(Color.decode("#2A4E52"));
+
         JScrollPane scroll = new JScrollPane(tablaIngredientes);
 
         // DATOS DEMO
@@ -146,6 +198,16 @@ public class DlgAgregarIngrediente extends JDialog {
         eventos(btnCerrar);
     }
 
+    /**
+     * Configura los escuchadores de eventos para los componentes interactivos.
+     * <p>
+     * Define las acciones para el cierre de la ventana, la cancelación del
+     * proceso y la lógica de validación y transferencia de datos al confirmar
+     * la adición de un ingrediente.</p>
+     *
+     * * @param btnCerrar El botón de cierre (X) ubicado en la parte superior
+     * del diálogo.
+     */
     private void eventos(JButton btnCerrar) {
 
         btnCerrar.addActionListener(e -> dispose());
@@ -193,7 +255,7 @@ public class DlgAgregarIngrediente extends JDialog {
             if (opcion == JOptionPane.YES_OPTION) {
 
                 IngredienteDTO ingrediente = ingredientes.get(fila);
-                
+
                 if (parent instanceof FrmRegistrarProducto) {
                     ((FrmRegistrarProducto) parent).agregarIngredienteATabla(ingrediente, Double.valueOf(cantidad));
                 } else if (parent instanceof FrmEditarProducto) {
@@ -202,11 +264,14 @@ public class DlgAgregarIngrediente extends JDialog {
 
                 //JOptionPane.showMessageDialog(this, "Ingrediente agregado correctamente");
                 //dispose();
-
             }
         });
     }
 
+    /**
+     * Recupera la lista de ingredientes desde el coordinador y actualiza la
+     * tabla.
+     */
     private void cargarIngredientes() {
         modeloTabla.setRowCount(0);
 
