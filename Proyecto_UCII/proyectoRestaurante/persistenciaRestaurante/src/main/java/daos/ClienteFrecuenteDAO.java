@@ -275,4 +275,25 @@ public class ClienteFrecuenteDAO implements IClienteFrecuenteDAO {
             em.close();
         }
     }
+
+    public List<ClienteFrecuente> consultarReporte(String nombre) throws PersistenciaException {
+        EntityManager em = ConexionBD.crearConexion();
+        try {
+            String jpql = "SELECT c FROM ClienteFrecuente c WHERE 1=1";
+
+            if (nombre != null && !nombre.isBlank()) {
+                jpql += " AND LOWER(c.nombres) LIKE :nombre";
+            }
+
+            TypedQuery<ClienteFrecuente> query = em.createQuery(jpql, ClienteFrecuente.class);
+
+            if (nombre != null && !nombre.isBlank()) {
+                query.setParameter("nombre", "%" + nombre.toLowerCase() + "%");
+            }
+
+            return query.getResultList();
+        } finally {
+            em.close();
+        }
+    }
 }
